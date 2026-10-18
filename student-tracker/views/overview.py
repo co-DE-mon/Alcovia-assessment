@@ -119,13 +119,15 @@ def page():
     with left:
         show(ui.h2("Biggest gaps", "The KPIs furthest from on track. Open the records to see who or what is behind each."))
         for k in insights.gaps(rows):
-            show(f'<div class="sv-sub" style="margin:.5rem 0 0">{ui.e(k["activity"])} · {ui.CADENCE_LABEL[k["cadence"]]}</div>')
-            kpi_with_drill(k, cfg, f'drill-overview-gap-{k["activity"]}-{k["kpi"]}')
+            with st.container(border=True):
+                show(f'<div class="sv-sub">{ui.e(k["activity"])} · {ui.CADENCE_LABEL[k["cadence"]]}</div>')
+                kpi_with_drill(k, cfg, f'drill-overview-gap-{k["activity"]}-{k["kpi"]}')
     with right:
         show(ui.h2("Bright spots", "What is working."))
         for k in insights.bright_spots(rows):
-            show(f'<div class="sv-sub" style="margin:.5rem 0 0">{ui.e(k["activity"])} · {ui.CADENCE_LABEL[k["cadence"]]}</div>')
-            kpi_with_drill(k, cfg, f'drill-overview-bright-{k["activity"]}-{k["kpi"]}')
+            with st.container(border=True):
+                show(f'<div class="sv-sub">{ui.e(k["activity"])} · {ui.CADENCE_LABEL[k["cadence"]]}</div>')
+                kpi_with_drill(k, cfg, f'drill-overview-bright-{k["activity"]}-{k["kpi"]}')
 
     show(ui.h2("Needs attention", f"Students with {cfg['scorecard']['off_track_min_reasons']} or more warning signs, grouped by advisor, longest silent first."))
     if not listed:
