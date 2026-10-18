@@ -40,7 +40,7 @@ Measure task-linked sessions with progress saved, chapter tasks completed and re
 
 ## Execution and evaluation
 
-Joining on 1 November, I would begin the scheduled work on 2 November. This follows the shared [Problem 3 workplan](problem-3-workplan.md) and [delivery workbook](delivery-workplan.xlsx), which reserve capacity for the GTM tracker and student dashboard alongside app adoption.
+Joining on 1 November, I would begin the scheduled work on 2 November. This follows the shared [Problem 3 workplan](problem-3-workplan.md) and [GitHub-readable delivery workplan](delivery-workplan.md), which reserve capacity for the GTM tracker and student dashboard alongside app adoption.
 
 I would own student research, prioritization, participant availability and evaluation. The process/systems designer would check content readiness, current progress-reporting steps and unaided use. The full-stack engineer would verify measurement, test device behaviour and handle implementation and release.
 
