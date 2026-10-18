@@ -95,16 +95,16 @@ def tinted(frame, column="Result"):
 
 
 def record_table(rows, key, end, *, style=False, cap=520, level=0):
-    """Select a row to see its complete displayed fields and the records linked by stable IDs."""
+    """Click a cell to see its row's fields and the records linked by stable IDs."""
     if not rows:
         st.info("No records for this selection.")
         return None
     frame = pd.DataFrame(rows)
-    st.caption("Select a row to inspect its fields and related records.")
+    st.caption("Click any cell to inspect its row and related records.")
     picked = st.dataframe(tinted(frame) if style else frame, hide_index=True, width="stretch",
-                          height=table_height(len(rows), cap), on_select="rerun", selection_mode="single-row", key=key)
-    if picked.selection.rows:
-        selected = rows[picked.selection.rows[0]]
+                          height=table_height(len(rows), cap), on_select="rerun", selection_mode="single-cell", key=key)
+    if picked.selection.cells:
+        selected = rows[picked.selection.cells[0][0]]
         st.caption("Selected row · fields and related records")
         st.dataframe(pd.DataFrame([{"Field": k, "Value": "—" if pd.isna(v) else str(v)} for k, v in selected.items()]),
                      hide_index=True, width="stretch", height=table_height(len(selected), 360))
