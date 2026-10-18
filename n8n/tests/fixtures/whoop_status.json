@@ -1,0 +1,10 @@
+{
+ "success": true,
+ "data": {
+  "isConnected": false,
+  "needsReconnect": false,
+  "expiryDate": null,
+  "lastSyncAt": null,
+  "reauthErrorAt": null
+ }
+}

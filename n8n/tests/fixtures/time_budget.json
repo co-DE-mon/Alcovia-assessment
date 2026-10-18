@@ -1,0 +1,314 @@
+{
+ "success": true,
+ "data": {
+  "student": {
+   "id": "8e68ff82-8992-5ba8-a8df-67a9703fa818",
+   "name": "name 53",
+   "board": "CBSE"
+  },
+  "academicYear": "2026-27",
+  "weekdayStudyHours": 2,
+  "weekendStudyHours": 5,
+  "quarters": [
+   {
+    "quarterName": "Q1",
+    "dateRange": {
+     "start": "2026-03-01T00:00:00.000Z",
+     "end": "2026-05-31T23:59:59.999Z"
+    },
+    "availableHours": 265,
+    "totalEstimatedHours": 138.1,
+    "totalActualHours": 0,
+    "gap": -126.9,
+    "isOverBudget": false,
+    "subjects": [
+     {
+      "subjectId": "2c309d4d-da45-54b0-b09e-4cb84610607b",
+      "subjectName": "Math",
+      "totalEstHours": 0,
+      "totalActualHours": 0,
+      "proportion": 0,
+      "chapters": [],
+      "examUrgency": null
+     },
+     {
+      "subjectId": "b8b75d04-5a23-5fa1-a897-62a2bd367765",
+      "subjectName": "Biology",
+      "totalEstHours": 100,
+      "totalActualHours": 0,
+      "proportion": 0.377,
+      "chapters": [],
+      "examUrgency": null
+     },
+     {
+      "subjectId": "11e8f6c0-7505-5119-9e74-e71cb87c9daf",
+      "subjectName": "Economics",
+      "totalEstHours": 0,
+      "totalActualHours": 0,
+      "proportion": 0,
+      "chapters": [],
+      "examUrgency": null
+     },
+     {
+      "subjectId": "192fe1c1-f930-51fc-bbbf-c051a121ceb0",
+      "subjectName": "History",
+      "totalEstHours": 0,
+      "totalActualHours": 0,
+      "proportion": 0,
+      "chapters": [],
+      "examUrgency": null
+     },
+     {
+      "subjectId": "6ce01339-35a9-50ab-b174-d497165bc22d",
+      "subjectName": "Literature",
+      "totalEstHours": 0,
+      "totalActualHours": 0,
+      "proportion": 0,
+      "chapters": [],
+      "examUrgency": null
+     },
+     {
+      "subjectId": "c2147f5a-d634-5e47-8af4-3067be728237",
+      "subjectName": "German",
+      "totalEstHours": 0,
+      "totalActualHours": 0,
+      "proportion": 0,
+      "chapters": [],
+      "examUrgency": null
+     },
+     {
+      "subjectId": "84b56c0c-e950-52ed-bd82-a3180c5cc146",
+      "subjectName": "Mathematics",
+      "totalEstHours": 6,
+      "totalActualHours": 0,
+      "proportion": 0.023,
+      "chapters": [],
+      "examUrgency": null
+     },
+     {
+      "subjectId": "860d7210-0e05-5939-b92e-3dd9b3cd906e",
+      "subjectName": "Physics",
+      "totalEstHours": 0.1,
+      "totalActualHours": 0,
+      "proportion": 0,
+      "chapters": [],
+      "examUrgency": null
+     },
+     {
+      "subjectId": "374e5008-7deb-5427-98b8-de7107429052",
+      "subjectName": "Chemistry",
+      "totalEstHours": 32,
+      "totalActualHours": 0,
+      "proportion": 0.121,
+      "chapters": [],
+      "examUrgency": null
+     }
+    ]
+   },
+   {
+    "quarterName": "Q2",
+    "dateRange": {
+     "start": "2026-06-01T00:00:00.000Z",
+     "end": "2026-08-31T23:59:59.999Z"
+    },
+    "availableHours": 262,
+    "totalEstimatedHours": 9,
+    "totalActualHours": 0,
+    "gap": -253,
+    "isOverBudget": false,
+    "subjects": [
+     {
+      "subjectId": "2c309d4d-da45-54b0-b09e-4cb84610607b",
+      "subjectName": "Math",
+      "totalEstHours": 0,
+      "totalActualHours": 0,
+      "proportion": 0,
+      "chapters": [],
+      "examUrgency": null
+     },
+     {
+      "subjectId": "11e8f6c0-7505-5119-9e74-e71cb87c9daf",
+      "subjectName": "Economics",
+      "totalEstHours": 0,
+      "totalActualHours": 0,
+      "proportion": 0,
+      "chapters": [],
+      "examUrgency": null
+     },
+     {
+      "subjectId": "192fe1c1-f930-51fc-bbbf-c051a121ceb0",
+      "subjectName": "History",
+      "totalEstHours": 0,
+      "totalActualHours": 0,
+      "proportion": 0,
+      "chapters": [],
+      "examUrgency": null
+     },
+     {
+      "subjectId": "6ce01339-35a9-50ab-b174-d497165bc22d",
+      "subjectName": "Literature",
+      "totalEstHours": 0,
+      "totalActualHours": 0,
+      "proportion": 0,
+      "chapters": [],
+      "examUrgency": null
+     },
+     {
+      "subjectId": "c2147f5a-d634-5e47-8af4-3067be728237",
+      "subjectName": "German",
+      "totalEstHours": 0,
+      "totalActualHours": 0,
+      "proportion": 0,
+      "chapters": [],
+      "examUrgency": null
+     },
+     {
+      "subjectId": "b8b75d04-5a23-5fa1-a897-62a2bd367765",
+      "subjectName": "Biology",
+      "totalEstHours": 9,
+      "totalActualHours": 0,
+      "proportion": 0.034,
+      "chapters": [],
+      "examUrgency": null
+     }
+    ]
+   },
+   {
+    "quarterName": "Q3",
+    "dateRange": {
+     "start": "2026-09-01T00:00:00.000Z",
+     "end": "2026-11-30T23:59:59.999Z"
+    },
+    "availableHours": 260,
+    "totalEstimatedHours": 59,
+    "totalActualHours": 0,
+    "gap": -201,
+    "isOverBudget": false,
+    "subjects": [
+     {
+      "subjectId": "b8b75d04-5a23-5fa1-a897-62a2bd367765",
+      "subjectName": "Biology",
+      "totalEstHours": 49,
+      "totalActualHours": 0,
+      "proportion": 0.188,
+      "chapters": [],
+      "examUrgency": null
+     },
+     {
+      "subjectId": "2c309d4d-da45-54b0-b09e-4cb84610607b",
+      "subjectName": "Math",
+      "totalEstHours": 0,
+      "totalActualHours": 0,
+      "proportion": 0,
+      "chapters": [],
+      "examUrgency": null
+     },
+     {
+      "subjectId": "11e8f6c0-7505-5119-9e74-e71cb87c9daf",
+      "subjectName": "Economics",
+      "totalEstHours": 10,
+      "totalActualHours": 0,
+      "proportion": 0.038,
+      "chapters": [],
+      "examUrgency": null
+     },
+     {
+      "subjectId": "192fe1c1-f930-51fc-bbbf-c051a121ceb0",
+      "subjectName": "History",
+      "totalEstHours": 0,
+      "totalActualHours": 0,
+      "proportion": 0,
+      "chapters": [],
+      "examUrgency": null
+     },
+     {
+      "subjectId": "6ce01339-35a9-50ab-b174-d497165bc22d",
+      "subjectName": "Literature",
+      "totalEstHours": 0,
+      "totalActualHours": 0,
+      "proportion": 0,
+      "chapters": [],
+      "examUrgency": null
+     },
+     {
+      "subjectId": "374e5008-7deb-5427-98b8-de7107429052",
+      "subjectName": "Chemistry",
+      "totalEstHours": 0,
+      "totalActualHours": 0,
+      "proportion": 0,
+      "chapters": [],
+      "examUrgency": null
+     },
+     {
+      "subjectId": "c2147f5a-d634-5e47-8af4-3067be728237",
+      "subjectName": "German",
+      "totalEstHours": 0,
+      "totalActualHours": 0,
+      "proportion": 0,
+      "chapters": [],
+      "examUrgency": null
+     }
+    ]
+   },
+   {
+    "quarterName": "Q4",
+    "dateRange": {
+     "start": "2026-12-01T00:00:00.000Z",
+     "end": "2027-02-28T00:00:00.000Z"
+    },
+    "availableHours": 258,
+    "totalEstimatedHours": 0,
+    "totalActualHours": 0,
+    "gap": -258,
+    "isOverBudget": false,
+    "subjects": [
+     {
+      "subjectId": "2c309d4d-da45-54b0-b09e-4cb84610607b",
+      "subjectName": "Math",
+      "totalEstHours": 0,
+      "totalActualHours": 0,
+      "proportion": 0,
+      "chapters": [],
+      "examUrgency": null
+     },
+     {
+      "subjectId": "192fe1c1-f930-51fc-bbbf-c051a121ceb0",
+      "subjectName": "History",
+      "totalEstHours": 0,
+      "totalActualHours": 0,
+      "proportion": 0,
+      "chapters": [],
+      "examUrgency": null
+     },
+     {
+      "subjectId": "6ce01339-35a9-50ab-b174-d497165bc22d",
+      "subjectName": "Literature",
+      "totalEstHours": 0,
+      "totalActualHours": 0,
+      "proportion": 0,
+      "chapters": [],
+      "examUrgency": null
+     },
+     {
+      "subjectId": "b8b75d04-5a23-5fa1-a897-62a2bd367765",
+      "subjectName": "Biology",
+      "totalEstHours": 0,
+      "totalActualHours": 0,
+      "proportion": 0,
+      "chapters": [],
+      "examUrgency": null
+     },
+     {
+      "subjectId": "11e8f6c0-7505-5119-9e74-e71cb87c9daf",
+      "subjectName": "Economics",
+      "totalEstHours": 0,
+      "totalActualHours": 0,
+      "proportion": 0,
+      "chapters": [],
+      "examUrgency": null
+     }
+    ]
+   }
+  ]
+ }
+}

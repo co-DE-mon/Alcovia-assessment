@@ -1,0 +1,25 @@
+# Only assessment deliverables belong in this repository.
+/*
+!/.gitignore
+!/student-tracker/
+!/gtm-tracker/
+!/n8n/
+!/Docs/
+
+**/.venv/
+**/__pycache__/
+**/.pytest_cache/
+**/.ruff_cache/
+**/.mypy_cache/
+**/node_modules/
+**/.env
+**/.env.*
+**/secrets.toml
+*.pyc
+*.duckdb
+*.duckdb.wal
+*.pem
+*.key
+/Docs/OBJECTIVES.md
+/Docs/*.docx
+/Docs/claude sessions

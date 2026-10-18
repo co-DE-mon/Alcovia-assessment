@@ -1,0 +1,32 @@
+{
+  "demo": true,
+  "label": "SYNTHETIC Apple, Samsung and Garmin daily sleep; vendor field names are assumed, not verified against live vendor APIs",
+  "asOf": "2026-10-08T18:45:00Z",
+  "devices": [
+    {
+      "studentId": "DEMO-STUDENT-2",
+      "vendor": "apple",
+      "readings": [
+        { "date": "2026-10-01", "asleepMinutes": 450 },
+        { "date": "2026-10-02", "asleepMinutes": 390 },
+        { "date": "2026-10-03", "asleepMinutes": null }
+      ]
+    },
+    {
+      "studentId": "DEMO-STUDENT-3",
+      "vendor": "samsung",
+      "readings": [
+        { "day": "2026-10-01", "sleepDurationMs": 25200000 },
+        { "day": "2026-10-02", "sleepDurationMs": 28800000 }
+      ]
+    },
+    {
+      "studentId": "DEMO-STUDENT-4",
+      "vendor": "garmin",
+      "readings": [
+        { "calendarDate": "2026-10-01", "sleepTimeSeconds": 30600 },
+        { "calendarDate": "2026-10-02", "sleepTimeSeconds": 27000 }
+      ]
+    }
+  ]
+}

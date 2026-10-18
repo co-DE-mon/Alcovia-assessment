@@ -1,0 +1,243 @@
+{
+  "id": "chapterProgressDemo01",
+  "name": "Chapter progress DEMO (synthetic inputs)",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "7422a030-8e42-51a0-8819-ec631edade46",
+      "name": "Run demo",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a9b06491-4b37-5779-9f8c-d41c9e8e1b78",
+              "name": "evidence",
+              "value": {
+                "demo": true,
+                "label": "SYNTHETIC chapter inputs; supplemental fields are not Alcovia API fields",
+                "studentId": "DEMO-STUDENT-1",
+                "subjects": [
+                  {
+                    "id": "DEMO-SUB-1",
+                    "name": "Mathematics"
+                  }
+                ],
+                "quarters": [
+                  {
+                    "id": "DEMO-Q-1",
+                    "label": "2026-27-Q3",
+                    "startDate": "2026-09-01",
+                    "endDate": "2026-11-30"
+                  }
+                ],
+                "chapters": [
+                  {
+                    "id": "DEMO-CH-1",
+                    "subjectId": "DEMO-SUB-1",
+                    "quarterId": "DEMO-Q-1",
+                    "tasks": [
+                      {
+                        "id": "DEMO-T-0",
+                        "taskType": "read_textbook",
+                        "taskStatus": "Done"
+                      },
+                      {
+                        "id": "DEMO-T-1",
+                        "taskType": "notes",
+                        "taskStatus": "Done"
+                      },
+                      {
+                        "id": "DEMO-T-2",
+                        "taskType": "worksheets",
+                        "taskStatus": "Done"
+                      }
+                    ],
+                    "scores": [
+                      {
+                        "id": "DEMO-SCORE-0",
+                        "chapterId": "DEMO-CH-1",
+                        "scoreType": "Worksheet",
+                        "marksObtained": 75,
+                        "maxMarks": 100,
+                        "accuracyPercentage": 75,
+                        "attemptNo": 1,
+                        "recordedOn": "2026-10-10T10:00:00Z"
+                      },
+                      {
+                        "id": "DEMO-SCORE-1",
+                        "chapterId": "DEMO-CH-1",
+                        "scoreType": "Mocktest",
+                        "marksObtained": 85,
+                        "maxMarks": 100,
+                        "accuracyPercentage": 85,
+                        "attemptNo": 1,
+                        "recordedOn": "2026-10-10T10:00:00Z"
+                      }
+                    ]
+                  }
+                ],
+                "plans": [
+                  {
+                    "studentId": "DEMO-STUDENT-1",
+                    "chapterId": "DEMO-CH-1",
+                    "plannedMonth": "2026-09-01"
+                  }
+                ],
+                "supplement": [
+                  {
+                    "studentId": "DEMO-STUDENT-1",
+                    "chapterId": "DEMO-CH-1",
+                    "timedPaper": {
+                      "completed": true,
+                      "withinTime": true
+                    },
+                    "stageChangedAt": "2026-10-10T10:00:00Z"
+                  }
+                ]
+              },
+              "type": "object"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      },
+      "id": "295d2538-bf98-537a-89d1-722b15641332",
+      "name": "Demo inputs",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        260,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "/* normalise.js: the mapping step of the student-app-daily-poll workflow.\n *\n * Pure: no network, no database and no clock (the run time is passed in), so it is unit tested under plain Node (tests/normalise.test.js) and\n * the same text is embedded in the workflow's two Code nodes by build/build.py. Edit this file, never the generated JSON.\n *\n * What it does with the student app's responses:\n *   - converts UTC timestamps to IST (+05:30), because the schema stores IST;\n *   - maps every status word explicitly and REJECTS an unknown one instead of guessing, because one bad value would otherwise fail the\n *     whole table batch at the database CHECK constraint (a reject is logged and the rest of the rows still load) [A43][A52];\n *   - removes duplicate keys inside one payload, because INSERT .. ON CONFLICT cannot touch the same row twice in one statement;\n *   - treats a failed or truncated response as a failed source, never as \"no rows\".\n * Assumption numbers refer to student-tracker/README.md#assumption-reference-index.\n */\n'use strict';\n\nconst IST_OFFSET_MS = 330 * 60 * 1000;\n\n// Primary key of each table, in the order build/build.py uses for ON CONFLICT. A unit test checks this against sql/postgres-schema.sql.\nconst KEYS = {\n  staff: ['staff_id'],\n  students: ['student_id'],\n  study_hours: ['student_id', 'subject', 'quarter', 'as_of'],\n  focus_sessions: ['session_id'],\n  todos: ['todo_id'],\n  events: ['event_id'],\n  event_attendance: ['event_id', 'student_id'],\n  syllabus_daily: ['student_id', 'day'],\n  wearable_daily: ['student_id', 'day'],\n  roadmap_items: ['item_id'],\n};\nconst TABLE_ORDER = Object.keys(KEYS);\n\n// The app's words, compared after lower-casing and dropping spaces, underscores and hyphens: \"InProgress\", \"in_progress\" and \"In Progress\" match.\nconst norm = (s) => String(s).toLowerCase().replace(/[\\s_-]/g, '');\nconst FOCUS_STATUS = { completed: 'completed', failed: 'failed' };\nconst FOCUS_NOT_FINAL = new Set(['running', 'active', 'started', 'inprogress']); // still running: skipped, loaded when it ends\nconst FAIL_REASON = new Set(['give_up', 'app_switch', 'abandoned', 'interrupted']);\nconst TODO_STATUS = { done: 'done', pending: 'pending', inprogress: 'in_progress', missed: 'missed' };\nconst TODO_SOURCE = new Set(['manual', 'admin_assigned', 'coaching_report', 'session_action', 'n8n']);\nconst SESSION_KIND = {\n  academic: 'academic_session', career: 'career_session', personal: 'personal_session', mindset: 'mindset_session',\n  deepwork: 'deep_work_session', mentor: 'mentor_call', workshop: 'workshop', podsession: 'pod',\n};\nconst ATTENDANCE = { present: true, absent: false, upcoming: null }; // A52\nconst GOAL_ROADMAP = { career: 'career', personal: 'personal', academic: 'academic', venture: 'entrepreneurship' }; // A50\nconst GOAL_STATUS = new Set(['notstarted', 'inprogress', 'achieved']);\n\nclass Reject extends Error {}\nconst must = (cond, message) => { if (!cond) throw new Reject(message); };\nconst isNum = (v) => typeof v === 'number' && Number.isFinite(v);\nconst text = (v) => (typeof v === 'string' ? v.trim() : '');\nconst pad = (n) => String(n).padStart(2, '0');\n\n/** Milliseconds for an ISO timestamp that carries a zone (Z or +hh:mm); null for anything else, so a zone-less value is never read as local time. */\nfunction instant(v) {\n  if (typeof v !== 'string') return null;\n  const match=/^(\\d{4}-\\d{2}-\\d{2})T(\\d{2}):(\\d{2}):(\\d{2})(?:\\.\\d+)?(Z|[+-]\\d{2}:?\\d{2})$/.exec(v);\n  if (!match || !validDay(match[1]) || Number(match[2])>23 || Number(match[3])>59 || Number(match[4])>59) return null;\n  const t=Date.parse(v);return Number.isFinite(t)?t:null;\n}\nfunction validDay(value) {\n  if(typeof value!=='string' || !/^\\d{4}-\\d{2}-\\d{2}$/.test(value))return false;\n  const parsed=Date.parse(value+'T00:00:00Z');\n  return Number.isFinite(parsed) && new Date(parsed).toISOString().slice(0,10)===value;\n}\nfunction ist(ms) {\n  const d = new Date(ms + IST_OFFSET_MS);\n  return { date: `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}`, time: `${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}:${pad(d.getUTCSeconds())}` };\n}\nconst toIst = (v) => { const t = instant(v); if (t === null) return null; const p = ist(t); return `${p.date} ${p.time}`; };\nconst istDate = (v) => { const t = instant(v); return t === null ? null : ist(t).date; };\nconst plainDate = value => validDay(value)?value:null;\n\n// Persist classifications, not untrusted upstream message bodies: arbitrary text may contain credentials.\nconst errorText = (error) => {\n  const raw=typeof error==='string'?error:error && typeof error==='object'?error.message || error.description:'';\n  const message=typeof raw==='string'?raw.trim():'';\n  if(!message)return 'unknown error';\n  if(/Failed query:/i.test(message))return 'the database rejected the write (details omitted)';\n  const safe=['Authorization failed','schedule activation failed','success=false','no response','no result from the database'];\n  if(safe.includes(message))return message;\n  if(/^node Fetch (profile|wearable status|time budget|focus today|todos|sessions|syllabus history|wellness history|annual goals|quarterly goals) did not run$/.test(message))return message;\n  if(/relation .*does not exist/i.test(message))return 'database relation unavailable';\n  if(/timeout|timed out/i.test(message))return 'request timed out';\n  const status=message.match(/\\b([45]\\d{2})\\b/);\n  return status?'HTTP '+status[1]+' request failed':'request failed (details omitted)';\n};\n\n/**\n * One source's n8n items -> {data} or {error}. n8n turns a bare JSON list into one item per element, wraps nothing for single objects, and with\n * \"continue on error\" emits {error: ...}. The app answers {success, data, meta?}; paged endpoints send one such item per page.\n */\nfunction unwrap(items) {\n  if (!Array.isArray(items)) return { error: 'no response' };\n  const live = items.filter((i) => i && typeof i === 'object' && Object.keys(i).length > 0);\n  if (live.length === 0) return { data: [] };\n  const failed = live.find((i) => i.error || i.success === false);\n  if (failed) return { error: errorText(failed.error || 'success=false') };\n  if (live.every((i) => 'success' in i && 'data' in i)) {\n    const pages = live.map((i) => i.data);\n    const data = pages.length === 1 ? pages[0] : pages.every(Array.isArray) ? [].concat(...pages) : pages;\n    const totals=live.map(i=>i.meta?.total).filter(value=>value!==undefined);\n    if(totals.some(value=>!Number.isInteger(value) || value<0) || new Set(totals).size>1)return {error:'inconsistent pagination totals'};\n    const total=totals[0];\n    if(total!==undefined && Array.isArray(data)) {\n      // Paged app records use stable id (sessions/goals), or date (syllabus history).\n      const identities=data.map(row=>row && typeof row==='object'?(row.id??row.date):undefined);\n      const count=identities.every(key=>typeof key==='string' && key)?new Set(identities).size:data.length;\n      if(count<total)return {error:`truncated: ${count} of ${total} unique rows received`};\n      if(count>total)return {error:'inconsistent pagination total versus received rows'};\n    }\n    return { data };\n  }\n  return { data: live };\n}\n// A single-object endpoint arrives wrapped ({success, data: {...}}) or bare, and n8n may hand either over as a one-element list.\nconst one = (d) => (Array.isArray(d) ? (d.length === 1 ? d[0] : null) : d);\nconst list = (x) => (Array.isArray(x) ? x : x === null || x === undefined ? [] : [x]);\n\n/**\n * input = { runAt: ISO timestamp, sources: { signin, me, whoop, timeBudget, focus, todos, sessions, syllabus, wellness, annual, quarterly } } where each\n * source is the array of item.json values the matching HTTP node produced.\n * Returns { status, rows: {table: [row]}, counts, rejects, failedSources, duplicates, skipped, rowsTotal, note, runAtIst, today }.\n */\nfunction normalise(input) {\n  const runMs = instant(input.runAt);\n  if (runMs === null) throw new Error('runAt must be an ISO timestamp with a zone');\n  const now = ist(runMs);\n  const today = now.date;\n  const runAtIst = `${now.date} ${now.time}`;\n  const out = { tables: {}, rejects: [], failedSources: [], duplicates: 0, skipped: 0, fatal: null };\n  TABLE_ORDER.forEach((t) => { out.tables[t] = new Map(); });\n\n  const src = (name) => {\n    const r = unwrap((input.sources || {})[name]);\n    if (!r.error && name === 'focus' && !Array.isArray(one(r.data)?.sessions)) r.error = 'invalid focus response: sessions must be an array';\n    if (r.error) { out.failedSources.push({ source: name, error: r.error }); return null; }\n    return r.data;\n  };\n  const put = (table, row) => {\n    const key = KEYS[table].map((k) => String(row[k])).join('\\u0001');\n    if (out.tables[table].has(key)) out.duplicates += 1;\n    out.tables[table].set(key, row); // the later copy wins\n  };\n  const attempt = (table, id, build) => {\n    try { const row = build(); if (row) put(table, row); } catch (e) {\n      if (!(e instanceof Reject)) throw e;\n      out.rejects.push({ table, id: id === undefined || id === null ? null : String(id), reason: e.message });\n    }\n  };\n\n  const signinData = src('signin');\n  const me = one(src('me'));\n  const signed = one(signinData);\n  const user = signed && signed.user ? signed.user : {};\n  if (!me || !text(me.id)) {\n    out.fatal = 'cannot identify the student: /users/me returned no id';\n    return finish(out, today, runAtIst);\n  }\n  const studentId = me.id;\n\n  // students and staff\n  const whoop = one(src('whoop'));\n  const tb = one(src('timeBudget'));\n  attempt('students', studentId, () => {\n    must(whoop, 'wearable status unavailable, so the student row is skipped this run');\n    must(text(me.name), 'name missing');\n    must(Number.isInteger(user.grade) && user.grade >= 8 && user.grade <= 12, `grade missing or outside 8-12: ${user.grade}`);\n    must(text(me.advisorId), 'advisor_id missing');\n    const start = istDate(me.programStartDate);\n    must(start, 'program_start_date missing or not an ISO timestamp with a zone');\n    const connected = whoop.isConnected === true;\n    const hours = (v) => (isNum(v) && v >= 0 ? Math.round(v) : null);\n    return {\n      student_id: studentId, name: me.name.trim(), grade: user.grade, board: text(me.board) || text(user.board) || null,\n      advisor_id: me.advisorId, career_counsellor_id: text(me.careerCounselorId) || null, program_start_date: start, left_on: null,\n      wearable: connected ? 'whoop' : 'none',\n      wearable_connected_on: connected ? today : null, // the database keeps the first date it ever saw [A45]\n      wearable_disconnected_on: connected ? null : today,\n      calendar_connected_on: null, calendar_disconnected_on: null, // no calendar status call yet: the database keeps what it has\n      weekday_study_hours: tb ? hours(tb.weekdayStudyHours) : null, weekend_study_hours: tb ? hours(tb.weekendStudyHours) : null,\n    };\n  });\n  for (const [role, person] of [['advisor', me.advisor], ['career_counsellor', me.careerCounselor]]) {\n    if (!person) continue;\n    attempt('staff', person.id, () => {\n      must(text(person.id) && text(person.name), `${role} without an id or a name`);\n      return { staff_id: person.id, name: person.name.trim(), role };\n    });\n  }\n\n  // study hours: the quarter that contains today\n  if (tb) {\n    const quarter = list(tb.quarters).find((q) => {\n      const s = instant(q && q.dateRange && q.dateRange.start);\n      const e = instant(q && q.dateRange && q.dateRange.end);\n      return s !== null && e !== null && s <= runMs && runMs <= e;\n    });\n    if (!quarter) out.rejects.push({ table: 'study_hours', id: null, reason: 'no quarter contains today' });\n    for (const s of quarter ? list(quarter.subjects) : []) {\n      attempt('study_hours', s && s.subjectName, () => {\n        must(text(s && s.subjectName), 'subject name missing');\n        must(text(tb.academicYear) && text(quarter.quarterName), 'academic year or quarter name missing');\n        must(isNum(s.totalEstHours) && s.totalEstHours >= 0, 'totalEstHours missing or negative');\n        must(isNum(s.totalActualHours) && s.totalActualHours >= 0, 'totalActualHours missing or negative');\n        return { student_id: studentId, subject: s.subjectName.trim(), quarter: `${tb.academicYear}-${quarter.quarterName}`, as_of: today,\n                 estimated_hours: s.totalEstHours, actual_hours: s.totalActualHours };\n      });\n    }\n  }\n\n  // focus sessions: the app only lists today's, so a missed day cannot be rebuilt at session level [A47]\n  const focus = one(src('focus'));\n  for (const s of focus ? list(focus.sessions) : []) {\n    const word = norm(s && s.status);\n    if (FOCUS_NOT_FINAL.has(word)) { out.skipped += 1; continue; }\n    attempt('focus_sessions', s && s.id, () => {\n      must(text(s && s.id), 'session id missing');\n      must(FOCUS_STATUS[word], `unknown focus status: ${s.status}`);\n      const started = toIst(s.startTime);\n      must(started, 'startTime missing or not an ISO timestamp with a zone');\n      must(isNum(s.durationMinutes) && s.durationMinutes >= 0, 'durationMinutes missing or negative');\n      const reason = s.failReason === null || s.failReason === undefined ? null : String(s.failReason).toLowerCase();\n      must(reason === null || FAIL_REASON.has(reason), `unknown fail reason: ${s.failReason}`);\n      const status = FOCUS_STATUS[word];\n      return { session_id: s.id, student_id: studentId, started_at: started, planned_minutes: null, actual_minutes: s.durationMinutes,\n               status, fail_reason: status === 'failed' ? reason : null };\n    });\n  }\n\n  // to-dos\n  for (const t of list(src('todos'))) {\n    attempt('todos', t && t.id, () => {\n      must(text(t && t.id), 'todo id missing');\n      must(text(t.title), 'title missing');\n      const status = TODO_STATUS[norm(t.status)];\n      must(status, `unknown todo status: ${t.status}`);\n      must(TODO_SOURCE.has(String(t.source)), `unknown todo source: ${t.source}`);\n      const due = istDate(t.dueDate), created = toIst(t.createdAt), updated = toIst(t.updatedAt);\n      must(due && created && updated, 'dueDate, createdAt or updatedAt missing or not an ISO timestamp with a zone');\n      return { todo_id: t.id, student_id: studentId, source: t.source, title: t.title.trim(), due_date: due, status, created_at: created, updated_at: updated };\n    });\n  }\n\n  // sessions: events, and this student's attendance\n  for (const s of list(src('sessions'))) {\n    attempt('events', s && s.id, () => {\n      must(text(s && s.id), 'session id missing');\n      const kind = SESSION_KIND[norm(s.sessionType)];\n      must(kind, `unknown session type: ${s.sessionType}`);\n      const planned = toIst(s.startTime);\n      must(planned, 'startTime missing or not an ISO timestamp with a zone');\n      const startMs = instant(s.startTime);\n      const status = s.cancelledAt ? 'cancelled' : startMs < runMs ? 'held' : 'planned';\n      const clickup = Object.keys(s).some((k) => /^clickup.*TaskId$/.test(k) && s[k]);\n      const nps = isNum(s.workshopNpsScore) && s.workshopNpsScore >= 0 && s.workshopNpsScore <= 10 ? s.workshopNpsScore : null;\n      return { event_id: s.id, kind, title: text(s.name) || null, planned_for: planned, status, group_id: null, owner_staff_id: text(s.createdById) || null,\n               posted_on: null, views: null, shares: null, source: clickup ? 'clickup' : 'app_api', nps_score: nps };\n    });\n    for (const p of list(s && s.participants).filter((x) => x && x.userId === studentId)) {\n      attempt('event_attendance', s.id, () => {\n        const key = norm(p.status);\n        must(Object.prototype.hasOwnProperty.call(ATTENDANCE, key), `unknown attendance status: ${p.status}`);\n        return { event_id: s.id, student_id: studentId, invited: true, attended: ATTENDANCE[key], outcome: null };\n      });\n    }\n  }\n\n  // syllabus history (the request asks for the last few days, so a missed run heals itself)\n  for (const h of list(src('syllabus'))) {\n    attempt('syllabus_daily', h && h.date, () => {\n      const day = plainDate(h && h.date);\n      must(day, 'date missing or not YYYY-MM-DD');\n      must(Number.isInteger(h.chaptersCompleted) && h.chaptersCompleted >= 0 && Number.isInteger(h.totalChapters) && h.totalChapters >= 0, 'chapter counts missing or negative');\n      must(h.chaptersCompleted <= h.totalChapters, 'more chapters completed than exist');\n      return { student_id: studentId, day, chapters_completed: h.chaptersCompleted, total_chapters: h.totalChapters };\n    });\n  }\n\n  // wellness history: Whoop days only. Strain and recovery come straight from the app; sleep is the three stage durations summed, and only when all\n  // three are present (a missing stage is an unknown night, never a short one). Manual days carry no usable reading in this endpoint, so they are skipped.\n  const wellness = src('wellness');\n  const wellnessRows = wellness === null ? [] : one(wellness) && Array.isArray(one(wellness).history) ? one(wellness).history : null;\n  if (wellnessRows === null) out.failedSources.push({ source: 'wellness', error: 'invalid wellness response: history must be an array' });\n  for (const w of wellnessRows || []) {\n    attempt('wearable_daily', w && w.date, () => {\n      const day = plainDate(w && w.date);\n      must(day, 'date missing or not YYYY-MM-DD');\n      must(['WHOOP', 'MANUAL'].includes(w.dataSource), `unknown data source: ${w.dataSource}`);\n      if (w.dataSource === 'MANUAL') return null;\n      const within = (v, hi, label) => {\n        if (v === null || v === undefined) return null;\n        must(isNum(v) && v >= 0 && v <= hi, `${label} outside 0-${hi}: ${v}`);\n        return v;\n      };\n      const stages = ['sleepStageLightMs', 'sleepStageDeepMs', 'sleepStageRemMs'].map((k) => w[k]);\n      must(stages.every((v) => v === null || v === undefined || (typeof v === 'string' && /^\\d+$/.test(v))), 'sleep stage is not a millisecond count');\n      const sleep = stages.every((v) => typeof v === 'string') ? within(stages.reduce((a, v) => a + Number(v), 0) / 3600000, 24, 'sleep hours') : null;\n      const row = { student_id: studentId, day, strain: within(w.dayStrain, 21, 'strain'), recovery_pct: within(w.recoveryScore, 100, 'recovery'), sleep_hours: sleep, data_source: 'whoop' };\n      if (row.strain === null && row.recovery_pct === null && row.sleep_hours === null) return null;\n      return row;\n    });\n  }\n\n  // roadmap items = goals. The app gives no completion time for quarterly and monthly goals, so done_at is the first run that sees \"Achieved\"; the\n  // database keeps the first value, and created_at is the first run that saw the goal [A50]. Some goals have no due date: they are loaded with a\n  // NULL due_date, so they count as having a roadmap but can never be late [A58].\n  const goal = (level, id, categoryWord, title, due, statusWord, createdAt) => attempt('roadmap_items', `${level}:${id}`, () => {\n    must(text(id), 'goal id missing');\n    const roadmap = GOAL_ROADMAP[norm(categoryWord)];\n    must(roadmap, `unknown goal category: ${categoryWord}`);\n    must(GOAL_STATUS.has(norm(statusWord)), `unknown goal status: ${statusWord}`);\n    return { item_id: `${level}:${id}`, student_id: studentId, roadmap, level, title: text(title) || `${roadmap} ${level} goal`, created_at: createdAt || runAtIst,\n             due_date: due, done_at: norm(statusWord) === 'achieved' ? runAtIst : null, source: 'app_api' };\n  });\n  for (const a of list(src('annual'))) {\n    goal('annual', a && a.id, a && a.category, a && a.title, Number.isInteger(a && a.year) ? `${a.year}-12-31` : null, a && a.status, toIst(a && a.createdAt)); // A58\n  }\n  for (const g of list(src('quarterly'))) {\n    const category = g && g.category && g.category.type;\n    goal('quarterly', g && g.id, category, g && g.description, istDate(g && g.dueDate), g && g.status, null);\n    for (const m of list(g && g.monthlyGoals)) goal('monthly', m && m.id, category, m && m.description, istDate(m && m.dueDate), m && m.status, null);\n  }\n\n  return finish(out, today, runAtIst);\n}\n\nfunction finish(out, today, runAtIst) {\n  const rows = {};\n  const counts = {};\n  let rowsTotal = 0;\n  for (const t of TABLE_ORDER) { rows[t] = [...out.tables[t].values()]; counts[t] = rows[t].length; rowsTotal += rows[t].length; }\n  const status = out.fatal ? 'failed' : out.failedSources.length || out.rejects.length ? 'partial' : 'ok';\n  const parts = [];\n  if (out.fatal) parts.push(out.fatal);\n  if (out.failedSources.length) parts.push(`failed sources: ${out.failedSources.map((f) => `${f.source} (${f.error})`).join('; ')}`);\n  if (out.rejects.length) {\n    const per = {};\n    out.rejects.forEach((r) => { per[r.table] = (per[r.table] || 0) + 1; });\n    const by = Object.entries(per).map(([t, c]) => `${t} ${c}`).join(', ');\n    parts.push(`${out.rejects.length} rows rejected (${by}), for example ${out.rejects.slice(0, 3).map((r) => `${r.table} ${r.id}: ${r.reason}`).join('; ')}${out.rejects.length > 3 ? '; ...' : ''}`);\n  }\n  return { status, rows, counts, rejects: out.rejects, failedSources: out.failedSources, duplicates: out.duplicates, skipped: out.skipped, rowsTotal,\n           note: parts.join(' | ').slice(0, 900) || null, runAtIst, today };\n}\n\n/**\n * Final status and the ingest_log row, from the normaliser's result and what the database said about each table batch.\n * tableResults[i] is the Postgres node's item for tables[i]: {upserted: n} on success, {error: ...} on failure.\n */\nfunction summarise({ run, tables, tableResults, runId, finishedAt }) {\n  const fin = instant(finishedAt);\n  if (fin === null) throw new Error('finishedAt must be an ISO timestamp with a zone');\n  const failed = [];\n  let upserted = 0;\n  tables.forEach((t, i) => {\n    const r = tableResults[i];\n    if (!r || r.error || !isNum(Number(r.upserted))) failed.push(`${t.table}: ${errorText((r && r.error) || 'no result from the database')}`);\n    else upserted += Number(r.upserted);\n  });\n  const real = tables.filter((t) => t.table !== 'none');\n  let status = run.status;\n  if (failed.length) status = real.length && failed.length >= real.length ? 'failed' : 'partial';\n  const note = [run.note, failed.length ? `database errors: ${failed.join('; ')}` : null].filter(Boolean).join(' | ').slice(0, 1000) || null;\n  const f = ist(fin);\n  return { run_id: runId, source: 'app_api', started_at: run.runAtIst, finished_at: `${f.date} ${f.time}`, status, rows_upserted: upserted, error: status === 'ok' ? null : note };\n}\n\nconst api = { normalise, summarise, unwrap, toIst, istDate, KEYS, TABLE_ORDER };\nif (typeof module !== 'undefined' && module.exports) module.exports = api;\n\n/* Pure mapper for the explicit chapter demonstration contract. No clock or I/O.\n * Config is supplied from student-tracker/config.yaml. Supplemental evidence is\n * synthetic demonstration input, not a claimed Alcovia API response.\n */\n'use strict';\nfunction mapChapters(input, config, helpers) {\n  if (input?.demo !== true) throw new Error('chapter demo mode must be explicit');\n  const policy = config?.chapter_loader;\n  const syllabus = config?.syllabus;\n  const stages = ['reading', 'recollection', 'practice', 'timed_paper', 'readiness'];\n  if (!policy || !syllabus || !Array.isArray(policy.stage_order) ||\n      policy.stage_order.length !== syllabus.stages_total || new Set(policy.stage_order).size !== stages.length ||\n      !policy.stage_order.every(s => stages.includes(s)) ||\n      ![syllabus.practice_accuracy_pct, syllabus.readiness_accuracy_pct, policy.score_tolerance_pct].every(v => typeof v === 'number' && Number.isFinite(v) && v >= 0) ||\n      syllabus.practice_accuracy_pct > 100 || syllabus.readiness_accuracy_pct > 100 ||\n      !Array.isArray(policy.allowed_task_types) || !Array.isArray(policy.incomplete_statuses) || !Array.isArray(policy.unknown_statuses) ||\n      !['reading','recollection','practice'].every(s => Array.isArray(policy.task_types?.[s]) && policy.task_types[s].length && policy.task_types[s].every(t => policy.allowed_task_types.includes(t))) ||\n      !policy.done_status || !policy.score_types?.practice || !policy.score_types?.readiness) throw new Error('invalid chapter loader configuration');\n  const check = (ok, message) => { if (!ok) throw new Error(message); };\n  const record = x => x !== null && typeof x === 'object' && !Array.isArray(x);\n  const id = x => typeof x === 'string' && x.trim().length > 0;\n  const number = x => {\n    check(typeof x === 'number' || typeof x === 'string' && /^\\d+(?:\\.\\d+)?$/.test(x.trim()), 'invalid numeric score');\n    const n = Number(x); check(Number.isFinite(n), 'invalid numeric score'); return n;\n  };\n  const day = x => typeof x === 'string' && /^\\d{4}-\\d{2}-\\d{2}$/.test(x) && !Number.isNaN(Date.parse(x+'T00:00:00Z')) && new Date(x+'T00:00:00Z').toISOString().slice(0,10) === x;\n  check(id(input.studentId) && Array.isArray(input.chapters), 'invalid demo student or chapters list');\n  const rows = [], rejects = [], chapterCounts = new Map();\n  for (const chapter of input.chapters) {\n    if (record(chapter) && id(chapter.id)) chapterCounts.set(chapter.id, (chapterCounts.get(chapter.id) || 0) + 1);\n  }\n  const unique = (array, predicate, label) => {\n    check(Array.isArray(array), 'missing '+label);\n    const matches = array.filter(x => record(x) && predicate(x));\n    check(matches.length === 1, 'missing or ambiguous '+label); return matches[0];\n  };\n  for (const chapter of input.chapters) {\n    try {\n      check(record(chapter) && id(chapter.id), 'invalid chapter row');\n      check(chapterCounts.get(chapter.id) === 1, 'duplicate chapter id');\n      const subject = unique(input.subjects, x => x.id === chapter.subjectId, 'subject');\n      const quarter = unique(input.quarters, x => x.id === chapter.quarterId, 'quarter');\n      check(id(subject.name) && id(quarter.label) && day(quarter.startDate) && day(quarter.endDate) && quarter.startDate <= quarter.endDate, 'invalid subject or quarter');\n      const linked = x => x.studentId === input.studentId && x.chapterId === chapter.id;\n      const plan = unique(input.plans, linked, 'monthly plan');\n      const extra = unique(input.supplement, linked, 'supplemental evidence');\n      check(day(plan.plannedMonth) && plan.plannedMonth.endsWith('-01') && plan.plannedMonth >= quarter.startDate && plan.plannedMonth <= quarter.endDate, 'planned month outside quarter or not a month start');\n      check(helpers.toIst(extra.stageChangedAt), 'missing or invalid actual stage-change timestamp');\n      check(Array.isArray(chapter.tasks) && Array.isArray(chapter.scores), 'missing tasks or scores evidence');\n      const tasks = new Map(), taskIds = new Set();\n      for (const task of chapter.tasks) {\n        check(record(task) && id(task.id) && !taskIds.has(task.id) && !tasks.has(task.taskType), 'invalid or duplicate task');\n        check(policy.allowed_task_types.includes(task.taskType), 'unsupported task type');\n        check([policy.done_status,...policy.incomplete_statuses,...policy.unknown_statuses].includes(task.taskStatus), 'unsupported task status');\n        check(!task.chapterId || task.chapterId === chapter.id, 'task chapter mismatch');\n        taskIds.add(task.id); tasks.set(task.taskType, task.taskStatus);\n      }\n      const taskDone = type => {\n        const statuses = policy.task_types[type].map(key => tasks.get(key));\n        if (statuses.includes(policy.done_status)) return true;\n        if (statuses.every(s => policy.incomplete_statuses.includes(s))) return false;\n        return null;\n      };\n      const scores = [], scoreIds = new Set();\n      for (const score of chapter.scores) {\n        check(record(score) && id(score.id) && !scoreIds.has(score.id), 'invalid or duplicate score'); scoreIds.add(score.id);\n        check(!score.chapterId || score.chapterId === chapter.id, 'score chapter mismatch');\n        check(Object.values(policy.score_types).includes(score.scoreType), 'unsupported score type');\n        const marks = number(score.marksObtained), max = number(score.maxMarks), accuracy = number(score.accuracyPercentage);\n        check(max > 0 && marks >= 0 && marks <= max && accuracy >= 0 && accuracy <= 100, 'score out of range');\n        check(Math.abs(accuracy - 100*marks/max) <= policy.score_tolerance_pct, 'conflicting marks and percentage');\n        check(helpers.toIst(score.recordedOn) && Number.isInteger(score.attemptNo) && score.attemptNo > 0, 'invalid score time or attempt');\n        scores.push({...score, accuracy, time: Date.parse(score.recordedOn)});\n      }\n      const passed = (type, threshold) => {\n        const ordered = scores.filter(s => s.scoreType === policy.score_types[type]).sort((a,b) => b.time-a.time || b.attemptNo-a.attemptNo);\n        if (!ordered.length) return false;\n        const latest = ordered[0];\n        check(!ordered.some(s => s.time === latest.time && s.attemptNo === latest.attemptNo && s.accuracy !== latest.accuracy), 'conflicting latest score attempts');\n        return latest.accuracy > threshold;\n      };\n      const practiceDone = taskDone('practice');\n      const paper = extra.timedPaper;\n      if (paper !== undefined) check(record(paper) && typeof paper.completed === 'boolean' && typeof paper.withinTime === 'boolean', 'invalid timed-paper evidence');\n      const proofs = {\n        reading: taskDone('reading'), recollection: taskDone('recollection'),\n        practice: practiceDone === null ? null : practiceDone && passed('practice', syllabus.practice_accuracy_pct),\n        timed_paper: paper ? paper.completed && paper.withinTime : null,\n        readiness: passed('readiness', syllabus.readiness_accuracy_pct),\n      };\n      let stage = 0;\n      for (const name of policy.stage_order) {\n        check(proofs[name] !== null, 'unknown evidence for '+name);\n        if (!proofs[name]) break;\n        stage += 1;\n      }\n      rows.push({student_id: input.studentId, chapter_id: chapter.id, subject: subject.name.trim(), quarter: quarter.label,\n                 planned_month: plan.plannedMonth, stage_reached: stage, updated_at: helpers.toIst(extra.stageChangedAt)});\n    } catch (e) { rejects.push({chapter_id: chapter?.id ?? null, reason: e.message}); }\n  }\n  return {demo: true, status: rejects.length ? 'partial' : 'ok', rows, rejects};\n}\nif (typeof module !== 'undefined' && module.exports) module.exports = {mapChapters};\n\nconst chapterResult = mapChapters($(\"Demo inputs\").first().json.evidence, {\"chapter_loader\": {\"stage_order\": [\"reading\", \"recollection\", \"practice\", \"timed_paper\", \"readiness\"], \"task_types\": {\"reading\": [\"read_textbook\"], \"recollection\": [\"notes\"], \"practice\": [\"textbook_qs\", \"worksheets\"]}, \"allowed_task_types\": [\"read_textbook\", \"videos\", \"notes\", \"textbook_qs\", \"worksheets\", \"worksheets_checked\"], \"done_status\": \"Done\", \"incomplete_statuses\": [\"NotStarted\", \"HaveStarted\", \"InProgress\", \"SignificantlyDone\"], \"unknown_statuses\": [\"NotRequired\"], \"score_types\": {\"practice\": \"Worksheet\", \"readiness\": \"Mocktest\"}, \"score_tolerance_pct\": 0.1}, \"syllabus\": {\"quarter_target_pct\": 25, \"on_track_ratio\": 0.8, \"stages_total\": 5, \"practice_accuracy_pct\": 70, \"readiness_accuracy_pct\": 80}}, {toIst, istDate});\nreturn [{json: {...chapterResult, sql: \"WITH up AS (\\n  INSERT INTO chapter_progress (student_id, chapter_id, subject, quarter, planned_month, stage_reached, updated_at)\\n  SELECT incoming.student_id, incoming.chapter_id, incoming.subject, incoming.quarter, incoming.planned_month, incoming.stage_reached, incoming.updated_at FROM json_populate_recordset(NULL::chapter_progress, $1::json) incoming\\n  WHERE EXISTS (SELECT 1 FROM students s WHERE s.student_id=incoming.student_id)\\n  ON CONFLICT (student_id, chapter_id) DO UPDATE SET\\n    subject = EXCLUDED.subject,\\n    quarter = EXCLUDED.quarter,\\n    planned_month = EXCLUDED.planned_month,\\n    stage_reached = EXCLUDED.stage_reached,\\n    updated_at = CASE WHEN chapter_progress.stage_reached IS DISTINCT FROM EXCLUDED.stage_reached THEN EXCLUDED.updated_at ELSE chapter_progress.updated_at END\\n  WHERE EXCLUDED.updated_at >= chapter_progress.updated_at\\n  RETURNING 1\\n)\\nSELECT count(*)::int AS upserted FROM up\"}}];\n"
+      },
+      "id": "5f32ebb7-ab7d-55c0-82e6-b9322efd0af1",
+      "name": "Map chapters",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        520,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "={{ $json.sql }}",
+        "options": {
+          "queryReplacement": "={{ JSON.stringify($json.rows) }}"
+        }
+      },
+      "id": "de046408-9921-5fa6-ad9a-ef42f0285841",
+      "name": "Upsert demo chapters",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        780,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const mapped = $(\"Map chapters\").first().json;\nreturn [{json:{demo:true,status:Number($input.first().json.upserted)<mapped.rows.length ? \"partial\" : mapped.status,upserted:Number($input.first().json.upserted),rejected:mapped.rejects,notice:\"Synthetic demonstration; live chapter mapping unverified\"}}];"
+      },
+      "id": "0f995923-5295-5f90-a8a8-6a902359f14b",
+      "name": "Demo summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1040,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "width": 900,
+        "height": 240,
+        "content": "## Chapter progress demonstration\n\nManual only. Demo inputs are synthetic and include separate plans and supplemental timed-paper/timestamp evidence. Rules and thresholds come from student-tracker/config.yaml; regenerate this export after changing them.\n\nAttach a credential for a disposable DEMO Postgres database with the student-tracker schema. No Alcovia API is called. Unknown evidence is reported, not invented. Demo summary shows rejected rows. This does not update live pipeline freshness."
+      },
+      "id": "b21cee56-e6b1-5cfe-b010-76fc3a86acdd",
+      "name": "About the demo",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -300
+      ]
+    }
+  ],
+  "connections": {
+    "Run demo": {
+      "main": [
+        [
+          {
+            "node": "Demo inputs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Demo inputs": {
+      "main": [
+        [
+          {
+            "node": "Map chapters",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Map chapters": {
+      "main": [
+        [
+          {
+            "node": "Upsert demo chapters",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upsert demo chapters": {
+      "main": [
+        [
+          {
+            "node": "Demo summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Kolkata",
+    "saveDataSuccessExecution": "none",
+    "saveDataErrorExecution": "none",
+    "saveManualExecutions": false,
+    "executionTimeout": 120
+  }
+}

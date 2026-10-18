@@ -1,0 +1,83 @@
+{
+  "demo": true,
+  "label": "SYNTHETIC chapter inputs; supplemental fields are not Alcovia API fields",
+  "studentId": "DEMO-STUDENT-1",
+  "subjects": [
+    {
+      "id": "DEMO-SUB-1",
+      "name": "Mathematics"
+    }
+  ],
+  "quarters": [
+    {
+      "id": "DEMO-Q-1",
+      "label": "2026-27-Q3",
+      "startDate": "2026-09-01",
+      "endDate": "2026-11-30"
+    }
+  ],
+  "chapters": [
+    {
+      "id": "DEMO-CH-1",
+      "subjectId": "DEMO-SUB-1",
+      "quarterId": "DEMO-Q-1",
+      "tasks": [
+        {
+          "id": "DEMO-T-0",
+          "taskType": "read_textbook",
+          "taskStatus": "Done"
+        },
+        {
+          "id": "DEMO-T-1",
+          "taskType": "notes",
+          "taskStatus": "Done"
+        },
+        {
+          "id": "DEMO-T-2",
+          "taskType": "worksheets",
+          "taskStatus": "Done"
+        }
+      ],
+      "scores": [
+        {
+          "id": "DEMO-SCORE-0",
+          "chapterId": "DEMO-CH-1",
+          "scoreType": "Worksheet",
+          "marksObtained": 75,
+          "maxMarks": 100,
+          "accuracyPercentage": 75,
+          "attemptNo": 1,
+          "recordedOn": "2026-10-10T10:00:00Z"
+        },
+        {
+          "id": "DEMO-SCORE-1",
+          "chapterId": "DEMO-CH-1",
+          "scoreType": "Mocktest",
+          "marksObtained": 85,
+          "maxMarks": 100,
+          "accuracyPercentage": 85,
+          "attemptNo": 1,
+          "recordedOn": "2026-10-10T10:00:00Z"
+        }
+      ]
+    }
+  ],
+  "plans": [
+    {
+      "studentId": "DEMO-STUDENT-1",
+      "chapterId": "DEMO-CH-1",
+      "plannedMonth": "2026-09-01"
+    }
+  ],
+  "supplement": [
+    {
+      "studentId": "DEMO-STUDENT-1",
+      "chapterId": "DEMO-CH-1",
+      "timedPaper": {
+        "completed": true,
+        "withinTime": true
+      },
+      "stageChangedAt": "2026-10-10T10:00:00Z"
+    }
+  ]
+}

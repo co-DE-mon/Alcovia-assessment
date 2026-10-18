@@ -1,0 +1,5 @@
+duckdb
+pyyaml
+streamlit
+pandas
+altair

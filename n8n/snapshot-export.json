@@ -1,0 +1,225 @@
+{
+  "id": "snapshotExport01",
+  "name": "Dashboard snapshot export",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "30 0 * * *"
+            }
+          ]
+        }
+      },
+      "id": "6afe4820-a7f7-512c-8bf9-5afd910fa0c7",
+      "name": "Schedule (daily 00:30 IST)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "ce64caa2-1103-5f4e-a72e-c85403b2a1c0",
+      "name": "Run now",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2c1ee39a-138c-59d9-94cd-e38e57a2a2ae",
+              "name": "python",
+              "value": "/opt/alcovia/student-tracker/.venv/bin/python",
+              "type": "string"
+            },
+            {
+              "id": "c049fed2-24ee-59d5-aedd-1598d8d6892d",
+              "name": "script",
+              "value": "/opt/alcovia/student-tracker/snapshot.py",
+              "type": "string"
+            },
+            {
+              "id": "693b05a9-c362-550f-b3cb-8584473b8d20",
+              "name": "database",
+              "value": "student",
+              "type": "string"
+            },
+            {
+              "id": "3aea8cbe-bbd7-5c48-9b83-b332b0377736",
+              "name": "user",
+              "value": "postgres",
+              "type": "string"
+            },
+            {
+              "id": "cb765f28-17c5-53e6-be5b-04ba989f5283",
+              "name": "output",
+              "value": "/var/lib/alcovia/student.duckdb",
+              "type": "string"
+            },
+            {
+              "id": "a543c1d7-9b3b-54da-b3cd-b31812c2fcb2",
+              "name": "container",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "2fb2a01b-00ba-524b-a414-3317f9c2627b",
+              "name": "asOf",
+              "value": "={{ $now.setZone('Asia/Kolkata').minus({ days: 1 }).toFormat('yyyy-MM-dd') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      },
+      "id": "d140f10e-f738-56ba-965d-fb82314f5607",
+      "name": "Settings",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        260,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const s = $input.first().json;\nconst SAFE = /^[A-Za-z0-9_.\\/:@-]+$/;\nfor (const key of ['python', 'script', 'database', 'user', 'output', 'asOf']) {\n  if (typeof s[key] !== 'string' || !SAFE.test(s[key])) throw new Error('setting ' + key + ' is empty or has characters outside A-Z a-z 0-9 _ . / : @ -');\n}\nif (s.container !== '' && !SAFE.test(s.container)) throw new Error('setting container has unsafe characters');\nif (!/^\\d{4}-\\d{2}-\\d{2}$/.test(s.asOf)) throw new Error('asOf must be YYYY-MM-DD');\nreturn [{ json: s }];"
+      },
+      "id": "598eec8b-250b-5022-9e5f-0efecf1cd0bf",
+      "name": "Check settings",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        520,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "command": "={{ $json.python + ' ' + $json.script + ($json.container ? ' --container ' + $json.container : '') + ' --database ' + $json.database + ' --user ' + $json.user + ' --output ' + $json.output + ' --as-of ' + $json.asOf }}"
+      },
+      "id": "66d5269d-7584-5aa3-8c9f-8a85d249a8d0",
+      "name": "Export snapshot",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        780,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const r = $input.first().json;\nconst out = String(r.stdout || '').trim();\nif (r.exitCode !== 0 || !out.includes('Published validated synthetic student snapshot')) {\n  throw new Error('snapshot export did not confirm publication (exit ' + r.exitCode + '); the previous snapshot is unchanged');\n}\nreturn [{ json: { status: 'ok', asOf: $('Check settings').first().json.asOf, output: $('Check settings').first().json.output } }];"
+      },
+      "id": "a1004214-0795-58e6-94b6-7d4762737077",
+      "name": "Confirm published",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1040,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "width": 760,
+        "height": 330,
+        "content": "## Dashboard snapshot export\n\nRuns after the 23:55 poll (00:30 IST) and replaces the dashboard's DuckDB snapshot, so nobody has to export it by hand. snapshot.py reads all tables in one repeatable-read transaction, validates the whole cohort and swaps the file atomically. On any failure the previous snapshot stays in place and this run fails.\n\nNeeds on the n8n host: the repo, python with duckdb, psql, PGPASSWORD or ~/.pgpass for the database, and the Execute Command node enabled (n8n disables it by default; remove `n8n-nodes-base.executeCommand` from NODES_EXCLUDE). Change the paths in Settings. snapshot.py refuses any cohort that is not DEMO- synthetic data. Inactive until you switch it on."
+      },
+      "id": "30ebebbc-c96f-5671-affa-49b47abc2a4f",
+      "name": "About this workflow",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -420
+      ]
+    }
+  ],
+  "connections": {
+    "Settings": {
+      "main": [
+        [
+          {
+            "node": "Check settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check settings": {
+      "main": [
+        [
+          {
+            "node": "Export snapshot",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Export snapshot": {
+      "main": [
+        [
+          {
+            "node": "Confirm published",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule (daily 00:30 IST)": {
+      "main": [
+        [
+          {
+            "node": "Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run now": {
+      "main": [
+        [
+          {
+            "node": "Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "tags": [],
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Kolkata",
+    "saveDataSuccessExecution": "none",
+    "saveDataErrorExecution": "all",
+    "saveManualExecutions": false,
+    "executionTimeout": 300
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false
+  }
+}

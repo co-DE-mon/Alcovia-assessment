@@ -1,0 +1,4883 @@
+{
+  "scope": "student-tracker only; one-student prototype; no fresh live API verification",
+  "definitions": {
+    "loaded": "Selected inputs mapped for the prototype; global limits still apply.",
+    "partial": "Mapped inputs have a known timing, completeness or interpretation gap.",
+    "missing": "A required loader, field or source contract is absent."
+  },
+  "summary": {
+    "kpis": 88,
+    "named_queries": 95,
+    "statuses": {
+      "missing": 56,
+      "partial": 26,
+      "loaded": 6
+    },
+    "query_missing_table_kpis": 32,
+    "selected_input_missing_table_kpis": 30,
+    "data_tables_loaded": [
+      "event_attendance",
+      "events",
+      "focus_sessions",
+      "roadmap_items",
+      "staff",
+      "students",
+      "study_hours",
+      "syllabus_daily",
+      "todos",
+      "wearable_daily"
+    ],
+    "tables_unloaded": [
+      "advisor_inputs",
+      "chapter_progress",
+      "exam_targets",
+      "feedback",
+      "quiz_attempts"
+    ]
+  },
+  "capabilities": {
+    "tasks": {
+      "status": "loaded",
+      "required_columns": [
+        "todos.todo_id",
+        "todos.student_id",
+        "todos.due_date",
+        "todos.status",
+        "todos.source"
+      ],
+      "endpoints": [
+        "/student/todos"
+      ],
+      "evidence": [
+        {
+          "path": "n8n/code/normalise.js",
+          "line": 231,
+          "match": "// to-dos"
+        },
+        {
+          "path": "student-tracker/README.md",
+          "line": 191,
+          "match": "| `todos` |"
+        }
+      ],
+      "limitation": "A due to-do is a timetable proxy. Student-auth scope and current-state history limits apply.",
+      "next_step": "Retain the proxy label; validate other students and roster coverage before cohort use.",
+      "evidence_level": "fixture-backed mapping; previous live observations documented, not rechecked"
+    },
+    "task_deadlines": {
+      "status": "partial",
+      "required_columns": [
+        "todos.status",
+        "todos.due_date",
+        "todos.updated_at"
+      ],
+      "endpoints": [
+        "/student/todos"
+      ],
+      "evidence": [
+        {
+          "path": "n8n/code/normalise.js",
+          "line": 231,
+          "match": "// to-dos"
+        },
+        {
+          "path": "student-tracker/README.md",
+          "line": 191,
+          "match": "| `todos` |"
+        }
+      ],
+      "limitation": "updatedAt is not completedAt; later edits can change apparent deadline adherence.",
+      "next_step": "Obtain a completion timestamp or explicitly accept and label the approximation.",
+      "evidence_level": "fixture-backed mapping; previous live observations documented, not rechecked"
+    },
+    "student_inputs": {
+      "status": "partial",
+      "required_columns": [
+        "todos.source",
+        "todos.created_at",
+        "todos.status",
+        "todos.updated_at"
+      ],
+      "endpoints": [
+        "/student/todos"
+      ],
+      "evidence": [
+        {
+          "path": "student-tracker/sql/metrics/weekly.sql",
+          "line": 131,
+          "match": "-- name: student_input_cadence"
+        },
+        {
+          "path": "n8n/code/normalise.js",
+          "line": 231,
+          "match": "// to-dos"
+        }
+      ],
+      "limitation": "Creating a manual to-do or updating a done task is a proxy for filling academic inputs.",
+      "next_step": "Confirm this proxy with Alcovia; do not equate it with the advisor checklist.",
+      "evidence_level": "fixture-backed mapping; previous live observations documented, not rechecked"
+    },
+    "focus": {
+      "status": "partial",
+      "required_columns": [
+        "focus_sessions.session_id",
+        "focus_sessions.student_id",
+        "focus_sessions.started_at",
+        "focus_sessions.status",
+        "focus_sessions.actual_minutes",
+        "focus_sessions.fail_reason"
+      ],
+      "endpoints": [
+        "/schedule/focus/score/today",
+        "/schedule/focus/score/history",
+        "/schedule/focus/pit-history (candidate)"
+      ],
+      "evidence": [
+        {
+          "path": "n8n/code/normalise.js",
+          "line": 212,
+          "match": "// focus sessions:"
+        },
+        {
+          "path": "n8n/build/build.py",
+          "line": 136,
+          "match": "Schedule (daily 23:55 IST)"
+        },
+        {
+          "path": "app/modules/app/m2004.js",
+          "line": 492,
+          "match": "'/schedule/focus/pit-history'"
+        },
+        {
+          "path": "app/modules/app/m2006.js",
+          "line": 757,
+          "match": "r1['durationSeconds']"
+        },
+        {
+          "path": "student-tracker/README.md",
+          "line": 190,
+          "match": "| Focus history |"
+        }
+      ],
+      "limitation": "The poll runs at 23:55 IST so /today is still the day being captured; sessions after 23:55 and a missed run are not recoverable at session level. Daily history gives per-day totals only (date, score, session count, minutes), no session ids or failure reasons. Pit history has id/type/timestamp/durationSeconds in code, but start-vs-end timestamp and ID equivalence are unverified.",
+      "next_step": "Confirm /today at 23:55 IST returns that day on the live service; pit-history looks like a mentor-session marker (sessionId, markedAt, sessionType), not a focus-session source, so a session-level backfill is not available.",
+      "evidence_level": "fixture-backed mapping; previous live observations documented, not rechecked"
+    },
+    "calendar": {
+      "status": "missing",
+      "required_columns": [
+        "students.calendar_connected_on",
+        "students.calendar_disconnected_on"
+      ],
+      "endpoints": [
+        "/google/status"
+      ],
+      "evidence": [
+        {
+          "path": "app/modules/lib/m2038.js",
+          "line": 58,
+          "match": "'/google/status'"
+        },
+        {
+          "path": "app/modules/lib/m2039.js",
+          "line": 69,
+          "match": "r1['isConnected']"
+        },
+        {
+          "path": "n8n/code/normalise.js",
+          "line": 180,
+          "match": "calendar_connected_on: null"
+        }
+      ],
+      "limitation": "No calendar status read; current upserts preserve nulls. Historical connection dates are unavailable.",
+      "next_step": "Add status snapshots and first-observed transition rules; retention becomes measurable only after the observation window.",
+      "evidence_level": "client code only for candidate read/submit contract; usable submitted data unverified"
+    },
+    "wearable_connection": {
+      "status": "partial",
+      "required_columns": [
+        "students.wearable",
+        "students.wearable_connected_on",
+        "students.wearable_disconnected_on"
+      ],
+      "endpoints": [
+        "/whoop/status"
+      ],
+      "evidence": [
+        {
+          "path": "n8n/code/normalise.js",
+          "line": 172,
+          "match": "const connected = whoop.isConnected"
+        },
+        {
+          "path": "n8n/build/build.py",
+          "line": 29,
+          "match": "wearable_connected_on"
+        },
+        {
+          "path": "student-tracker/README.md",
+          "line": 188,
+          "match": "| `students` connection dates |"
+        }
+      ],
+      "limitation": "Dates are first observed; reconnect episodes are collapsed. needsReconnect/lastSyncAt do not determine this connection field.",
+      "next_step": "Confirm retention semantics and observation window; keep connection separate from healthy syncing.",
+      "evidence_level": "fixture-backed mapping; previous live observations documented, not rechecked"
+    },
+    "wellness": {
+      "status": "missing",
+      "required_columns": [
+        "wearable_daily.student_id",
+        "wearable_daily.day",
+        "wearable_daily.strain",
+        "wearable_daily.recovery_pct",
+        "wearable_daily.sleep_hours",
+        "wearable_daily.data_source"
+      ],
+      "endpoints": [
+        "/wellness/history",
+        "/wellness/daily/<date>"
+      ],
+      "evidence": [
+        {
+          "path": "app/modules/app/m2016.js",
+          "line": 282,
+          "match": "'/wellness/history'"
+        },
+        {
+          "path": "app/modules/app/m2015.js",
+          "line": 712,
+          "match": "r1['recoveryScore']"
+        },
+        {
+          "path": "app/modules/app/m2015.js",
+          "line": 1003,
+          "match": "r1['sleepStageLightMs']"
+        },
+        {
+          "path": "app/modules/app/m2015.js",
+          "line": 728,
+          "match": "r1['manualSleepHours']"
+        },
+        {
+          "path": "n8n/code/wellness.js",
+          "line": 3,
+          "match": "function mapWellness"
+        },
+        {
+          "path": "student-tracker/README.md",
+          "line": 201,
+          "match": "| `wearable_daily` |"
+        }
+      ],
+      "limitation": "Daily poll has no wellness loader or populated real fixture. The separate synthetic manual demo verifies Whoop/manual separation, sleep units, nulls and KPI behavior (n8n/code/wellness.js). Only Whoop integration is evidenced.",
+      "next_step": "Confirm populated real history/daily responses, day semantics, completeness and corrections before integrating the tested synthetic mapper; other brands still need actual integrations.",
+      "evidence_level": "client code plus previously reported empty live responses; populated shape unverified"
+    },
+    "study_plan": {
+      "status": "loaded",
+      "required_columns": [
+        "students.weekday_study_hours",
+        "students.weekend_study_hours"
+      ],
+      "endpoints": [
+        "/academics/time-budget"
+      ],
+      "evidence": [
+        {
+          "path": "n8n/code/normalise.js",
+          "line": 181,
+          "match": "weekday_study_hours: tb"
+        },
+        {
+          "path": "n8n/tests/fixtures/time_budget.json",
+          "line": 10,
+          "match": "weekdayStudyHours"
+        }
+      ],
+      "limitation": "This measures whether both hours are set, not whether the plan is good or followed. The normalizer rounds reported hours.",
+      "next_step": "Confirm fractional-hour handling and per-grade planning policy before treating this as a quality measure.",
+      "evidence_level": "fixture-backed mapping; previous live observations documented, not rechecked"
+    },
+    "study_hours": {
+      "status": "partial",
+      "required_columns": [
+        "study_hours.student_id",
+        "study_hours.subject",
+        "study_hours.quarter",
+        "study_hours.as_of",
+        "study_hours.estimated_hours",
+        "study_hours.actual_hours"
+      ],
+      "endpoints": [
+        "/academics/time-budget"
+      ],
+      "evidence": [
+        {
+          "path": "n8n/code/normalise.js",
+          "line": 192,
+          "match": "// study hours:"
+        },
+        {
+          "path": "n8n/tests/fixtures/time_budget.json",
+          "line": 28,
+          "match": "totalEstHours"
+        },
+        {
+          "path": "student-tracker/sql/metrics/given.sql",
+          "line": 46,
+          "match": "-- name: time_estimation"
+        }
+      ],
+      "limitation": "Daily snapshots are mapped. Accuracy against elapsed-quarter pace is an assumption; reported live actual hours were zero, and free-text subject names need normalization.",
+      "next_step": "Verify a populated actual-hours example and subject mapping; agree pace-accuracy interpretation.",
+      "evidence_level": "fixture-backed mapping; previous live observations documented, not rechecked"
+    },
+    "syllabus": {
+      "status": "loaded",
+      "required_columns": [
+        "syllabus_daily.student_id",
+        "syllabus_daily.day",
+        "syllabus_daily.chapters_completed",
+        "syllabus_daily.total_chapters"
+      ],
+      "endpoints": [
+        "/academics/my-syllabus-history"
+      ],
+      "evidence": [
+        {
+          "path": "n8n/code/normalise.js",
+          "line": 269,
+          "match": "// syllabus history"
+        },
+        {
+          "path": "n8n/tests/fixtures/syllabus_history.json",
+          "line": 6,
+          "match": "chaptersCompleted"
+        }
+      ],
+      "limitation": "The API gives running totals; denominator consistency and the configured academic-quarter pace remain assumptions.",
+      "next_step": "Cross-check totals and zero-chapter behavior; confirm the 25%-per-quarter pace and enrollment denominator.",
+      "evidence_level": "fixture-backed mapping; previous live observations documented, not rechecked"
+    },
+    "sessions": {
+      "status": "partial",
+      "required_columns": [
+        "events.event_id",
+        "events.kind",
+        "events.planned_for",
+        "events.status"
+      ],
+      "endpoints": [
+        "/schedule/sessions"
+      ],
+      "evidence": [
+        {
+          "path": "n8n/code/normalise.js",
+          "line": 40,
+          "match": "const SESSION_KIND"
+        },
+        {
+          "path": "n8n/code/normalise.js",
+          "line": 254,
+          "match": "const status = s.cancelledAt"
+        },
+        {
+          "path": "n8n/tests/fixtures/sessions.json",
+          "line": 7,
+          "match": "sessionType"
+        }
+      ],
+      "limitation": "Only mapped kinds are loaded. A past start time is inferred held, not confirmed delivery. Student-visible records may omit cohort events. Policy targets are configured, not fetched each run.",
+      "next_step": "Verify completion/cancellation semantics, event visibility and per-grade policy against monthly-progress/admin delivery data.",
+      "evidence_level": "fixture-backed mapping; previous live observations documented, not rechecked"
+    },
+    "attendance": {
+      "status": "partial",
+      "required_columns": [
+        "event_attendance.event_id",
+        "event_attendance.student_id",
+        "event_attendance.invited",
+        "event_attendance.attended"
+      ],
+      "endpoints": [
+        "/schedule/sessions"
+      ],
+      "evidence": [
+        {
+          "path": "n8n/code/normalise.js",
+          "line": 245,
+          "match": "// sessions:"
+        },
+        {
+          "path": "student-tracker/README.md",
+          "line": 192,
+          "match": "| `events` + `event_attendance` (sessions) |"
+        }
+      ],
+      "limitation": "Only the signed-in participant is loaded. Participation means invited=true; the full invitation roster and denominator are unverified.",
+      "next_step": "Confirm participant/invitee semantics and cohort permissions; reconcile against attendance totals.",
+      "evidence_level": "fixture-backed mapping; previous live observations documented, not rechecked"
+    },
+    "nps": {
+      "status": "loaded",
+      "required_columns": [
+        "events.nps_score"
+      ],
+      "endpoints": [
+        "/schedule/sessions"
+      ],
+      "evidence": [
+        {
+          "path": "n8n/code/normalise.js",
+          "line": 256,
+          "match": "const nps ="
+        },
+        {
+          "path": "student-tracker/sql/metrics/events.sql",
+          "line": 76,
+          "match": "nps AS (SELECT kind, avg(nps_score)"
+        }
+      ],
+      "limitation": "This is the API event-level value divided by 10, not a recomputed Net Promoter Score. It does not require the feedback table.",
+      "next_step": "Confirm the upstream meaning and label; test with feedback empty.",
+      "evidence_level": "fixture-backed mapping; previous live observations documented, not rechecked"
+    },
+    "quiz_events": {
+      "status": "missing",
+      "required_columns": [
+        "events.event_id",
+        "events.kind",
+        "events.planned_for",
+        "events.status"
+      ],
+      "endpoints": [
+        "/quizzes/scheduled",
+        "/quizzes/my-history"
+      ],
+      "evidence": [
+        {
+          "path": "app/modules/app/m2019.js",
+          "line": 59,
+          "match": "'/quizzes/scheduled'"
+        },
+        {
+          "path": "app/modules/lib/m2020.js",
+          "line": 159,
+          "match": "r1['scheduledAt']"
+        },
+        {
+          "path": "student-tracker/README.md",
+          "line": 194,
+          "match": "| Quiz events and `quiz_attempts` |"
+        }
+      ],
+      "limitation": "Daily poll has no quiz mapping. A separate synthetic manual demo exists (n8n/code/quizzes.js); taken-only history cannot identify held-but-skipped or cancelled quizzes.",
+      "next_step": "Define event ID/status/timestamp mapping and schedule capture; obtain a populated example before claiming real coverage.",
+      "evidence_level": "client code plus previously reported empty live responses; populated shape unverified"
+    },
+    "quiz_attempts": {
+      "status": "missing",
+      "required_columns": [
+        "quiz_attempts.event_id",
+        "quiz_attempts.student_id",
+        "quiz_attempts.started_at",
+        "quiz_attempts.completed_at",
+        "quiz_attempts.score",
+        "quiz_attempts.total_questions"
+      ],
+      "endpoints": [
+        "/quizzes/my-history",
+        "/quizzes/scheduled"
+      ],
+      "evidence": [
+        {
+          "path": "app/modules/app/m2019.js",
+          "line": 145,
+          "match": "'/quizzes/my-history'"
+        },
+        {
+          "path": "app/modules/lib/m2020.js",
+          "line": 238,
+          "match": "r1['quizId']"
+        },
+        {
+          "path": "student-tracker/README.md",
+          "line": 194,
+          "match": "| Quiz events and `quiz_attempts` |"
+        }
+      ],
+      "limitation": "Daily poll has no attempt loader or populated real fixture. A separate synthetic manual demo verifies event linkage and incomplete/completed attempts (n8n/code/quizzes.js).",
+      "next_step": "Confirm populated real responses, history completeness, retakes and corrections before integrating the tested synthetic mapper.",
+      "evidence_level": "client code plus previously reported empty live responses; populated shape unverified"
+    },
+    "session_feedback": {
+      "status": "missing",
+      "required_columns": [
+        "feedback.feedback_id",
+        "feedback.student_id",
+        "feedback.event_id",
+        "feedback.kind",
+        "feedback.composite",
+        "feedback.submitted_at",
+        "feedback.has_comment"
+      ],
+      "endpoints": [
+        "/admin/feedback (candidate)",
+        "/schedule/sessions/feedback/pending (pending only)"
+      ],
+      "evidence": [
+        {
+          "path": "app/modules/app/m3213.js",
+          "line": 742,
+          "match": "'/admin/feedback'"
+        },
+        {
+          "path": "app/modules/app/m3214.js",
+          "line": 4266,
+          "match": "r1['submittedAt']"
+        },
+        {
+          "path": "n8n/code/feedback.js",
+          "line": 3,
+          "match": "function mapFeedback"
+        },
+        {
+          "path": "app/modules/lib/m2030.js",
+          "line": 61,
+          "match": "'/schedule/sessions/feedback/pending'"
+        }
+      ],
+      "limitation": "Daily poll has no feedback loader. Separate synthetic submitted-feedback demo verifies mapping and KPIs; admin read permissions, kind coverage and populated real responses remain unverified. Pending lists are not submitted history.",
+      "next_step": "Request authorized admin access or an export; map each feedback kind separately and retain only has_comment, not comment text.",
+      "evidence_level": "client code only for candidate read/submit contract; usable submitted data unverified"
+    },
+    "roadmap_feedback": {
+      "status": "missing",
+      "required_columns": [
+        "feedback.kind",
+        "feedback.student_id",
+        "feedback.q1_rating",
+        "feedback.q2_rating",
+        "feedback.q3_rating",
+        "feedback.composite",
+        "feedback.submitted_at"
+      ],
+      "endpoints": [
+        "/schedule/roadmap/student-feedback (submission only)",
+        "Authorized submitted-feedback export/read API (unknown)"
+      ],
+      "evidence": [
+        {
+          "path": "app/modules/lib/m2030.js",
+          "line": 114,
+          "match": "'/schedule/roadmap/student-feedback'"
+        },
+        {
+          "path": "app/modules/app/m2398.js",
+          "line": 195,
+          "match": "How would you rate the pace"
+        },
+        {
+          "path": "student-tracker/sql/metrics/roadmaps.sql",
+          "line": 101,
+          "match": "avg(q1_rating) AS avg_pace"
+        }
+      ],
+      "limitation": "Question meanings are evidenced: q1 pace, q2 investment, q3 confidence. The synthetic demo verifies these mappings through a proposed export, but no real submitted-roadmap read source is established.",
+      "next_step": "Find an authorized readable record/export with stable IDs, submittedAt, kind and the three ratings; a submit endpoint is not a loader.",
+      "evidence_level": "client code only for candidate read/submit contract; usable submitted data unverified"
+    },
+    "proposed_feedback": {
+      "status": "missing",
+      "required_columns": [
+        "feedback.kind",
+        "feedback.student_id",
+        "feedback.event_id",
+        "feedback.composite",
+        "feedback.submitted_at"
+      ],
+      "endpoints": [
+        "Proposed form/export; no existing source established"
+      ],
+      "evidence": [
+        {
+          "path": "student-tracker/sql/metrics/quarterly.sql",
+          "line": 54,
+          "match": "-- name: entrepreneurship_rating"
+        },
+        {
+          "path": "student-tracker/README.md",
+          "line": 195,
+          "match": "Social work, entrepreneurship and summer program have no form"
+        }
+      ],
+      "limitation": "Social work, entrepreneurship and summer-support ratings use a proposed synthetic export in the manual demo. No real collection source or feedback-sending workflow is established.",
+      "next_step": "Agree the rating question, cadence, owner, consent/access and event linkage before implementing a collection path.",
+      "evidence_level": "proposed or incomplete source; actual access/field mapping unknown"
+    },
+    "additional_events": {
+      "status": "missing",
+      "required_columns": [
+        "events.event_id",
+        "events.kind",
+        "events.planned_for",
+        "events.status"
+      ],
+      "endpoints": [
+        "ClickUp List tasks (proposed)",
+        "Authorized admin activity records (candidate)"
+      ],
+      "evidence": [
+        {
+          "path": "n8n/code/normalise.js",
+          "line": 40,
+          "match": "const SESSION_KIND"
+        },
+        {
+          "path": "student-tracker/README.md",
+          "line": 202,
+          "match": "Quarterly items (podcast"
+        }
+      ],
+      "limitation": "The current kind map excludes peer_session, branding_shoot, podcast, competition, parent_workshop, trip, social_work, summer_support and entrepreneurship_checkin.",
+      "next_step": "Obtain real lists/fields/statuses and stable app-student ID mappings or verify an authorized backend source; do not invent workspace IDs.",
+      "evidence_level": "proposed or incomplete source; actual access/field mapping unknown"
+    },
+    "publishing": {
+      "status": "missing",
+      "required_columns": [
+        "events.posted_on",
+        "events.views"
+      ],
+      "endpoints": [
+        "ClickUp fields or publishing analytics (unknown)"
+      ],
+      "evidence": [
+        {
+          "path": "n8n/code/normalise.js",
+          "line": 258,
+          "match": "posted_on: null, views: null"
+        },
+        {
+          "path": "student-tracker/sql/metrics/events.sql",
+          "line": 83,
+          "match": "-- name: posted_clips"
+        }
+      ],
+      "limitation": "Publication dates and views are hardcoded null. Current view counts cannot reconstruct historical reach.",
+      "next_step": "Specify the publishing system, clip/event linkage, metrics access and snapshot policy.",
+      "evidence_level": "proposed or incomplete source; actual access/field mapping unknown"
+    },
+    "groups": {
+      "status": "missing",
+      "required_columns": [
+        "events.group_id",
+        "event_attendance.student_id",
+        "event_attendance.invited"
+      ],
+      "endpoints": [
+        "ClickUp group membership (proposed)"
+      ],
+      "evidence": [
+        {
+          "path": "n8n/code/normalise.js",
+          "line": 257,
+          "match": "group_id: null"
+        },
+        {
+          "path": "student-tracker/sql/metrics/quarterly.sql",
+          "line": 28,
+          "match": "-- name: social_work_groups"
+        }
+      ],
+      "limitation": "Group IDs are hardcoded null; group counts cannot be recovered just by adding social-work events.",
+      "next_step": "Obtain stable group IDs and membership/invitation records; verify the assumed group size.",
+      "evidence_level": "proposed or incomplete source; actual access/field mapping unknown"
+    },
+    "outcomes": {
+      "status": "missing",
+      "required_columns": [
+        "event_attendance.outcome"
+      ],
+      "endpoints": [
+        "ClickUp application outcomes (proposed)",
+        "Authorized application records (unknown)"
+      ],
+      "evidence": [
+        {
+          "path": "n8n/code/normalise.js",
+          "line": 264,
+          "match": "outcome: null"
+        },
+        {
+          "path": "student-tracker/sql/metrics/quarterly.sql",
+          "line": 63,
+          "match": "-- name: summer_applications"
+        }
+      ],
+      "limitation": "Application outcomes are hardcoded null; event attendance does not establish application submission or acceptance.",
+      "next_step": "Agree submitted/accepted states, source owner and update timestamps, linked to student and support event.",
+      "evidence_level": "proposed or incomplete source; actual access/field mapping unknown"
+    },
+    "goals": {
+      "status": "partial",
+      "required_columns": [
+        "roadmap_items.item_id",
+        "roadmap_items.student_id",
+        "roadmap_items.roadmap",
+        "roadmap_items.level",
+        "roadmap_items.created_at",
+        "roadmap_items.due_date",
+        "roadmap_items.done_at"
+      ],
+      "endpoints": [
+        "/goals/annual",
+        "/goals/quarterly"
+      ],
+      "evidence": [
+        {
+          "path": "n8n/code/normalise.js",
+          "line": 305,
+          "match": "// roadmap items = goals."
+        },
+        {
+          "path": "n8n/tests/fixtures/quarterly_goals.json",
+          "line": 15,
+          "match": "monthlyGoals"
+        }
+      ],
+      "limitation": "Quarterly/monthly creation and completion use first-observed dates, not historical timestamps. Some due dates are null. Venture becomes entrepreneurship but may not mean the agreed startup-plan artifact.",
+      "next_step": "Confirm categories and artifact semantics. Keep observed-vs-actual dates explicit; do not claim exact historical deadline adherence.",
+      "evidence_level": "fixture-backed mapping; previous live observations documented, not rechecked"
+    },
+    "social_goals": {
+      "status": "missing",
+      "required_columns": [
+        "roadmap_items.roadmap",
+        "roadmap_items.due_date",
+        "roadmap_items.done_at"
+      ],
+      "endpoints": [
+        "ClickUp social-work milestones (proposed)"
+      ],
+      "evidence": [
+        {
+          "path": "n8n/code/normalise.js",
+          "line": 45,
+          "match": "const GOAL_ROADMAP"
+        },
+        {
+          "path": "student-tracker/README.md",
+          "line": 196,
+          "match": "`social_work` has no category"
+        }
+      ],
+      "limitation": "No social_work category mapping exists, although the schema and KPI require it.",
+      "next_step": "Identify the milestone source and stable student/goal IDs; agree deadline and completion fields.",
+      "evidence_level": "proposed or incomplete source; actual access/field mapping unknown"
+    },
+    "chapters": {
+      "status": "missing",
+      "required_columns": [
+        "chapter_progress.student_id",
+        "chapter_progress.chapter_id",
+        "chapter_progress.subject",
+        "chapter_progress.quarter",
+        "chapter_progress.planned_month",
+        "chapter_progress.stage_reached",
+        "chapter_progress.updated_at"
+      ],
+      "endpoints": [
+        "/academics/chapters",
+        "/academics/context",
+        "/academics/subjects (lookup candidate)"
+      ],
+      "evidence": [
+        {
+          "path": "n8n/code/chapters.js",
+          "line": 6,
+          "match": "function mapChapters"
+        },
+        {
+          "path": "app/modules/app/m1996.js",
+          "line": 229,
+          "match": "'/academics/chapters'"
+        },
+        {
+          "path": "app/modules/app/m1997.js",
+          "line": 730,
+          "match": "r1['taskStatus']"
+        },
+        {
+          "path": "app/modules/app/m1997.js",
+          "line": 805,
+          "match": "r1['accuracyPercentage']"
+        },
+        {
+          "path": "student-tracker/README.md",
+          "line": 197,
+          "match": "| `chapter_progress` |"
+        }
+      ],
+      "limitation": "Task/revision/score fields exist in static code; prior notes report populated tasks but empty scores. The checked-in ChapterSchema does not establish planned_month, stage-change timestamp, timed-paper evidence or exact five-stage semantics. Earlier notes claim task completedAt from live data, but no raw sample is checked in.",
+      "next_step": "Obtain sanitized chapter/task/score and planning samples; resolve subject/quarter lookups, planned month, NotRequired, threshold boundaries, contiguous stages and change timestamps. Do not use poll time as student activity.",
+      "evidence_level": "client code plus previously reported populated tasks and empty scores; planning/stage-change fields unresolved"
+    },
+    "advisor_inputs": {
+      "status": "missing",
+      "required_columns": [
+        "advisor_inputs.student_id",
+        "advisor_inputs.month",
+        "advisor_inputs.input_kind",
+        "advisor_inputs.done",
+        "advisor_inputs.source"
+      ],
+      "endpoints": [
+        "ClickUp advisor checklist (proposed)"
+      ],
+      "evidence": [
+        {
+          "path": "student-tracker/config.yaml",
+          "line": 56,
+          "match": "advisor_input_kinds:"
+        },
+        {
+          "path": "student-tracker/sql/schema/student.sql",
+          "line": 163,
+          "match": "CREATE TABLE IF NOT EXISTS advisor_inputs"
+        }
+      ],
+      "limitation": "No list, custom-field IDs, completion events or source rows have been seen. A roster of expected duties is needed to represent not-done, not just completed tasks.",
+      "next_step": "Agree expected duty cadence and owner; map real task/custom-field IDs and student IDs; reconcile planned and completed duties.",
+      "evidence_level": "proposed or incomplete source; actual access/field mapping unknown"
+    },
+    "exam_targets": {
+      "status": "missing",
+      "required_columns": [
+        "exam_targets.student_id",
+        "exam_targets.subject",
+        "exam_targets.exam_type",
+        "exam_targets.target_score",
+        "exam_targets.actual_score"
+      ],
+      "endpoints": [
+        "/academics/performance/subjects",
+        "ClickUp score targets (proposed)"
+      ],
+      "evidence": [
+        {
+          "path": "app/modules/app/m1996.js",
+          "line": 137,
+          "match": "'/academics/performance/subjects'"
+        },
+        {
+          "path": "student-tracker/README.md",
+          "line": 200,
+          "match": "| `exam_targets` |"
+        },
+        {
+          "path": "student-tracker/sql/schema/student.sql",
+          "line": 172,
+          "match": "CREATE TABLE IF NOT EXISTS exam_targets"
+        }
+      ],
+      "limitation": "Actual-score code is term-oriented; targets and an exact formative/unit_test/mid_term mapping are unknown. The schema cannot distinguish repeated exams or years. The scorecard selects formative only.",
+      "next_step": "Obtain targets and actuals for an identified exam/year; agree exam-type mapping, score units and schema grain before loading.",
+      "evidence_level": "proposed or incomplete source; actual access/field mapping unknown"
+    }
+  },
+  "queries": {
+    "daily.quiz_daily": {
+      "path": "student-tracker/sql/metrics/daily.sql",
+      "line": 6,
+      "tables": [
+        "events",
+        "quiz_attempts",
+        "students"
+      ],
+      "unloaded_tables": [
+        "quiz_attempts"
+      ]
+    },
+    "daily.quiz_summary": {
+      "path": "student-tracker/sql/metrics/daily.sql",
+      "line": 40,
+      "tables": [
+        "events",
+        "quiz_attempts",
+        "students"
+      ],
+      "unloaded_tables": [
+        "quiz_attempts"
+      ]
+    },
+    "daily.quiz_regular_takers": {
+      "path": "student-tracker/sql/metrics/daily.sql",
+      "line": 78,
+      "tables": [
+        "events",
+        "quiz_attempts",
+        "students"
+      ],
+      "unloaded_tables": [
+        "quiz_attempts"
+      ]
+    },
+    "daily.focus_daily": {
+      "path": "student-tracker/sql/metrics/daily.sql",
+      "line": 102,
+      "tables": [
+        "focus_sessions",
+        "students"
+      ],
+      "unloaded_tables": []
+    },
+    "daily.focus_summary": {
+      "path": "student-tracker/sql/metrics/daily.sql",
+      "line": 125,
+      "tables": [
+        "focus_sessions",
+        "students"
+      ],
+      "unloaded_tables": []
+    },
+    "daily.timetable_summary": {
+      "path": "student-tracker/sql/metrics/daily.sql",
+      "line": 164,
+      "tables": [
+        "students",
+        "todos"
+      ],
+      "unloaded_tables": []
+    },
+    "daily.connection_retention": {
+      "path": "student-tracker/sql/metrics/daily.sql",
+      "line": 193,
+      "tables": [
+        "students"
+      ],
+      "unloaded_tables": []
+    },
+    "daily.wearable_summary": {
+      "path": "student-tracker/sql/metrics/daily.sql",
+      "line": 221,
+      "tables": [
+        "students",
+        "wearable_daily"
+      ],
+      "unloaded_tables": []
+    },
+    "daily.whoop_syncing": {
+      "path": "student-tracker/sql/metrics/daily.sql",
+      "line": 251,
+      "tables": [
+        "students",
+        "wearable_daily"
+      ],
+      "unloaded_tables": []
+    },
+    "drill.quiz_by_day": {
+      "path": "student-tracker/sql/metrics/drill.sql",
+      "line": 8,
+      "tables": [
+        "events"
+      ],
+      "unloaded_tables": []
+    },
+    "drill.quiz_by_student": {
+      "path": "student-tracker/sql/metrics/drill.sql",
+      "line": 18,
+      "tables": [
+        "events",
+        "quiz_attempts",
+        "students"
+      ],
+      "unloaded_tables": [
+        "quiz_attempts"
+      ]
+    },
+    "drill.quiz_regular_takers_by_student": {
+      "path": "student-tracker/sql/metrics/drill.sql",
+      "line": 40,
+      "tables": [
+        "events",
+        "quiz_attempts",
+        "students"
+      ],
+      "unloaded_tables": [
+        "quiz_attempts"
+      ]
+    },
+    "drill.focus_by_student": {
+      "path": "student-tracker/sql/metrics/drill.sql",
+      "line": 56,
+      "tables": [
+        "focus_sessions",
+        "students"
+      ],
+      "unloaded_tables": []
+    },
+    "drill.timetable_by_student": {
+      "path": "student-tracker/sql/metrics/drill.sql",
+      "line": 81,
+      "tables": [
+        "students",
+        "todos"
+      ],
+      "unloaded_tables": []
+    },
+    "drill.connection_by_student": {
+      "path": "student-tracker/sql/metrics/drill.sql",
+      "line": 100,
+      "tables": [
+        "students"
+      ],
+      "unloaded_tables": []
+    },
+    "drill.wearable_by_student": {
+      "path": "student-tracker/sql/metrics/drill.sql",
+      "line": 115,
+      "tables": [
+        "students",
+        "wearable_daily"
+      ],
+      "unloaded_tables": []
+    },
+    "drill.study_plan_by_student": {
+      "path": "student-tracker/sql/metrics/drill.sql",
+      "line": 134,
+      "tables": [
+        "students"
+      ],
+      "unloaded_tables": []
+    },
+    "drill.syllabus_by_student": {
+      "path": "student-tracker/sql/metrics/drill.sql",
+      "line": 140,
+      "tables": [
+        "students",
+        "syllabus_daily"
+      ],
+      "unloaded_tables": []
+    },
+    "drill.todos_by_student": {
+      "path": "student-tracker/sql/metrics/drill.sql",
+      "line": 152,
+      "tables": [
+        "students",
+        "todos"
+      ],
+      "unloaded_tables": []
+    },
+    "drill.time_estimation_rows": {
+      "path": "student-tracker/sql/metrics/drill.sql",
+      "line": 162,
+      "tables": [
+        "students",
+        "study_hours"
+      ],
+      "unloaded_tables": []
+    },
+    "drill.readiness_by_student": {
+      "path": "student-tracker/sql/metrics/drill.sql",
+      "line": 182,
+      "tables": [
+        "chapter_progress",
+        "students"
+      ],
+      "unloaded_tables": [
+        "chapter_progress"
+      ]
+    },
+    "drill.rigour_by_student": {
+      "path": "student-tracker/sql/metrics/drill.sql",
+      "line": 193,
+      "tables": [
+        "chapter_progress",
+        "students"
+      ],
+      "unloaded_tables": [
+        "chapter_progress"
+      ]
+    },
+    "drill.advisor_todos_rows": {
+      "path": "student-tracker/sql/metrics/drill.sql",
+      "line": 201,
+      "tables": [
+        "students",
+        "todos"
+      ],
+      "unloaded_tables": []
+    },
+    "drill.input_cadence_by_student": {
+      "path": "student-tracker/sql/metrics/drill.sql",
+      "line": 210,
+      "tables": [
+        "students",
+        "todos"
+      ],
+      "unloaded_tables": []
+    },
+    "drill.events_list": {
+      "path": "student-tracker/sql/metrics/drill.sql",
+      "line": 221,
+      "tables": [
+        "events"
+      ],
+      "unloaded_tables": []
+    },
+    "drill.attendance_rows": {
+      "path": "student-tracker/sql/metrics/drill.sql",
+      "line": 229,
+      "tables": [
+        "event_attendance",
+        "events",
+        "students"
+      ],
+      "unloaded_tables": []
+    },
+    "drill.session_feedback_rows": {
+      "path": "student-tracker/sql/metrics/drill.sql",
+      "line": 238,
+      "tables": [
+        "events",
+        "feedback",
+        "students"
+      ],
+      "unloaded_tables": [
+        "feedback"
+      ]
+    },
+    "drill.event_feedback_rows": {
+      "path": "student-tracker/sql/metrics/drill.sql",
+      "line": 247,
+      "tables": [
+        "events",
+        "feedback",
+        "students"
+      ],
+      "unloaded_tables": [
+        "feedback"
+      ]
+    },
+    "drill.event_nps_rows": {
+      "path": "student-tracker/sql/metrics/drill.sql",
+      "line": 255,
+      "tables": [
+        "events"
+      ],
+      "unloaded_tables": []
+    },
+    "drill.posted_rows": {
+      "path": "student-tracker/sql/metrics/drill.sql",
+      "line": 260,
+      "tables": [
+        "events"
+      ],
+      "unloaded_tables": []
+    },
+    "drill.competition_by_student": {
+      "path": "student-tracker/sql/metrics/drill.sql",
+      "line": 268,
+      "tables": [
+        "event_attendance",
+        "events",
+        "students"
+      ],
+      "unloaded_tables": []
+    },
+    "drill.social_work_group_rows": {
+      "path": "student-tracker/sql/metrics/drill.sql",
+      "line": 284,
+      "tables": [
+        "event_attendance",
+        "events"
+      ],
+      "unloaded_tables": []
+    },
+    "drill.roadmap_items_due": {
+      "path": "student-tracker/sql/metrics/drill.sql",
+      "line": 293,
+      "tables": [
+        "roadmap_items",
+        "students"
+      ],
+      "unloaded_tables": []
+    },
+    "drill.roadmap_coverage_by_student": {
+      "path": "student-tracker/sql/metrics/drill.sql",
+      "line": 304,
+      "tables": [
+        "roadmap_items",
+        "students"
+      ],
+      "unloaded_tables": []
+    },
+    "drill.roadmap_completion_rows": {
+      "path": "student-tracker/sql/metrics/drill.sql",
+      "line": 310,
+      "tables": [
+        "roadmap_items",
+        "students"
+      ],
+      "unloaded_tables": []
+    },
+    "drill.advisor_input_rows": {
+      "path": "student-tracker/sql/metrics/drill.sql",
+      "line": 318,
+      "tables": [
+        "advisor_inputs",
+        "students"
+      ],
+      "unloaded_tables": [
+        "advisor_inputs"
+      ]
+    },
+    "drill.exam_rows": {
+      "path": "student-tracker/sql/metrics/drill.sql",
+      "line": 327,
+      "tables": [
+        "exam_targets",
+        "students"
+      ],
+      "unloaded_tables": [
+        "exam_targets"
+      ]
+    },
+    "drill.roadmap_feedback_rows": {
+      "path": "student-tracker/sql/metrics/drill.sql",
+      "line": 335,
+      "tables": [
+        "feedback",
+        "students"
+      ],
+      "unloaded_tables": [
+        "feedback"
+      ]
+    },
+    "drill.whoop_sync_by_student": {
+      "path": "student-tracker/sql/metrics/drill.sql",
+      "line": 343,
+      "tables": [
+        "students",
+        "wearable_daily"
+      ],
+      "unloaded_tables": []
+    },
+    "drill.clip_reach_rows": {
+      "path": "student-tracker/sql/metrics/drill.sql",
+      "line": 356,
+      "tables": [
+        "events"
+      ],
+      "unloaded_tables": []
+    },
+    "drill.entrepreneurship_rating_rows": {
+      "path": "student-tracker/sql/metrics/drill.sql",
+      "line": 363,
+      "tables": [
+        "feedback",
+        "students"
+      ],
+      "unloaded_tables": [
+        "feedback"
+      ]
+    },
+    "drill.advisor_input_kind_rows": {
+      "path": "student-tracker/sql/metrics/drill.sql",
+      "line": 370,
+      "tables": [
+        "advisor_inputs",
+        "students"
+      ],
+      "unloaded_tables": [
+        "advisor_inputs"
+      ]
+    },
+    "drill.chapter_activity_by_student": {
+      "path": "student-tracker/sql/metrics/drill.sql",
+      "line": 378,
+      "tables": [
+        "chapter_progress",
+        "students"
+      ],
+      "unloaded_tables": [
+        "chapter_progress"
+      ]
+    },
+    "drill.rigour_closed_by_student": {
+      "path": "student-tracker/sql/metrics/drill.sql",
+      "line": 385,
+      "tables": [
+        "chapter_progress",
+        "students"
+      ],
+      "unloaded_tables": [
+        "chapter_progress"
+      ]
+    },
+    "drill.summer_applications_by_student": {
+      "path": "student-tracker/sql/metrics/drill.sql",
+      "line": 393,
+      "tables": [
+        "event_attendance",
+        "events",
+        "students"
+      ],
+      "unloaded_tables": []
+    },
+    "events.event_delivery": {
+      "path": "student-tracker/sql/metrics/events.sql",
+      "line": 7,
+      "tables": [
+        "events",
+        "students"
+      ],
+      "unloaded_tables": []
+    },
+    "events.event_attendance_rates": {
+      "path": "student-tracker/sql/metrics/events.sql",
+      "line": 44,
+      "tables": [
+        "event_attendance",
+        "events"
+      ],
+      "unloaded_tables": []
+    },
+    "events.event_feedback": {
+      "path": "student-tracker/sql/metrics/events.sql",
+      "line": 60,
+      "tables": [
+        "event_attendance",
+        "events",
+        "feedback"
+      ],
+      "unloaded_tables": [
+        "feedback"
+      ]
+    },
+    "events.posted_clips": {
+      "path": "student-tracker/sql/metrics/events.sql",
+      "line": 83,
+      "tables": [
+        "events"
+      ],
+      "unloaded_tables": []
+    },
+    "events.clip_reach": {
+      "path": "student-tracker/sql/metrics/events.sql",
+      "line": 102,
+      "tables": [
+        "events"
+      ],
+      "unloaded_tables": []
+    },
+    "given.task_metrics": {
+      "path": "student-tracker/sql/metrics/given.sql",
+      "line": 6,
+      "tables": [
+        "students",
+        "todos"
+      ],
+      "unloaded_tables": []
+    },
+    "given.task_metrics_by_student": {
+      "path": "student-tracker/sql/metrics/given.sql",
+      "line": 30,
+      "tables": [
+        "students",
+        "todos"
+      ],
+      "unloaded_tables": []
+    },
+    "given.time_estimation": {
+      "path": "student-tracker/sql/metrics/given.sql",
+      "line": 46,
+      "tables": [
+        "students",
+        "study_hours"
+      ],
+      "unloaded_tables": []
+    },
+    "given.chapter_readiness_by_student": {
+      "path": "student-tracker/sql/metrics/given.sql",
+      "line": 77,
+      "tables": [
+        "chapter_progress",
+        "students"
+      ],
+      "unloaded_tables": [
+        "chapter_progress"
+      ]
+    },
+    "given.chapter_readiness": {
+      "path": "student-tracker/sql/metrics/given.sql",
+      "line": 89,
+      "tables": [
+        "chapter_progress",
+        "students"
+      ],
+      "unloaded_tables": [
+        "chapter_progress"
+      ]
+    },
+    "given.rigour_adherence": {
+      "path": "student-tracker/sql/metrics/given.sql",
+      "line": 98,
+      "tables": [
+        "chapter_progress",
+        "students"
+      ],
+      "unloaded_tables": [
+        "chapter_progress"
+      ]
+    },
+    "given.rigour_closed_months": {
+      "path": "student-tracker/sql/metrics/given.sql",
+      "line": 109,
+      "tables": [
+        "chapter_progress",
+        "students"
+      ],
+      "unloaded_tables": [
+        "chapter_progress"
+      ]
+    },
+    "given.chapter_activity": {
+      "path": "student-tracker/sql/metrics/given.sql",
+      "line": 120,
+      "tables": [
+        "chapter_progress",
+        "students"
+      ],
+      "unloaded_tables": [
+        "chapter_progress"
+      ]
+    },
+    "health.source_freshness": {
+      "path": "student-tracker/sql/metrics/health.sql",
+      "line": 4,
+      "tables": [
+        "ingest_log"
+      ],
+      "unloaded_tables": []
+    },
+    "health.recent_runs": {
+      "path": "student-tracker/sql/metrics/health.sql",
+      "line": 28,
+      "tables": [
+        "ingest_log"
+      ],
+      "unloaded_tables": []
+    },
+    "health.whoop_reconnect": {
+      "path": "student-tracker/sql/metrics/health.sql",
+      "line": 37,
+      "tables": [
+        "students",
+        "wearable_daily"
+      ],
+      "unloaded_tables": []
+    },
+    "health.history_start": {
+      "path": "student-tracker/sql/metrics/health.sql",
+      "line": 54,
+      "tables": [
+        "events"
+      ],
+      "unloaded_tables": []
+    },
+    "profile.profile_identity": {
+      "path": "student-tracker/sql/metrics/profile.sql",
+      "line": 6,
+      "tables": [
+        "students"
+      ],
+      "unloaded_tables": []
+    },
+    "profile.profile_quizzes": {
+      "path": "student-tracker/sql/metrics/profile.sql",
+      "line": 15,
+      "tables": [
+        "events",
+        "quiz_attempts",
+        "students"
+      ],
+      "unloaded_tables": [
+        "quiz_attempts"
+      ]
+    },
+    "profile.profile_focus": {
+      "path": "student-tracker/sql/metrics/profile.sql",
+      "line": 29,
+      "tables": [
+        "focus_sessions"
+      ],
+      "unloaded_tables": []
+    },
+    "profile.profile_todos": {
+      "path": "student-tracker/sql/metrics/profile.sql",
+      "line": 34,
+      "tables": [
+        "todos"
+      ],
+      "unloaded_tables": []
+    },
+    "profile.profile_events": {
+      "path": "student-tracker/sql/metrics/profile.sql",
+      "line": 39,
+      "tables": [
+        "event_attendance",
+        "events"
+      ],
+      "unloaded_tables": []
+    },
+    "profile.profile_feedback": {
+      "path": "student-tracker/sql/metrics/profile.sql",
+      "line": 48,
+      "tables": [
+        "events",
+        "feedback"
+      ],
+      "unloaded_tables": [
+        "feedback"
+      ]
+    },
+    "profile.profile_roadmap": {
+      "path": "student-tracker/sql/metrics/profile.sql",
+      "line": 55,
+      "tables": [
+        "roadmap_items"
+      ],
+      "unloaded_tables": []
+    },
+    "profile.profile_advisor_inputs": {
+      "path": "student-tracker/sql/metrics/profile.sql",
+      "line": 63,
+      "tables": [
+        "advisor_inputs"
+      ],
+      "unloaded_tables": [
+        "advisor_inputs"
+      ]
+    },
+    "profile.profile_chapters": {
+      "path": "student-tracker/sql/metrics/profile.sql",
+      "line": 68,
+      "tables": [
+        "chapter_progress"
+      ],
+      "unloaded_tables": [
+        "chapter_progress"
+      ]
+    },
+    "profile.profile_study_hours": {
+      "path": "student-tracker/sql/metrics/profile.sql",
+      "line": 73,
+      "tables": [
+        "study_hours"
+      ],
+      "unloaded_tables": []
+    },
+    "profile.profile_exams": {
+      "path": "student-tracker/sql/metrics/profile.sql",
+      "line": 79,
+      "tables": [
+        "exam_targets"
+      ],
+      "unloaded_tables": [
+        "exam_targets"
+      ]
+    },
+    "profile.profile_wearable": {
+      "path": "student-tracker/sql/metrics/profile.sql",
+      "line": 85,
+      "tables": [
+        "wearable_daily"
+      ],
+      "unloaded_tables": []
+    },
+    "quarterly.competition_outcomes": {
+      "path": "student-tracker/sql/metrics/quarterly.sql",
+      "line": 7,
+      "tables": [
+        "event_attendance",
+        "events",
+        "students"
+      ],
+      "unloaded_tables": []
+    },
+    "quarterly.social_work_groups": {
+      "path": "student-tracker/sql/metrics/quarterly.sql",
+      "line": 28,
+      "tables": [
+        "event_attendance",
+        "events",
+        "students"
+      ],
+      "unloaded_tables": []
+    },
+    "quarterly.entrepreneurship_rating": {
+      "path": "student-tracker/sql/metrics/quarterly.sql",
+      "line": 54,
+      "tables": [
+        "feedback",
+        "students"
+      ],
+      "unloaded_tables": [
+        "feedback"
+      ]
+    },
+    "quarterly.summer_applications": {
+      "path": "student-tracker/sql/metrics/quarterly.sql",
+      "line": 63,
+      "tables": [
+        "event_attendance",
+        "events"
+      ],
+      "unloaded_tables": []
+    },
+    "roadmaps.roadmap_status": {
+      "path": "student-tracker/sql/metrics/roadmaps.sql",
+      "line": 6,
+      "tables": [
+        "roadmap_items",
+        "students"
+      ],
+      "unloaded_tables": []
+    },
+    "roadmaps.roadmap_on_track_by_student": {
+      "path": "student-tracker/sql/metrics/roadmaps.sql",
+      "line": 23,
+      "tables": [
+        "roadmap_items",
+        "students"
+      ],
+      "unloaded_tables": []
+    },
+    "roadmaps.roadmap_coverage": {
+      "path": "student-tracker/sql/metrics/roadmaps.sql",
+      "line": 39,
+      "tables": [
+        "roadmap_items",
+        "students"
+      ],
+      "unloaded_tables": []
+    },
+    "roadmaps.advisor_inputs_by_kind": {
+      "path": "student-tracker/sql/metrics/roadmaps.sql",
+      "line": 55,
+      "tables": [
+        "advisor_inputs",
+        "students"
+      ],
+      "unloaded_tables": [
+        "advisor_inputs"
+      ]
+    },
+    "roadmaps.exam_score_vs_target": {
+      "path": "student-tracker/sql/metrics/roadmaps.sql",
+      "line": 69,
+      "tables": [
+        "exam_targets",
+        "students"
+      ],
+      "unloaded_tables": [
+        "exam_targets"
+      ]
+    },
+    "roadmaps.roadmap_feedback": {
+      "path": "student-tracker/sql/metrics/roadmaps.sql",
+      "line": 87,
+      "tables": [
+        "feedback",
+        "students"
+      ],
+      "unloaded_tables": [
+        "feedback"
+      ]
+    },
+    "roadmaps.roadmap_completion": {
+      "path": "student-tracker/sql/metrics/roadmaps.sql",
+      "line": 104,
+      "tables": [
+        "roadmap_items",
+        "students"
+      ],
+      "unloaded_tables": []
+    },
+    "students.student_activity": {
+      "path": "student-tracker/sql/metrics/students.sql",
+      "line": 3,
+      "tables": [
+        "events",
+        "focus_sessions",
+        "quiz_attempts",
+        "students",
+        "todos"
+      ],
+      "unloaded_tables": [
+        "quiz_attempts"
+      ]
+    },
+    "students.student_timeline": {
+      "path": "student-tracker/sql/metrics/students.sql",
+      "line": 41,
+      "tables": [
+        "events",
+        "focus_sessions",
+        "quiz_attempts",
+        "students",
+        "todos"
+      ],
+      "unloaded_tables": [
+        "quiz_attempts"
+      ]
+    },
+    "weekly.study_plan_set": {
+      "path": "student-tracker/sql/metrics/weekly.sql",
+      "line": 7,
+      "tables": [
+        "students"
+      ],
+      "unloaded_tables": []
+    },
+    "weekly.session_delivery": {
+      "path": "student-tracker/sql/metrics/weekly.sql",
+      "line": 17,
+      "tables": [
+        "event_attendance",
+        "events",
+        "students"
+      ],
+      "unloaded_tables": []
+    },
+    "weekly.session_feedback": {
+      "path": "student-tracker/sql/metrics/weekly.sql",
+      "line": 55,
+      "tables": [
+        "event_attendance",
+        "events",
+        "feedback"
+      ],
+      "unloaded_tables": [
+        "feedback"
+      ]
+    },
+    "weekly.syllabus_pace_by_student": {
+      "path": "student-tracker/sql/metrics/weekly.sql",
+      "line": 74,
+      "tables": [
+        "students",
+        "syllabus_daily"
+      ],
+      "unloaded_tables": []
+    },
+    "weekly.syllabus_pace": {
+      "path": "student-tracker/sql/metrics/weekly.sql",
+      "line": 95,
+      "tables": [
+        "students",
+        "syllabus_daily"
+      ],
+      "unloaded_tables": []
+    },
+    "weekly.advisor_todos": {
+      "path": "student-tracker/sql/metrics/weekly.sql",
+      "line": 114,
+      "tables": [
+        "students",
+        "todos"
+      ],
+      "unloaded_tables": []
+    },
+    "weekly.student_input_cadence": {
+      "path": "student-tracker/sql/metrics/weekly.sql",
+      "line": 131,
+      "tables": [
+        "students",
+        "todos"
+      ],
+      "unloaded_tables": []
+    },
+    "weekly.syllabus_progress": {
+      "path": "student-tracker/sql/metrics/weekly.sql",
+      "line": 148,
+      "tables": [
+        "students",
+        "syllabus_daily"
+      ],
+      "unloaded_tables": []
+    }
+  },
+  "kpis": [
+    {
+      "cadence": "daily",
+      "activity": "8pm quiz",
+      "lens": "conducted",
+      "name": "Quizzes held / days",
+      "query": "daily.quiz_summary",
+      "output_fields": [
+        "held_rate"
+      ],
+      "selection_expression": "field('held_rate')",
+      "filters": {},
+      "scorecard_line": 47,
+      "required_columns": [
+        "events.event_id",
+        "events.kind",
+        "events.planned_for",
+        "events.status"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "events",
+        "quiz_attempts",
+        "students"
+      ],
+      "query_unloaded_tables": [
+        "quiz_attempts"
+      ],
+      "capabilities": [
+        "quiz_events"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "daily",
+      "activity": "8pm quiz",
+      "lens": "liked",
+      "name": "Quizzes finished / started (proxy)",
+      "query": "daily.quiz_summary",
+      "output_fields": [
+        "completion_rate"
+      ],
+      "selection_expression": "field('completion_rate')",
+      "filters": {},
+      "scorecard_line": 48,
+      "required_columns": [
+        "events.event_id",
+        "events.kind",
+        "events.planned_for",
+        "events.status",
+        "quiz_attempts.completed_at",
+        "quiz_attempts.event_id",
+        "quiz_attempts.score",
+        "quiz_attempts.started_at",
+        "quiz_attempts.student_id",
+        "quiz_attempts.total_questions"
+      ],
+      "required_unloaded_tables": [
+        "quiz_attempts"
+      ],
+      "query_tables": [
+        "events",
+        "quiz_attempts",
+        "students"
+      ],
+      "query_unloaded_tables": [
+        "quiz_attempts"
+      ],
+      "capabilities": [
+        "quiz_events",
+        "quiz_attempts"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "daily",
+      "activity": "8pm quiz",
+      "lens": "liked",
+      "name": "Regular quiz takers (proxy)",
+      "query": "daily.quiz_regular_takers",
+      "output_fields": [
+        "regular_taker_rate"
+      ],
+      "selection_expression": "field('regular_taker_rate')",
+      "filters": {},
+      "scorecard_line": 49,
+      "required_columns": [
+        "events.event_id",
+        "events.kind",
+        "events.planned_for",
+        "events.status",
+        "quiz_attempts.completed_at",
+        "quiz_attempts.event_id",
+        "quiz_attempts.score",
+        "quiz_attempts.started_at",
+        "quiz_attempts.student_id",
+        "quiz_attempts.total_questions"
+      ],
+      "required_unloaded_tables": [
+        "quiz_attempts"
+      ],
+      "query_tables": [
+        "events",
+        "quiz_attempts",
+        "students"
+      ],
+      "query_unloaded_tables": [
+        "quiz_attempts"
+      ],
+      "capabilities": [
+        "quiz_events",
+        "quiz_attempts"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "daily",
+      "activity": "8pm quiz",
+      "lens": "performed",
+      "name": "Started inside the entry window",
+      "query": "daily.quiz_summary",
+      "output_fields": [
+        "in_window_rate"
+      ],
+      "selection_expression": "field('in_window_rate')",
+      "filters": {},
+      "scorecard_line": 50,
+      "required_columns": [
+        "events.event_id",
+        "events.kind",
+        "events.planned_for",
+        "events.status",
+        "quiz_attempts.completed_at",
+        "quiz_attempts.event_id",
+        "quiz_attempts.score",
+        "quiz_attempts.started_at",
+        "quiz_attempts.student_id",
+        "quiz_attempts.total_questions"
+      ],
+      "required_unloaded_tables": [
+        "quiz_attempts"
+      ],
+      "query_tables": [
+        "events",
+        "quiz_attempts",
+        "students"
+      ],
+      "query_unloaded_tables": [
+        "quiz_attempts"
+      ],
+      "capabilities": [
+        "quiz_events",
+        "quiz_attempts"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "daily",
+      "activity": "Focus time",
+      "lens": "conducted",
+      "name": "Student-days with a session",
+      "query": "daily.focus_summary",
+      "output_fields": [
+        "reach_rate"
+      ],
+      "selection_expression": "field('reach_rate')",
+      "filters": {},
+      "scorecard_line": 51,
+      "required_columns": [
+        "focus_sessions.actual_minutes",
+        "focus_sessions.fail_reason",
+        "focus_sessions.session_id",
+        "focus_sessions.started_at",
+        "focus_sessions.status",
+        "focus_sessions.student_id"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "focus_sessions",
+        "students"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "focus"
+      ],
+      "status": "partial"
+    },
+    {
+      "cadence": "daily",
+      "activity": "Focus time",
+      "lens": "liked",
+      "name": "Sessions not given up (proxy)",
+      "query": "daily.focus_summary",
+      "output_fields": [
+        "give_up_rate"
+      ],
+      "selection_expression": "one_minus(field('give_up_rate'))",
+      "filters": {},
+      "scorecard_line": 52,
+      "required_columns": [
+        "focus_sessions.actual_minutes",
+        "focus_sessions.fail_reason",
+        "focus_sessions.session_id",
+        "focus_sessions.started_at",
+        "focus_sessions.status",
+        "focus_sessions.student_id"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "focus_sessions",
+        "students"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "focus"
+      ],
+      "status": "partial"
+    },
+    {
+      "cadence": "daily",
+      "activity": "Focus time",
+      "lens": "performed",
+      "name": "Student-days at the focus target",
+      "query": "daily.focus_summary",
+      "output_fields": [
+        "share_meeting_target"
+      ],
+      "selection_expression": "field('share_meeting_target')",
+      "filters": {},
+      "scorecard_line": 53,
+      "required_columns": [
+        "focus_sessions.actual_minutes",
+        "focus_sessions.fail_reason",
+        "focus_sessions.session_id",
+        "focus_sessions.started_at",
+        "focus_sessions.status",
+        "focus_sessions.student_id"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "focus_sessions",
+        "students"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "focus"
+      ],
+      "status": "partial"
+    },
+    {
+      "cadence": "daily",
+      "activity": "Timetable",
+      "lens": "conducted",
+      "name": "Student-days with a to-do due",
+      "query": "daily.timetable_summary",
+      "output_fields": [
+        "logged_rate"
+      ],
+      "selection_expression": "field('logged_rate')",
+      "filters": {},
+      "scorecard_line": 54,
+      "required_columns": [
+        "todos.due_date",
+        "todos.source",
+        "todos.status",
+        "todos.student_id",
+        "todos.todo_id"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "students",
+        "todos"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "tasks"
+      ],
+      "status": "loaded"
+    },
+    {
+      "cadence": "daily",
+      "activity": "Timetable",
+      "lens": "liked",
+      "name": "Calendar still connected (proxy)",
+      "query": "daily.connection_retention",
+      "output_fields": [
+        "retention_rate"
+      ],
+      "selection_expression": "field('retention_rate', kind='calendar')",
+      "filters": {
+        "kind": "calendar"
+      },
+      "scorecard_line": 55,
+      "required_columns": [
+        "students.calendar_connected_on",
+        "students.calendar_disconnected_on"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "students"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "calendar"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "daily",
+      "activity": "Timetable",
+      "lens": "performed",
+      "name": "To-dos done on their due date",
+      "query": "daily.timetable_summary",
+      "output_fields": [
+        "done_same_day_rate"
+      ],
+      "selection_expression": "field('done_same_day_rate')",
+      "filters": {},
+      "scorecard_line": 56,
+      "required_columns": [
+        "todos.due_date",
+        "todos.source",
+        "todos.status",
+        "todos.student_id",
+        "todos.todo_id",
+        "todos.updated_at"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "students",
+        "todos"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "tasks",
+        "task_deadlines"
+      ],
+      "status": "partial"
+    },
+    {
+      "cadence": "daily",
+      "activity": "Active minutes",
+      "lens": "conducted",
+      "name": "Student-days with wearable strain",
+      "query": "daily.wearable_summary",
+      "output_fields": [
+        "strain_coverage"
+      ],
+      "selection_expression": "field('strain_coverage')",
+      "filters": {},
+      "scorecard_line": 57,
+      "required_columns": [
+        "wearable_daily.data_source",
+        "wearable_daily.day",
+        "wearable_daily.recovery_pct",
+        "wearable_daily.sleep_hours",
+        "wearable_daily.strain",
+        "wearable_daily.student_id"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "students",
+        "wearable_daily"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "wellness"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "daily",
+      "activity": "Active minutes",
+      "lens": "liked",
+      "name": "Wearable still connected (proxy)",
+      "query": "daily.connection_retention",
+      "output_fields": [
+        "retention_rate"
+      ],
+      "selection_expression": "field('retention_rate', kind='wearable')",
+      "filters": {
+        "kind": "wearable"
+      },
+      "scorecard_line": 58,
+      "required_columns": [
+        "students.wearable",
+        "students.wearable_connected_on",
+        "students.wearable_disconnected_on"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "students"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "wearable_connection"
+      ],
+      "status": "partial"
+    },
+    {
+      "cadence": "daily",
+      "activity": "Active minutes",
+      "lens": "performed",
+      "name": "Strain inside the target band",
+      "query": "daily.wearable_summary",
+      "output_fields": [
+        "strain_in_band_rate"
+      ],
+      "selection_expression": "field('strain_in_band_rate')",
+      "filters": {},
+      "scorecard_line": 59,
+      "required_columns": [
+        "wearable_daily.data_source",
+        "wearable_daily.day",
+        "wearable_daily.recovery_pct",
+        "wearable_daily.sleep_hours",
+        "wearable_daily.strain",
+        "wearable_daily.student_id"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "students",
+        "wearable_daily"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "wellness"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "daily",
+      "activity": "Recovery",
+      "lens": "conducted",
+      "name": "Student-days with a recovery reading",
+      "query": "daily.wearable_summary",
+      "output_fields": [
+        "recovery_days",
+        "student_days"
+      ],
+      "selection_expression": "ratio('recovery_days', 'student_days')",
+      "filters": {},
+      "scorecard_line": 60,
+      "required_columns": [
+        "wearable_daily.data_source",
+        "wearable_daily.day",
+        "wearable_daily.recovery_pct",
+        "wearable_daily.sleep_hours",
+        "wearable_daily.strain",
+        "wearable_daily.student_id"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "students",
+        "wearable_daily"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "wellness"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "daily",
+      "activity": "Recovery",
+      "lens": "liked",
+      "name": "Whoop students still syncing (proxy)",
+      "query": "daily.whoop_syncing",
+      "output_fields": [
+        "sync_rate"
+      ],
+      "selection_expression": "field('sync_rate')",
+      "filters": {},
+      "scorecard_line": 61,
+      "required_columns": [
+        "students.wearable",
+        "students.wearable_connected_on",
+        "students.wearable_disconnected_on",
+        "wearable_daily.data_source",
+        "wearable_daily.day",
+        "wearable_daily.recovery_pct",
+        "wearable_daily.sleep_hours",
+        "wearable_daily.strain",
+        "wearable_daily.student_id"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "students",
+        "wearable_daily"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "wearable_connection",
+        "wellness"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "daily",
+      "activity": "Recovery",
+      "lens": "performed",
+      "name": "Sleep at or above target",
+      "query": "daily.wearable_summary",
+      "output_fields": [
+        "sleep_target_rate"
+      ],
+      "selection_expression": "field('sleep_target_rate')",
+      "filters": {},
+      "scorecard_line": 62,
+      "required_columns": [
+        "wearable_daily.data_source",
+        "wearable_daily.day",
+        "wearable_daily.recovery_pct",
+        "wearable_daily.sleep_hours",
+        "wearable_daily.strain",
+        "wearable_daily.student_id"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "students",
+        "wearable_daily"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "wellness"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "weekly",
+      "activity": "Academic roadmap",
+      "lens": "conducted",
+      "name": "Study-hour plan set",
+      "query": "weekly.study_plan_set",
+      "output_fields": [
+        "plan_set_rate"
+      ],
+      "selection_expression": "field('plan_set_rate')",
+      "filters": {},
+      "scorecard_line": 64,
+      "required_columns": [
+        "students.weekday_study_hours",
+        "students.weekend_study_hours"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "students"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "study_plan"
+      ],
+      "status": "loaded"
+    },
+    {
+      "cadence": "weekly",
+      "activity": "Academic roadmap",
+      "lens": "liked",
+      "name": "Roadmap check-in: pace of progress (average / 5)",
+      "query": "roadmaps.roadmap_feedback",
+      "output_fields": [
+        "avg_pace"
+      ],
+      "selection_expression": "field('avg_pace')",
+      "filters": {},
+      "scorecard_line": 65,
+      "required_columns": [
+        "feedback.composite",
+        "feedback.kind",
+        "feedback.q1_rating",
+        "feedback.q2_rating",
+        "feedback.q3_rating",
+        "feedback.student_id",
+        "feedback.submitted_at"
+      ],
+      "required_unloaded_tables": [
+        "feedback"
+      ],
+      "query_tables": [
+        "feedback",
+        "students"
+      ],
+      "query_unloaded_tables": [
+        "feedback"
+      ],
+      "capabilities": [
+        "roadmap_feedback"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "weekly",
+      "activity": "Academic roadmap",
+      "lens": "performed",
+      "name": "Students on the syllabus pace",
+      "query": "weekly.syllabus_pace",
+      "output_fields": [
+        "on_track_rate"
+      ],
+      "selection_expression": "field('on_track_rate')",
+      "filters": {},
+      "scorecard_line": 66,
+      "required_columns": [
+        "syllabus_daily.chapters_completed",
+        "syllabus_daily.day",
+        "syllabus_daily.student_id",
+        "syllabus_daily.total_chapters"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "students",
+        "syllabus_daily"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "syllabus"
+      ],
+      "status": "loaded"
+    },
+    {
+      "cadence": "weekly",
+      "activity": "Academic roadmap",
+      "lens": "performed",
+      "name": "Task completion rate",
+      "query": "given.task_metrics",
+      "output_fields": [
+        "task_completion_rate"
+      ],
+      "selection_expression": "field('task_completion_rate')",
+      "filters": {},
+      "scorecard_line": 67,
+      "required_columns": [
+        "todos.due_date",
+        "todos.source",
+        "todos.status",
+        "todos.student_id",
+        "todos.todo_id"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "students",
+        "todos"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "tasks"
+      ],
+      "status": "loaded"
+    },
+    {
+      "cadence": "weekly",
+      "activity": "Academic roadmap",
+      "lens": "performed",
+      "name": "Deadline adherence",
+      "query": "given.task_metrics",
+      "output_fields": [
+        "deadline_adherence"
+      ],
+      "selection_expression": "field('deadline_adherence')",
+      "filters": {},
+      "scorecard_line": 68,
+      "required_columns": [
+        "todos.due_date",
+        "todos.source",
+        "todos.status",
+        "todos.student_id",
+        "todos.todo_id",
+        "todos.updated_at"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "students",
+        "todos"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "tasks",
+        "task_deadlines"
+      ],
+      "status": "partial"
+    },
+    {
+      "cadence": "weekly",
+      "activity": "Academic roadmap",
+      "lens": "performed",
+      "name": "Time estimation accuracy",
+      "query": "given.time_estimation",
+      "output_fields": [
+        "avg_accuracy"
+      ],
+      "selection_expression": "field('avg_accuracy')",
+      "filters": {},
+      "scorecard_line": 69,
+      "required_columns": [
+        "study_hours.actual_hours",
+        "study_hours.as_of",
+        "study_hours.estimated_hours",
+        "study_hours.quarter",
+        "study_hours.student_id",
+        "study_hours.subject"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "students",
+        "study_hours"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "study_hours"
+      ],
+      "status": "partial"
+    },
+    {
+      "cadence": "weekly",
+      "activity": "Academic roadmap",
+      "lens": "performed",
+      "name": "Chapter readiness score",
+      "query": "given.chapter_readiness",
+      "output_fields": [
+        "readiness_score"
+      ],
+      "selection_expression": "field('readiness_score')",
+      "filters": {},
+      "scorecard_line": 70,
+      "required_columns": [
+        "chapter_progress.chapter_id",
+        "chapter_progress.planned_month",
+        "chapter_progress.quarter",
+        "chapter_progress.stage_reached",
+        "chapter_progress.student_id",
+        "chapter_progress.subject",
+        "chapter_progress.updated_at"
+      ],
+      "required_unloaded_tables": [
+        "chapter_progress"
+      ],
+      "query_tables": [
+        "chapter_progress",
+        "students"
+      ],
+      "query_unloaded_tables": [
+        "chapter_progress"
+      ],
+      "capabilities": [
+        "chapters"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "weekly",
+      "activity": "Academic roadmap",
+      "lens": "performed",
+      "name": "Monthly rigour adherence",
+      "query": "given.rigour_adherence",
+      "output_fields": [
+        "adherence"
+      ],
+      "selection_expression": "field('adherence')",
+      "filters": {},
+      "scorecard_line": 71,
+      "required_columns": [
+        "chapter_progress.chapter_id",
+        "chapter_progress.planned_month",
+        "chapter_progress.quarter",
+        "chapter_progress.stage_reached",
+        "chapter_progress.student_id",
+        "chapter_progress.subject",
+        "chapter_progress.updated_at"
+      ],
+      "required_unloaded_tables": [
+        "chapter_progress"
+      ],
+      "query_tables": [
+        "chapter_progress",
+        "students"
+      ],
+      "query_unloaded_tables": [
+        "chapter_progress"
+      ],
+      "capabilities": [
+        "chapters"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "weekly",
+      "activity": "Advisor input",
+      "lens": "conducted",
+      "name": "Advisor-assigned to-dos done",
+      "query": "weekly.advisor_todos",
+      "output_fields": [
+        "done_rate"
+      ],
+      "selection_expression": "field('done_rate')",
+      "filters": {},
+      "scorecard_line": 72,
+      "required_columns": [
+        "todos.due_date",
+        "todos.source",
+        "todos.status",
+        "todos.student_id",
+        "todos.todo_id"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "students",
+        "todos"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "tasks"
+      ],
+      "status": "loaded"
+    },
+    {
+      "cadence": "weekly",
+      "activity": "Advisor input",
+      "lens": "liked",
+      "name": "Academic session rating (average / 5)",
+      "query": "events.event_feedback",
+      "output_fields": [
+        "avg_composite"
+      ],
+      "selection_expression": "field('avg_composite', kind='academic_session')",
+      "filters": {
+        "kind": "academic_session"
+      },
+      "scorecard_line": 73,
+      "required_columns": [
+        "events.event_id",
+        "events.kind",
+        "events.planned_for",
+        "events.status",
+        "feedback.composite",
+        "feedback.event_id",
+        "feedback.feedback_id",
+        "feedback.has_comment",
+        "feedback.kind",
+        "feedback.student_id",
+        "feedback.submitted_at"
+      ],
+      "required_unloaded_tables": [
+        "feedback"
+      ],
+      "query_tables": [
+        "event_attendance",
+        "events",
+        "feedback"
+      ],
+      "query_unloaded_tables": [
+        "feedback"
+      ],
+      "capabilities": [
+        "sessions",
+        "session_feedback"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "weekly",
+      "activity": "Advisor input",
+      "lens": "performed",
+      "name": "Advisor-assigned to-dos done on time",
+      "query": "weekly.advisor_todos",
+      "output_fields": [
+        "on_time_rate"
+      ],
+      "selection_expression": "field('on_time_rate')",
+      "filters": {},
+      "scorecard_line": 74,
+      "required_columns": [
+        "todos.due_date",
+        "todos.source",
+        "todos.status",
+        "todos.student_id",
+        "todos.todo_id",
+        "todos.updated_at"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "students",
+        "todos"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "tasks",
+        "task_deadlines"
+      ],
+      "status": "partial"
+    },
+    {
+      "cadence": "weekly",
+      "activity": "Advisor input",
+      "lens": "performed",
+      "name": "Students filling in their inputs",
+      "query": "weekly.student_input_cadence",
+      "output_fields": [
+        "filled_rate"
+      ],
+      "selection_expression": "field('filled_rate')",
+      "filters": {},
+      "scorecard_line": 75,
+      "required_columns": [
+        "todos.created_at",
+        "todos.source",
+        "todos.status",
+        "todos.updated_at"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "students",
+        "todos"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "student_inputs"
+      ],
+      "status": "partial"
+    },
+    {
+      "cadence": "weekly",
+      "activity": "Academic sessions",
+      "lens": "conducted",
+      "name": "Academic sessions held vs policy",
+      "query": "weekly.session_delivery",
+      "output_fields": [
+        "delivered_vs_policy"
+      ],
+      "selection_expression": "field('delivered_vs_policy', kind='academic_session')",
+      "filters": {
+        "kind": "academic_session"
+      },
+      "scorecard_line": 76,
+      "required_columns": [
+        "events.event_id",
+        "events.kind",
+        "events.planned_for",
+        "events.status"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "event_attendance",
+        "events",
+        "students"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "sessions"
+      ],
+      "status": "partial"
+    },
+    {
+      "cadence": "weekly",
+      "activity": "Academic sessions",
+      "lens": "liked",
+      "name": "Session feedback (average rating / 5)",
+      "query": "weekly.session_feedback",
+      "output_fields": [
+        "avg_composite"
+      ],
+      "selection_expression": "field('avg_composite')",
+      "filters": {},
+      "scorecard_line": 77,
+      "required_columns": [
+        "events.event_id",
+        "events.kind",
+        "events.planned_for",
+        "events.status",
+        "feedback.composite",
+        "feedback.event_id",
+        "feedback.feedback_id",
+        "feedback.has_comment",
+        "feedback.kind",
+        "feedback.student_id",
+        "feedback.submitted_at"
+      ],
+      "required_unloaded_tables": [
+        "feedback"
+      ],
+      "query_tables": [
+        "event_attendance",
+        "events",
+        "feedback"
+      ],
+      "query_unloaded_tables": [
+        "feedback"
+      ],
+      "capabilities": [
+        "sessions",
+        "session_feedback"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "weekly",
+      "activity": "Academic sessions",
+      "lens": "performed",
+      "name": "Academic sessions attended",
+      "query": "weekly.session_delivery",
+      "output_fields": [
+        "attended_rate"
+      ],
+      "selection_expression": "field('attended_rate', kind='academic_session')",
+      "filters": {
+        "kind": "academic_session"
+      },
+      "scorecard_line": 78,
+      "required_columns": [
+        "event_attendance.attended",
+        "event_attendance.event_id",
+        "event_attendance.invited",
+        "event_attendance.student_id",
+        "events.event_id",
+        "events.kind",
+        "events.planned_for",
+        "events.status"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "event_attendance",
+        "events",
+        "students"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "sessions",
+        "attendance"
+      ],
+      "status": "partial"
+    },
+    {
+      "cadence": "monthly",
+      "activity": "Workshops",
+      "lens": "conducted",
+      "name": "Workshops held vs expected",
+      "query": "events.event_delivery",
+      "output_fields": [
+        "delivered_vs_expected"
+      ],
+      "selection_expression": "field('delivered_vs_expected', kind='workshop')",
+      "filters": {
+        "kind": "workshop"
+      },
+      "scorecard_line": 80,
+      "required_columns": [
+        "events.event_id",
+        "events.kind",
+        "events.planned_for",
+        "events.status"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "events",
+        "students"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "sessions"
+      ],
+      "status": "partial"
+    },
+    {
+      "cadence": "monthly",
+      "activity": "Workshops",
+      "lens": "liked",
+      "name": "Workshop rating (average / 5)",
+      "query": "events.event_feedback",
+      "output_fields": [
+        "avg_composite"
+      ],
+      "selection_expression": "field('avg_composite', kind='workshop')",
+      "filters": {
+        "kind": "workshop"
+      },
+      "scorecard_line": 81,
+      "required_columns": [
+        "events.event_id",
+        "events.kind",
+        "events.planned_for",
+        "events.status",
+        "feedback.composite",
+        "feedback.event_id",
+        "feedback.feedback_id",
+        "feedback.has_comment",
+        "feedback.kind",
+        "feedback.student_id",
+        "feedback.submitted_at"
+      ],
+      "required_unloaded_tables": [
+        "feedback"
+      ],
+      "query_tables": [
+        "event_attendance",
+        "events",
+        "feedback"
+      ],
+      "query_unloaded_tables": [
+        "feedback"
+      ],
+      "capabilities": [
+        "sessions",
+        "session_feedback"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "monthly",
+      "activity": "Workshops",
+      "lens": "liked",
+      "name": "Workshop NPS (/ 10)",
+      "query": "events.event_feedback",
+      "output_fields": [
+        "avg_nps"
+      ],
+      "selection_expression": "field('avg_nps', kind='workshop')",
+      "filters": {
+        "kind": "workshop"
+      },
+      "scorecard_line": 82,
+      "required_columns": [
+        "events.event_id",
+        "events.kind",
+        "events.nps_score",
+        "events.planned_for",
+        "events.status"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "event_attendance",
+        "events",
+        "feedback"
+      ],
+      "query_unloaded_tables": [
+        "feedback"
+      ],
+      "capabilities": [
+        "sessions",
+        "nps"
+      ],
+      "status": "partial"
+    },
+    {
+      "cadence": "monthly",
+      "activity": "Workshops",
+      "lens": "performed",
+      "name": "Workshop attendance",
+      "query": "events.event_attendance_rates",
+      "output_fields": [
+        "attended_rate"
+      ],
+      "selection_expression": "field('attended_rate', kind='workshop')",
+      "filters": {
+        "kind": "workshop"
+      },
+      "scorecard_line": 83,
+      "required_columns": [
+        "event_attendance.attended",
+        "event_attendance.event_id",
+        "event_attendance.invited",
+        "event_attendance.student_id",
+        "events.event_id",
+        "events.kind",
+        "events.planned_for",
+        "events.status"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "event_attendance",
+        "events"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "sessions",
+        "attendance"
+      ],
+      "status": "partial"
+    },
+    {
+      "cadence": "monthly",
+      "activity": "Pod session",
+      "lens": "conducted",
+      "name": "Pods held vs expected",
+      "query": "events.event_delivery",
+      "output_fields": [
+        "delivered_vs_expected"
+      ],
+      "selection_expression": "field('delivered_vs_expected', kind='pod')",
+      "filters": {
+        "kind": "pod"
+      },
+      "scorecard_line": 84,
+      "required_columns": [
+        "events.event_id",
+        "events.kind",
+        "events.planned_for",
+        "events.status"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "events",
+        "students"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "sessions"
+      ],
+      "status": "partial"
+    },
+    {
+      "cadence": "monthly",
+      "activity": "Pod session",
+      "lens": "liked",
+      "name": "Pod rating (average / 5)",
+      "query": "events.event_feedback",
+      "output_fields": [
+        "avg_composite"
+      ],
+      "selection_expression": "field('avg_composite', kind='pod')",
+      "filters": {
+        "kind": "pod"
+      },
+      "scorecard_line": 85,
+      "required_columns": [
+        "events.event_id",
+        "events.kind",
+        "events.planned_for",
+        "events.status",
+        "feedback.composite",
+        "feedback.event_id",
+        "feedback.feedback_id",
+        "feedback.has_comment",
+        "feedback.kind",
+        "feedback.student_id",
+        "feedback.submitted_at"
+      ],
+      "required_unloaded_tables": [
+        "feedback"
+      ],
+      "query_tables": [
+        "event_attendance",
+        "events",
+        "feedback"
+      ],
+      "query_unloaded_tables": [
+        "feedback"
+      ],
+      "capabilities": [
+        "sessions",
+        "session_feedback"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "monthly",
+      "activity": "Pod session",
+      "lens": "performed",
+      "name": "Pod attendance",
+      "query": "events.event_attendance_rates",
+      "output_fields": [
+        "attended_rate"
+      ],
+      "selection_expression": "field('attended_rate', kind='pod')",
+      "filters": {
+        "kind": "pod"
+      },
+      "scorecard_line": 86,
+      "required_columns": [
+        "event_attendance.attended",
+        "event_attendance.event_id",
+        "event_attendance.invited",
+        "event_attendance.student_id",
+        "events.event_id",
+        "events.kind",
+        "events.planned_for",
+        "events.status"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "event_attendance",
+        "events"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "sessions",
+        "attendance"
+      ],
+      "status": "partial"
+    },
+    {
+      "cadence": "monthly",
+      "activity": "Peer session",
+      "lens": "conducted",
+      "name": "Peer sessions held vs expected",
+      "query": "events.event_delivery",
+      "output_fields": [
+        "delivered_vs_expected"
+      ],
+      "selection_expression": "field('delivered_vs_expected', kind='peer_session')",
+      "filters": {
+        "kind": "peer_session"
+      },
+      "scorecard_line": 87,
+      "required_columns": [
+        "events.event_id",
+        "events.kind",
+        "events.planned_for",
+        "events.status"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "events",
+        "students"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "additional_events"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "monthly",
+      "activity": "Peer session",
+      "lens": "liked",
+      "name": "Peer session rating (average / 5)",
+      "query": "events.event_feedback",
+      "output_fields": [
+        "avg_composite"
+      ],
+      "selection_expression": "field('avg_composite', kind='peer_session')",
+      "filters": {
+        "kind": "peer_session"
+      },
+      "scorecard_line": 88,
+      "required_columns": [
+        "events.event_id",
+        "events.kind",
+        "events.planned_for",
+        "events.status",
+        "feedback.composite",
+        "feedback.event_id",
+        "feedback.feedback_id",
+        "feedback.has_comment",
+        "feedback.kind",
+        "feedback.student_id",
+        "feedback.submitted_at"
+      ],
+      "required_unloaded_tables": [
+        "feedback"
+      ],
+      "query_tables": [
+        "event_attendance",
+        "events",
+        "feedback"
+      ],
+      "query_unloaded_tables": [
+        "feedback"
+      ],
+      "capabilities": [
+        "additional_events",
+        "session_feedback"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "monthly",
+      "activity": "Peer session",
+      "lens": "performed",
+      "name": "Peer session attendance",
+      "query": "events.event_attendance_rates",
+      "output_fields": [
+        "attended_rate"
+      ],
+      "selection_expression": "field('attended_rate', kind='peer_session')",
+      "filters": {
+        "kind": "peer_session"
+      },
+      "scorecard_line": 89,
+      "required_columns": [
+        "event_attendance.attended",
+        "event_attendance.event_id",
+        "event_attendance.invited",
+        "event_attendance.student_id",
+        "events.event_id",
+        "events.kind",
+        "events.planned_for",
+        "events.status"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "event_attendance",
+        "events"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "additional_events",
+        "attendance"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "monthly",
+      "activity": "Mentor call",
+      "lens": "conducted",
+      "name": "Mentor calls held vs expected",
+      "query": "events.event_delivery",
+      "output_fields": [
+        "delivered_vs_expected"
+      ],
+      "selection_expression": "field('delivered_vs_expected', kind='mentor_call')",
+      "filters": {
+        "kind": "mentor_call"
+      },
+      "scorecard_line": 90,
+      "required_columns": [
+        "events.event_id",
+        "events.kind",
+        "events.planned_for",
+        "events.status"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "events",
+        "students"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "sessions"
+      ],
+      "status": "partial"
+    },
+    {
+      "cadence": "monthly",
+      "activity": "Mentor call",
+      "lens": "liked",
+      "name": "Mentor call rating (average / 5)",
+      "query": "events.event_feedback",
+      "output_fields": [
+        "avg_composite"
+      ],
+      "selection_expression": "field('avg_composite', kind='mentor_call')",
+      "filters": {
+        "kind": "mentor_call"
+      },
+      "scorecard_line": 91,
+      "required_columns": [
+        "events.event_id",
+        "events.kind",
+        "events.planned_for",
+        "events.status",
+        "feedback.composite",
+        "feedback.event_id",
+        "feedback.feedback_id",
+        "feedback.has_comment",
+        "feedback.kind",
+        "feedback.student_id",
+        "feedback.submitted_at"
+      ],
+      "required_unloaded_tables": [
+        "feedback"
+      ],
+      "query_tables": [
+        "event_attendance",
+        "events",
+        "feedback"
+      ],
+      "query_unloaded_tables": [
+        "feedback"
+      ],
+      "capabilities": [
+        "sessions",
+        "session_feedback"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "monthly",
+      "activity": "Mentor call",
+      "lens": "performed",
+      "name": "Mentor call attendance",
+      "query": "events.event_attendance_rates",
+      "output_fields": [
+        "attended_rate"
+      ],
+      "selection_expression": "field('attended_rate', kind='mentor_call')",
+      "filters": {
+        "kind": "mentor_call"
+      },
+      "scorecard_line": 92,
+      "required_columns": [
+        "event_attendance.attended",
+        "event_attendance.event_id",
+        "event_attendance.invited",
+        "event_attendance.student_id",
+        "events.event_id",
+        "events.kind",
+        "events.planned_for",
+        "events.status"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "event_attendance",
+        "events"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "sessions",
+        "attendance"
+      ],
+      "status": "partial"
+    },
+    {
+      "cadence": "monthly",
+      "activity": "Personal branding",
+      "lens": "conducted",
+      "name": "Shoots held / scheduled",
+      "query": "events.event_delivery",
+      "output_fields": [
+        "held_rate"
+      ],
+      "selection_expression": "field('held_rate', kind='branding_shoot')",
+      "filters": {
+        "kind": "branding_shoot"
+      },
+      "scorecard_line": 93,
+      "required_columns": [
+        "events.event_id",
+        "events.kind",
+        "events.planned_for",
+        "events.status"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "events",
+        "students"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "additional_events"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "monthly",
+      "activity": "Personal branding",
+      "lens": "liked",
+      "name": "Posted clips reaching the view target (proxy)",
+      "query": "events.clip_reach",
+      "output_fields": [
+        "reach_rate"
+      ],
+      "selection_expression": "field('reach_rate', kind='branding_shoot')",
+      "filters": {
+        "kind": "branding_shoot"
+      },
+      "scorecard_line": 94,
+      "required_columns": [
+        "events.event_id",
+        "events.kind",
+        "events.planned_for",
+        "events.posted_on",
+        "events.status",
+        "events.views"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "events"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "additional_events",
+        "publishing"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "monthly",
+      "activity": "Personal branding",
+      "lens": "performed",
+      "name": "Shoots posted",
+      "query": "events.posted_clips",
+      "output_fields": [
+        "posted_rate"
+      ],
+      "selection_expression": "field('posted_rate', kind='branding_shoot')",
+      "filters": {
+        "kind": "branding_shoot"
+      },
+      "scorecard_line": 95,
+      "required_columns": [
+        "events.event_id",
+        "events.kind",
+        "events.planned_for",
+        "events.posted_on",
+        "events.status",
+        "events.views"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "events"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "additional_events",
+        "publishing"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "quarterly",
+      "activity": "Podcast",
+      "lens": "conducted",
+      "name": "Podcasts held / scheduled",
+      "query": "events.event_delivery",
+      "output_fields": [
+        "held_rate"
+      ],
+      "selection_expression": "field('held_rate', kind='podcast')",
+      "filters": {
+        "kind": "podcast"
+      },
+      "scorecard_line": 97,
+      "required_columns": [
+        "events.event_id",
+        "events.kind",
+        "events.planned_for",
+        "events.status"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "events",
+        "students"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "additional_events"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "quarterly",
+      "activity": "Podcast",
+      "lens": "liked",
+      "name": "Podcast rating (average / 5)",
+      "query": "events.event_feedback",
+      "output_fields": [
+        "avg_composite"
+      ],
+      "selection_expression": "field('avg_composite', kind='podcast')",
+      "filters": {
+        "kind": "podcast"
+      },
+      "scorecard_line": 98,
+      "required_columns": [
+        "events.event_id",
+        "events.kind",
+        "events.planned_for",
+        "events.status",
+        "feedback.composite",
+        "feedback.event_id",
+        "feedback.feedback_id",
+        "feedback.has_comment",
+        "feedback.kind",
+        "feedback.student_id",
+        "feedback.submitted_at"
+      ],
+      "required_unloaded_tables": [
+        "feedback"
+      ],
+      "query_tables": [
+        "event_attendance",
+        "events",
+        "feedback"
+      ],
+      "query_unloaded_tables": [
+        "feedback"
+      ],
+      "capabilities": [
+        "additional_events",
+        "session_feedback"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "quarterly",
+      "activity": "Podcast",
+      "lens": "performed",
+      "name": "Episodes posted",
+      "query": "events.posted_clips",
+      "output_fields": [
+        "posted_rate"
+      ],
+      "selection_expression": "field('posted_rate', kind='podcast')",
+      "filters": {
+        "kind": "podcast"
+      },
+      "scorecard_line": 99,
+      "required_columns": [
+        "events.event_id",
+        "events.kind",
+        "events.planned_for",
+        "events.posted_on",
+        "events.status",
+        "events.views"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "events"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "additional_events",
+        "publishing"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "quarterly",
+      "activity": "Competition prep",
+      "lens": "conducted",
+      "name": "Students assigned a competition",
+      "query": "quarterly.competition_outcomes",
+      "output_fields": [
+        "assigned_rate"
+      ],
+      "selection_expression": "field('assigned_rate')",
+      "filters": {},
+      "scorecard_line": 100,
+      "required_columns": [
+        "event_attendance.attended",
+        "event_attendance.event_id",
+        "event_attendance.invited",
+        "event_attendance.student_id",
+        "events.event_id",
+        "events.kind",
+        "events.planned_for",
+        "events.status"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "event_attendance",
+        "events",
+        "students"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "additional_events",
+        "attendance"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "quarterly",
+      "activity": "Competition prep",
+      "lens": "liked",
+      "name": "Competition rating (average / 5)",
+      "query": "events.event_feedback",
+      "output_fields": [
+        "avg_composite"
+      ],
+      "selection_expression": "field('avg_composite', kind='competition')",
+      "filters": {
+        "kind": "competition"
+      },
+      "scorecard_line": 101,
+      "required_columns": [
+        "events.event_id",
+        "events.kind",
+        "events.planned_for",
+        "events.status",
+        "feedback.composite",
+        "feedback.event_id",
+        "feedback.feedback_id",
+        "feedback.has_comment",
+        "feedback.kind",
+        "feedback.student_id",
+        "feedback.submitted_at"
+      ],
+      "required_unloaded_tables": [
+        "feedback"
+      ],
+      "query_tables": [
+        "event_attendance",
+        "events",
+        "feedback"
+      ],
+      "query_unloaded_tables": [
+        "feedback"
+      ],
+      "capabilities": [
+        "additional_events",
+        "session_feedback"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "quarterly",
+      "activity": "Competition prep",
+      "lens": "performed",
+      "name": "Assigned students who entered",
+      "query": "quarterly.competition_outcomes",
+      "output_fields": [
+        "entered_rate"
+      ],
+      "selection_expression": "field('entered_rate')",
+      "filters": {},
+      "scorecard_line": 102,
+      "required_columns": [
+        "event_attendance.attended",
+        "event_attendance.event_id",
+        "event_attendance.invited",
+        "event_attendance.student_id",
+        "events.event_id",
+        "events.kind",
+        "events.planned_for",
+        "events.status"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "event_attendance",
+        "events",
+        "students"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "additional_events",
+        "attendance"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "quarterly",
+      "activity": "Parent-child bonding",
+      "lens": "conducted",
+      "name": "Parent workshop held",
+      "query": "events.event_delivery",
+      "output_fields": [
+        "held_rate"
+      ],
+      "selection_expression": "field('held_rate', kind='parent_workshop')",
+      "filters": {
+        "kind": "parent_workshop"
+      },
+      "scorecard_line": 103,
+      "required_columns": [
+        "events.event_id",
+        "events.kind",
+        "events.planned_for",
+        "events.status"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "events",
+        "students"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "additional_events"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "quarterly",
+      "activity": "Parent-child bonding",
+      "lens": "liked",
+      "name": "Parent workshop rating (average / 5)",
+      "query": "events.event_feedback",
+      "output_fields": [
+        "avg_composite"
+      ],
+      "selection_expression": "field('avg_composite', kind='parent_workshop')",
+      "filters": {
+        "kind": "parent_workshop"
+      },
+      "scorecard_line": 104,
+      "required_columns": [
+        "events.event_id",
+        "events.kind",
+        "events.planned_for",
+        "events.status",
+        "feedback.composite",
+        "feedback.event_id",
+        "feedback.feedback_id",
+        "feedback.has_comment",
+        "feedback.kind",
+        "feedback.student_id",
+        "feedback.submitted_at"
+      ],
+      "required_unloaded_tables": [
+        "feedback"
+      ],
+      "query_tables": [
+        "event_attendance",
+        "events",
+        "feedback"
+      ],
+      "query_unloaded_tables": [
+        "feedback"
+      ],
+      "capabilities": [
+        "additional_events",
+        "session_feedback"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "quarterly",
+      "activity": "Parent-child bonding",
+      "lens": "performed",
+      "name": "Parent workshop attendance",
+      "query": "events.event_attendance_rates",
+      "output_fields": [
+        "attended_rate"
+      ],
+      "selection_expression": "field('attended_rate', kind='parent_workshop')",
+      "filters": {
+        "kind": "parent_workshop"
+      },
+      "scorecard_line": 105,
+      "required_columns": [
+        "event_attendance.attended",
+        "event_attendance.event_id",
+        "event_attendance.invited",
+        "event_attendance.student_id",
+        "events.event_id",
+        "events.kind",
+        "events.planned_for",
+        "events.status"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "event_attendance",
+        "events"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "additional_events",
+        "attendance"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "quarterly",
+      "activity": "Out-of-city trip",
+      "lens": "conducted",
+      "name": "Trip held",
+      "query": "events.event_delivery",
+      "output_fields": [
+        "held_rate"
+      ],
+      "selection_expression": "field('held_rate', kind='trip')",
+      "filters": {
+        "kind": "trip"
+      },
+      "scorecard_line": 106,
+      "required_columns": [
+        "events.event_id",
+        "events.kind",
+        "events.planned_for",
+        "events.status"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "events",
+        "students"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "additional_events"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "quarterly",
+      "activity": "Out-of-city trip",
+      "lens": "liked",
+      "name": "Trip rating (average / 5)",
+      "query": "events.event_feedback",
+      "output_fields": [
+        "avg_composite"
+      ],
+      "selection_expression": "field('avg_composite', kind='trip')",
+      "filters": {
+        "kind": "trip"
+      },
+      "scorecard_line": 107,
+      "required_columns": [
+        "events.event_id",
+        "events.kind",
+        "events.planned_for",
+        "events.status",
+        "feedback.composite",
+        "feedback.event_id",
+        "feedback.feedback_id",
+        "feedback.has_comment",
+        "feedback.kind",
+        "feedback.student_id",
+        "feedback.submitted_at"
+      ],
+      "required_unloaded_tables": [
+        "feedback"
+      ],
+      "query_tables": [
+        "event_attendance",
+        "events",
+        "feedback"
+      ],
+      "query_unloaded_tables": [
+        "feedback"
+      ],
+      "capabilities": [
+        "additional_events",
+        "session_feedback"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "quarterly",
+      "activity": "Out-of-city trip",
+      "lens": "performed",
+      "name": "Trip attendance",
+      "query": "events.event_attendance_rates",
+      "output_fields": [
+        "attended_rate"
+      ],
+      "selection_expression": "field('attended_rate', kind='trip')",
+      "filters": {
+        "kind": "trip"
+      },
+      "scorecard_line": 108,
+      "required_columns": [
+        "event_attendance.attended",
+        "event_attendance.event_id",
+        "event_attendance.invited",
+        "event_attendance.student_id",
+        "events.event_id",
+        "events.kind",
+        "events.planned_for",
+        "events.status"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "event_attendance",
+        "events"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "additional_events",
+        "attendance"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "quarterly",
+      "activity": "Social work",
+      "lens": "conducted",
+      "name": "Social work activities held / scheduled",
+      "query": "quarterly.social_work_groups",
+      "output_fields": [
+        "held_rate"
+      ],
+      "selection_expression": "field('held_rate')",
+      "filters": {},
+      "scorecard_line": 109,
+      "required_columns": [
+        "events.event_id",
+        "events.kind",
+        "events.planned_for",
+        "events.status"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "event_attendance",
+        "events",
+        "students"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "additional_events"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "quarterly",
+      "activity": "Social work",
+      "lens": "conducted",
+      "name": "Groups formed",
+      "query": "quarterly.social_work_groups",
+      "output_fields": [
+        "groups_formed_rate"
+      ],
+      "selection_expression": "field('groups_formed_rate')",
+      "filters": {},
+      "scorecard_line": 110,
+      "required_columns": [
+        "event_attendance.attended",
+        "event_attendance.event_id",
+        "event_attendance.invited",
+        "event_attendance.student_id",
+        "events.event_id",
+        "events.group_id",
+        "events.kind",
+        "events.planned_for",
+        "events.status"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "event_attendance",
+        "events",
+        "students"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "additional_events",
+        "groups",
+        "attendance"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "quarterly",
+      "activity": "Social work",
+      "lens": "liked",
+      "name": "Social work rating (average / 5)",
+      "query": "events.event_feedback",
+      "output_fields": [
+        "avg_composite"
+      ],
+      "selection_expression": "field('avg_composite', kind='social_work')",
+      "filters": {
+        "kind": "social_work"
+      },
+      "scorecard_line": 111,
+      "required_columns": [
+        "events.event_id",
+        "events.kind",
+        "events.planned_for",
+        "events.status",
+        "feedback.composite",
+        "feedback.event_id",
+        "feedback.kind",
+        "feedback.student_id",
+        "feedback.submitted_at"
+      ],
+      "required_unloaded_tables": [
+        "feedback"
+      ],
+      "query_tables": [
+        "event_attendance",
+        "events",
+        "feedback"
+      ],
+      "query_unloaded_tables": [
+        "feedback"
+      ],
+      "capabilities": [
+        "additional_events",
+        "proposed_feedback"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "quarterly",
+      "activity": "Social work",
+      "lens": "performed",
+      "name": "Social work attendance",
+      "query": "quarterly.social_work_groups",
+      "output_fields": [
+        "attended_rate"
+      ],
+      "selection_expression": "field('attended_rate')",
+      "filters": {},
+      "scorecard_line": 112,
+      "required_columns": [
+        "event_attendance.attended",
+        "event_attendance.event_id",
+        "event_attendance.invited",
+        "event_attendance.student_id",
+        "events.event_id",
+        "events.kind",
+        "events.planned_for",
+        "events.status"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "event_attendance",
+        "events",
+        "students"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "additional_events",
+        "attendance"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "quarterly",
+      "activity": "Social work",
+      "lens": "performed",
+      "name": "Theme milestones done by deadline",
+      "query": "roadmaps.roadmap_status",
+      "output_fields": [
+        "done_by_deadline",
+        "items_due"
+      ],
+      "selection_expression": "ratio('done_by_deadline', 'items_due', roadmap='social_work')",
+      "filters": {
+        "roadmap": "social_work"
+      },
+      "scorecard_line": 113,
+      "required_columns": [
+        "roadmap_items.done_at",
+        "roadmap_items.due_date",
+        "roadmap_items.roadmap"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "roadmap_items",
+        "students"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "social_goals"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "quarterly",
+      "activity": "Summer program closure",
+      "lens": "conducted",
+      "name": "Application support sessions held / scheduled",
+      "query": "events.event_delivery",
+      "output_fields": [
+        "held_rate"
+      ],
+      "selection_expression": "field('held_rate', kind='summer_support')",
+      "filters": {
+        "kind": "summer_support"
+      },
+      "scorecard_line": 114,
+      "required_columns": [
+        "events.event_id",
+        "events.kind",
+        "events.planned_for",
+        "events.status"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "events",
+        "students"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "additional_events"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "quarterly",
+      "activity": "Summer program closure",
+      "lens": "liked",
+      "name": "Summer support rating (average / 5)",
+      "query": "events.event_feedback",
+      "output_fields": [
+        "avg_composite"
+      ],
+      "selection_expression": "field('avg_composite', kind='summer_support')",
+      "filters": {
+        "kind": "summer_support"
+      },
+      "scorecard_line": 115,
+      "required_columns": [
+        "events.event_id",
+        "events.kind",
+        "events.planned_for",
+        "events.status",
+        "feedback.composite",
+        "feedback.event_id",
+        "feedback.kind",
+        "feedback.student_id",
+        "feedback.submitted_at"
+      ],
+      "required_unloaded_tables": [
+        "feedback"
+      ],
+      "query_tables": [
+        "event_attendance",
+        "events",
+        "feedback"
+      ],
+      "query_unloaded_tables": [
+        "feedback"
+      ],
+      "capabilities": [
+        "additional_events",
+        "proposed_feedback"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "quarterly",
+      "activity": "Summer program closure",
+      "lens": "performed",
+      "name": "Students who submitted an application",
+      "query": "quarterly.summer_applications",
+      "output_fields": [
+        "applied_rate"
+      ],
+      "selection_expression": "field('applied_rate')",
+      "filters": {},
+      "scorecard_line": 116,
+      "required_columns": [
+        "event_attendance.attended",
+        "event_attendance.event_id",
+        "event_attendance.invited",
+        "event_attendance.outcome",
+        "event_attendance.student_id",
+        "events.event_id",
+        "events.kind",
+        "events.planned_for",
+        "events.status"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "event_attendance",
+        "events"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "additional_events",
+        "attendance",
+        "outcomes"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "quarterly",
+      "activity": "Entrepreneurship",
+      "lens": "conducted",
+      "name": "Students with a startup plan",
+      "query": "roadmaps.roadmap_coverage",
+      "output_fields": [
+        "coverage_rate"
+      ],
+      "selection_expression": "field('coverage_rate', roadmap='entrepreneurship')",
+      "filters": {
+        "roadmap": "entrepreneurship"
+      },
+      "scorecard_line": 117,
+      "required_columns": [
+        "roadmap_items.created_at",
+        "roadmap_items.done_at",
+        "roadmap_items.due_date",
+        "roadmap_items.item_id",
+        "roadmap_items.level",
+        "roadmap_items.roadmap",
+        "roadmap_items.student_id"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "roadmap_items",
+        "students"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "goals"
+      ],
+      "status": "partial"
+    },
+    {
+      "cadence": "quarterly",
+      "activity": "Entrepreneurship",
+      "lens": "liked",
+      "name": "Entrepreneurship rating (average / 5)",
+      "query": "quarterly.entrepreneurship_rating",
+      "output_fields": [
+        "avg_composite"
+      ],
+      "selection_expression": "field('avg_composite')",
+      "filters": {},
+      "scorecard_line": 118,
+      "required_columns": [
+        "feedback.composite",
+        "feedback.event_id",
+        "feedback.kind",
+        "feedback.student_id",
+        "feedback.submitted_at"
+      ],
+      "required_unloaded_tables": [
+        "feedback"
+      ],
+      "query_tables": [
+        "feedback",
+        "students"
+      ],
+      "query_unloaded_tables": [
+        "feedback"
+      ],
+      "capabilities": [
+        "proposed_feedback"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "quarterly",
+      "activity": "Entrepreneurship",
+      "lens": "performed",
+      "name": "Theme milestones done by deadline",
+      "query": "roadmaps.roadmap_status",
+      "output_fields": [
+        "done_by_deadline",
+        "items_due"
+      ],
+      "selection_expression": "ratio('done_by_deadline', 'items_due', roadmap='entrepreneurship')",
+      "filters": {
+        "roadmap": "entrepreneurship"
+      },
+      "scorecard_line": 119,
+      "required_columns": [
+        "roadmap_items.created_at",
+        "roadmap_items.done_at",
+        "roadmap_items.due_date",
+        "roadmap_items.item_id",
+        "roadmap_items.level",
+        "roadmap_items.roadmap",
+        "roadmap_items.student_id"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "roadmap_items",
+        "students"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "goals"
+      ],
+      "status": "partial"
+    },
+    {
+      "cadence": "roadmaps",
+      "activity": "Career",
+      "lens": "conducted",
+      "name": "Students with a career roadmap",
+      "query": "roadmaps.roadmap_coverage",
+      "output_fields": [
+        "coverage_rate"
+      ],
+      "selection_expression": "field('coverage_rate', roadmap='career')",
+      "filters": {
+        "roadmap": "career"
+      },
+      "scorecard_line": 121,
+      "required_columns": [
+        "roadmap_items.created_at",
+        "roadmap_items.done_at",
+        "roadmap_items.due_date",
+        "roadmap_items.item_id",
+        "roadmap_items.level",
+        "roadmap_items.roadmap",
+        "roadmap_items.student_id"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "roadmap_items",
+        "students"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "goals"
+      ],
+      "status": "partial"
+    },
+    {
+      "cadence": "roadmaps",
+      "activity": "Career",
+      "lens": "liked",
+      "name": "Check-in: confidence the roadmap leads to the goals (average / 5)",
+      "query": "roadmaps.roadmap_feedback",
+      "output_fields": [
+        "avg_confidence"
+      ],
+      "selection_expression": "field('avg_confidence')",
+      "filters": {},
+      "scorecard_line": 122,
+      "required_columns": [
+        "feedback.composite",
+        "feedback.kind",
+        "feedback.q1_rating",
+        "feedback.q2_rating",
+        "feedback.q3_rating",
+        "feedback.student_id",
+        "feedback.submitted_at"
+      ],
+      "required_unloaded_tables": [
+        "feedback"
+      ],
+      "query_tables": [
+        "feedback",
+        "students"
+      ],
+      "query_unloaded_tables": [
+        "feedback"
+      ],
+      "capabilities": [
+        "roadmap_feedback"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "roadmaps",
+      "activity": "Career",
+      "lens": "performed",
+      "name": "Career roadmap items done",
+      "query": "roadmaps.roadmap_completion",
+      "output_fields": [
+        "completion_rate"
+      ],
+      "selection_expression": "field('completion_rate', roadmap='career')",
+      "filters": {
+        "roadmap": "career"
+      },
+      "scorecard_line": 123,
+      "required_columns": [
+        "roadmap_items.created_at",
+        "roadmap_items.done_at",
+        "roadmap_items.due_date",
+        "roadmap_items.item_id",
+        "roadmap_items.level",
+        "roadmap_items.roadmap",
+        "roadmap_items.student_id"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "roadmap_items",
+        "students"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "goals"
+      ],
+      "status": "partial"
+    },
+    {
+      "cadence": "roadmaps",
+      "activity": "Personal",
+      "lens": "conducted",
+      "name": "Students with monthly milestones",
+      "query": "roadmaps.roadmap_coverage",
+      "output_fields": [
+        "coverage_rate"
+      ],
+      "selection_expression": "field('coverage_rate', roadmap='personal')",
+      "filters": {
+        "roadmap": "personal"
+      },
+      "scorecard_line": 124,
+      "required_columns": [
+        "roadmap_items.created_at",
+        "roadmap_items.done_at",
+        "roadmap_items.due_date",
+        "roadmap_items.item_id",
+        "roadmap_items.level",
+        "roadmap_items.roadmap",
+        "roadmap_items.student_id"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "roadmap_items",
+        "students"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "goals"
+      ],
+      "status": "partial"
+    },
+    {
+      "cadence": "roadmaps",
+      "activity": "Personal",
+      "lens": "liked",
+      "name": "Check-in: how invested students feel (average / 5)",
+      "query": "roadmaps.roadmap_feedback",
+      "output_fields": [
+        "avg_invested"
+      ],
+      "selection_expression": "field('avg_invested')",
+      "filters": {},
+      "scorecard_line": 125,
+      "required_columns": [
+        "feedback.composite",
+        "feedback.kind",
+        "feedback.q1_rating",
+        "feedback.q2_rating",
+        "feedback.q3_rating",
+        "feedback.student_id",
+        "feedback.submitted_at"
+      ],
+      "required_unloaded_tables": [
+        "feedback"
+      ],
+      "query_tables": [
+        "feedback",
+        "students"
+      ],
+      "query_unloaded_tables": [
+        "feedback"
+      ],
+      "capabilities": [
+        "roadmap_feedback"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "roadmaps",
+      "activity": "Personal",
+      "lens": "performed",
+      "name": "Milestones done by deadline",
+      "query": "roadmaps.roadmap_status",
+      "output_fields": [
+        "done_by_deadline",
+        "items_due"
+      ],
+      "selection_expression": "ratio('done_by_deadline', 'items_due', roadmap='personal')",
+      "filters": {
+        "roadmap": "personal"
+      },
+      "scorecard_line": 126,
+      "required_columns": [
+        "roadmap_items.created_at",
+        "roadmap_items.done_at",
+        "roadmap_items.due_date",
+        "roadmap_items.item_id",
+        "roadmap_items.level",
+        "roadmap_items.roadmap",
+        "roadmap_items.student_id"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "roadmap_items",
+        "students"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "goals"
+      ],
+      "status": "partial"
+    },
+    {
+      "cadence": "roadmaps",
+      "activity": "Syllabus completion",
+      "lens": "conducted",
+      "name": "Monthly syllabus reviews done",
+      "query": "roadmaps.advisor_inputs_by_kind",
+      "output_fields": [
+        "done_rate"
+      ],
+      "selection_expression": "field('done_rate', input_kind='syllabus_review')",
+      "filters": {
+        "input_kind": "syllabus_review"
+      },
+      "scorecard_line": 127,
+      "required_columns": [
+        "advisor_inputs.done",
+        "advisor_inputs.input_kind",
+        "advisor_inputs.month",
+        "advisor_inputs.source",
+        "advisor_inputs.student_id"
+      ],
+      "required_unloaded_tables": [
+        "advisor_inputs"
+      ],
+      "query_tables": [
+        "advisor_inputs",
+        "students"
+      ],
+      "query_unloaded_tables": [
+        "advisor_inputs"
+      ],
+      "capabilities": [
+        "advisor_inputs"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "roadmaps",
+      "activity": "Syllabus completion",
+      "lens": "liked",
+      "name": "Roadmap check-in: pace of progress (average / 5)",
+      "query": "roadmaps.roadmap_feedback",
+      "output_fields": [
+        "avg_pace"
+      ],
+      "selection_expression": "field('avg_pace')",
+      "filters": {},
+      "scorecard_line": 128,
+      "required_columns": [
+        "feedback.composite",
+        "feedback.kind",
+        "feedback.q1_rating",
+        "feedback.q2_rating",
+        "feedback.q3_rating",
+        "feedback.student_id",
+        "feedback.submitted_at"
+      ],
+      "required_unloaded_tables": [
+        "feedback"
+      ],
+      "query_tables": [
+        "feedback",
+        "students"
+      ],
+      "query_unloaded_tables": [
+        "feedback"
+      ],
+      "capabilities": [
+        "roadmap_feedback"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "roadmaps",
+      "activity": "Syllabus completion",
+      "lens": "performed",
+      "name": "Chapters covered against the syllabus pace",
+      "query": "weekly.syllabus_progress",
+      "output_fields": [
+        "pace_ratio"
+      ],
+      "selection_expression": "field('pace_ratio')",
+      "filters": {},
+      "scorecard_line": 129,
+      "required_columns": [
+        "syllabus_daily.chapters_completed",
+        "syllabus_daily.day",
+        "syllabus_daily.student_id",
+        "syllabus_daily.total_chapters"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "students",
+        "syllabus_daily"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "syllabus"
+      ],
+      "status": "loaded"
+    },
+    {
+      "cadence": "roadmaps",
+      "activity": "Rigour of completion",
+      "lens": "conducted",
+      "name": "Rigour checks done by the advisor",
+      "query": "roadmaps.advisor_inputs_by_kind",
+      "output_fields": [
+        "done_rate"
+      ],
+      "selection_expression": "field('done_rate', input_kind='rigour_check')",
+      "filters": {
+        "input_kind": "rigour_check"
+      },
+      "scorecard_line": 130,
+      "required_columns": [
+        "advisor_inputs.done",
+        "advisor_inputs.input_kind",
+        "advisor_inputs.month",
+        "advisor_inputs.source",
+        "advisor_inputs.student_id"
+      ],
+      "required_unloaded_tables": [
+        "advisor_inputs"
+      ],
+      "query_tables": [
+        "advisor_inputs",
+        "students"
+      ],
+      "query_unloaded_tables": [
+        "advisor_inputs"
+      ],
+      "capabilities": [
+        "advisor_inputs"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "roadmaps",
+      "activity": "Rigour of completion",
+      "lens": "conducted",
+      "name": "Sprints made when a timeline was missed",
+      "query": "roadmaps.advisor_inputs_by_kind",
+      "output_fields": [
+        "done_rate"
+      ],
+      "selection_expression": "field('done_rate', input_kind='sprint_made')",
+      "filters": {
+        "input_kind": "sprint_made"
+      },
+      "scorecard_line": 131,
+      "required_columns": [
+        "advisor_inputs.done",
+        "advisor_inputs.input_kind",
+        "advisor_inputs.month",
+        "advisor_inputs.source",
+        "advisor_inputs.student_id"
+      ],
+      "required_unloaded_tables": [
+        "advisor_inputs"
+      ],
+      "query_tables": [
+        "advisor_inputs",
+        "students"
+      ],
+      "query_unloaded_tables": [
+        "advisor_inputs"
+      ],
+      "capabilities": [
+        "advisor_inputs"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "roadmaps",
+      "activity": "Rigour of completion",
+      "lens": "liked",
+      "name": "Students still working through their chapters (proxy)",
+      "query": "given.chapter_activity",
+      "output_fields": [
+        "working_rate"
+      ],
+      "selection_expression": "field('working_rate')",
+      "filters": {},
+      "scorecard_line": 132,
+      "required_columns": [
+        "chapter_progress.chapter_id",
+        "chapter_progress.planned_month",
+        "chapter_progress.quarter",
+        "chapter_progress.stage_reached",
+        "chapter_progress.student_id",
+        "chapter_progress.subject",
+        "chapter_progress.updated_at"
+      ],
+      "required_unloaded_tables": [
+        "chapter_progress"
+      ],
+      "query_tables": [
+        "chapter_progress",
+        "students"
+      ],
+      "query_unloaded_tables": [
+        "chapter_progress"
+      ],
+      "capabilities": [
+        "chapters"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "roadmaps",
+      "activity": "Rigour of completion",
+      "lens": "performed",
+      "name": "Chapters from past months fully complete",
+      "query": "given.rigour_closed_months",
+      "output_fields": [
+        "closed_month_rate"
+      ],
+      "selection_expression": "field('closed_month_rate')",
+      "filters": {},
+      "scorecard_line": 133,
+      "required_columns": [
+        "chapter_progress.chapter_id",
+        "chapter_progress.planned_month",
+        "chapter_progress.quarter",
+        "chapter_progress.stage_reached",
+        "chapter_progress.student_id",
+        "chapter_progress.subject",
+        "chapter_progress.updated_at"
+      ],
+      "required_unloaded_tables": [
+        "chapter_progress"
+      ],
+      "query_tables": [
+        "chapter_progress",
+        "students"
+      ],
+      "query_unloaded_tables": [
+        "chapter_progress"
+      ],
+      "capabilities": [
+        "chapters"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "roadmaps",
+      "activity": "Academic",
+      "lens": "conducted",
+      "name": "Students with an academic roadmap",
+      "query": "roadmaps.roadmap_coverage",
+      "output_fields": [
+        "coverage_rate"
+      ],
+      "selection_expression": "field('coverage_rate', roadmap='academic')",
+      "filters": {
+        "roadmap": "academic"
+      },
+      "scorecard_line": 134,
+      "required_columns": [
+        "roadmap_items.created_at",
+        "roadmap_items.done_at",
+        "roadmap_items.due_date",
+        "roadmap_items.item_id",
+        "roadmap_items.level",
+        "roadmap_items.roadmap",
+        "roadmap_items.student_id"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "roadmap_items",
+        "students"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "goals"
+      ],
+      "status": "partial"
+    },
+    {
+      "cadence": "roadmaps",
+      "activity": "Academic",
+      "lens": "conducted",
+      "name": "Advisor inputs done",
+      "query": "roadmaps.advisor_inputs_by_kind",
+      "output_fields": [
+        "inputs_done",
+        "inputs_due"
+      ],
+      "selection_expression": "ratio('inputs_done', 'inputs_due')",
+      "filters": {},
+      "scorecard_line": 135,
+      "required_columns": [
+        "advisor_inputs.done",
+        "advisor_inputs.input_kind",
+        "advisor_inputs.month",
+        "advisor_inputs.source",
+        "advisor_inputs.student_id"
+      ],
+      "required_unloaded_tables": [
+        "advisor_inputs"
+      ],
+      "query_tables": [
+        "advisor_inputs",
+        "students"
+      ],
+      "query_unloaded_tables": [
+        "advisor_inputs"
+      ],
+      "capabilities": [
+        "advisor_inputs"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "roadmaps",
+      "activity": "Academic",
+      "lens": "liked",
+      "name": "Roadmap check-in rating (average / 5)",
+      "query": "roadmaps.roadmap_feedback",
+      "output_fields": [
+        "avg_composite"
+      ],
+      "selection_expression": "field('avg_composite')",
+      "filters": {},
+      "scorecard_line": 136,
+      "required_columns": [
+        "feedback.composite",
+        "feedback.kind",
+        "feedback.q1_rating",
+        "feedback.q2_rating",
+        "feedback.q3_rating",
+        "feedback.student_id",
+        "feedback.submitted_at"
+      ],
+      "required_unloaded_tables": [
+        "feedback"
+      ],
+      "query_tables": [
+        "feedback",
+        "students"
+      ],
+      "query_unloaded_tables": [
+        "feedback"
+      ],
+      "capabilities": [
+        "roadmap_feedback"
+      ],
+      "status": "missing"
+    },
+    {
+      "cadence": "roadmaps",
+      "activity": "Academic",
+      "lens": "performed",
+      "name": "Academic items done by deadline",
+      "query": "roadmaps.roadmap_status",
+      "output_fields": [
+        "done_by_deadline",
+        "items_due"
+      ],
+      "selection_expression": "ratio('done_by_deadline', 'items_due', roadmap='academic')",
+      "filters": {
+        "roadmap": "academic"
+      },
+      "scorecard_line": 137,
+      "required_columns": [
+        "roadmap_items.created_at",
+        "roadmap_items.done_at",
+        "roadmap_items.due_date",
+        "roadmap_items.item_id",
+        "roadmap_items.level",
+        "roadmap_items.roadmap",
+        "roadmap_items.student_id"
+      ],
+      "required_unloaded_tables": [],
+      "query_tables": [
+        "roadmap_items",
+        "students"
+      ],
+      "query_unloaded_tables": [],
+      "capabilities": [
+        "goals"
+      ],
+      "status": "partial"
+    },
+    {
+      "cadence": "roadmaps",
+      "activity": "Academic",
+      "lens": "performed",
+      "name": "Exam scores at or above target",
+      "query": "roadmaps.exam_score_vs_target",
+      "output_fields": [
+        "met_target_rate"
+      ],
+      "selection_expression": "field('met_target_rate', exam_type='formative')",
+      "filters": {
+        "exam_type": "formative"
+      },
+      "scorecard_line": 138,
+      "required_columns": [
+        "exam_targets.actual_score",
+        "exam_targets.exam_type",
+        "exam_targets.student_id",
+        "exam_targets.subject",
+        "exam_targets.target_score"
+      ],
+      "required_unloaded_tables": [
+        "exam_targets"
+      ],
+      "query_tables": [
+        "exam_targets",
+        "students"
+      ],
+      "query_unloaded_tables": [
+        "exam_targets"
+      ],
+      "capabilities": [
+        "exam_targets"
+      ],
+      "status": "missing"
+    }
+  ]
+}

@@ -1,0 +1,194 @@
+{
+  "demo": true,
+  "label": "SYNTHETIC shared two-student cohort; no real ClickUp workspace or exam history",
+  "asOf": "2026-10-24T12:00:00Z",
+  "students": [
+    {
+      "student_id": "DEMO-STUDENT-1",
+      "name": "Demo Student 1",
+      "grade": 10,
+      "advisor_id": "DEMO-ADVISOR",
+      "program_start_date": "2026-01-01",
+      "wearable": "whoop",
+      "wearable_connected_on": "2026-09-01",
+      "wearable_disconnected_on": null
+    },
+    {
+      "student_id": "DEMO-STUDENT-2",
+      "name": "Demo Student 2",
+      "grade": 10,
+      "advisor_id": "DEMO-ADVISOR",
+      "program_start_date": "2026-01-01",
+      "wearable": "none",
+      "wearable_disconnected_on": null,
+      "wearable_connected_on": null
+    }
+  ],
+  "staff": [
+    {
+      "staff_id": "DEMO-ADVISOR",
+      "name": "Demo Advisor",
+      "role": "advisor"
+    }
+  ],
+  "advisor_inputs": [
+    {
+      "student_id": "DEMO-STUDENT-1",
+      "month": "2026-10-01",
+      "input_kind": "targets_aligned",
+      "done": true,
+      "source": "manual"
+    },
+    {
+      "student_id": "DEMO-STUDENT-1",
+      "month": "2026-10-01",
+      "input_kind": "guardrails_set",
+      "done": true,
+      "source": "manual"
+    },
+    {
+      "student_id": "DEMO-STUDENT-1",
+      "month": "2026-10-01",
+      "input_kind": "inputs_at_cadence",
+      "done": true,
+      "source": "manual"
+    },
+    {
+      "student_id": "DEMO-STUDENT-1",
+      "month": "2026-10-01",
+      "input_kind": "deadline_messages_sent",
+      "done": true,
+      "source": "manual"
+    },
+    {
+      "student_id": "DEMO-STUDENT-1",
+      "month": "2026-10-01",
+      "input_kind": "tutor_input_set",
+      "done": true,
+      "source": "manual"
+    },
+    {
+      "student_id": "DEMO-STUDENT-1",
+      "month": "2026-10-01",
+      "input_kind": "sprint_made",
+      "done": true,
+      "source": "manual"
+    },
+    {
+      "student_id": "DEMO-STUDENT-1",
+      "month": "2026-10-01",
+      "input_kind": "syllabus_review",
+      "done": true,
+      "source": "manual"
+    },
+    {
+      "student_id": "DEMO-STUDENT-1",
+      "month": "2026-10-01",
+      "input_kind": "rigour_check",
+      "done": true,
+      "source": "manual"
+    },
+    {
+      "student_id": "DEMO-STUDENT-1",
+      "month": "2026-10-01",
+      "input_kind": "career_roadmap_reviewed",
+      "done": true,
+      "source": "manual"
+    },
+    {
+      "student_id": "DEMO-STUDENT-1",
+      "month": "2026-10-01",
+      "input_kind": "personal_milestones_set",
+      "done": true,
+      "source": "manual"
+    },
+    {
+      "student_id": "DEMO-STUDENT-2",
+      "month": "2026-10-01",
+      "input_kind": "targets_aligned",
+      "done": false,
+      "source": "manual"
+    },
+    {
+      "student_id": "DEMO-STUDENT-2",
+      "month": "2026-10-01",
+      "input_kind": "guardrails_set",
+      "done": false,
+      "source": "manual"
+    },
+    {
+      "student_id": "DEMO-STUDENT-2",
+      "month": "2026-10-01",
+      "input_kind": "inputs_at_cadence",
+      "done": false,
+      "source": "manual"
+    },
+    {
+      "student_id": "DEMO-STUDENT-2",
+      "month": "2026-10-01",
+      "input_kind": "deadline_messages_sent",
+      "done": false,
+      "source": "manual"
+    },
+    {
+      "student_id": "DEMO-STUDENT-2",
+      "month": "2026-10-01",
+      "input_kind": "tutor_input_set",
+      "done": false,
+      "source": "manual"
+    },
+    {
+      "student_id": "DEMO-STUDENT-2",
+      "month": "2026-10-01",
+      "input_kind": "sprint_made",
+      "done": false,
+      "source": "manual"
+    },
+    {
+      "student_id": "DEMO-STUDENT-2",
+      "month": "2026-10-01",
+      "input_kind": "syllabus_review",
+      "done": false,
+      "source": "manual"
+    },
+    {
+      "student_id": "DEMO-STUDENT-2",
+      "month": "2026-10-01",
+      "input_kind": "rigour_check",
+      "done": false,
+      "source": "manual"
+    },
+    {
+      "student_id": "DEMO-STUDENT-2",
+      "month": "2026-10-01",
+      "input_kind": "career_roadmap_reviewed",
+      "done": false,
+      "source": "manual"
+    },
+    {
+      "student_id": "DEMO-STUDENT-2",
+      "month": "2026-10-01",
+      "input_kind": "personal_milestones_set",
+      "done": false,
+      "source": "manual"
+    }
+  ],
+  "exam_targets": [
+    {
+      "student_id": "DEMO-STUDENT-1",
+      "subject": "Mathematics",
+      "exam_type": "unit_test",
+      "target_score": 80,
+      "actual_score": 85
+    },
+    {
+      "student_id": "DEMO-STUDENT-2",
+      "subject": "Mathematics",
+      "exam_type": "unit_test",
+      "target_score": 80,
+      "actual_score": null
+    }
+  ],
+  "examScoreMax": 100,
+  "examCycle": "SYNTHETIC single exam cycle; not a year of historical exams"
+}

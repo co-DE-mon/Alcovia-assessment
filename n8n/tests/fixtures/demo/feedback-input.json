@@ -1,0 +1,355 @@
+{
+  "demo": true,
+  "label": "SYNTHETIC submitted feedback: admin-shaped pages and PROPOSED export contract, not verified live responses",
+  "asOf": "2026-10-08T12:00:00Z",
+  "studentIds": [
+    "DEMO-STUDENT-1",
+    "DEMO-STUDENT-2"
+  ],
+  "eventLinks": [
+    {
+      "eventId": "DEMO-FEEDBACK-EVENT-1",
+      "sourceId": "DEMO-FEEDBACK-EVENT-1",
+      "kind": "academic_session",
+      "status": "held",
+      "plannedFor": "2026-10-01T10:00:00Z"
+    },
+    {
+      "eventId": "DEMO-FEEDBACK-EVENT-2",
+      "sourceId": "DEMO-FEEDBACK-EVENT-2",
+      "kind": "career_session",
+      "status": "held",
+      "plannedFor": "2026-10-01T10:00:00Z"
+    },
+    {
+      "eventId": "DEMO-FEEDBACK-EVENT-3",
+      "sourceId": "DEMO-FEEDBACK-EVENT-3",
+      "kind": "personal_session",
+      "status": "held",
+      "plannedFor": "2026-10-01T10:00:00Z"
+    },
+    {
+      "eventId": "DEMO-FEEDBACK-EVENT-4",
+      "sourceId": "DEMO-FEEDBACK-EVENT-4",
+      "kind": "mindset_session",
+      "status": "held",
+      "plannedFor": "2026-10-01T10:00:00Z"
+    },
+    {
+      "eventId": "DEMO-FEEDBACK-EVENT-5",
+      "sourceId": "DEMO-FEEDBACK-EVENT-5",
+      "kind": "deep_work_session",
+      "status": "held",
+      "plannedFor": "2026-10-01T10:00:00Z"
+    },
+    {
+      "eventId": "DEMO-FEEDBACK-EVENT-6",
+      "sourceId": "DEMO-FEEDBACK-EVENT-6",
+      "kind": "workshop",
+      "status": "held",
+      "plannedFor": "2026-10-01T10:00:00Z"
+    },
+    {
+      "eventId": "DEMO-FEEDBACK-EVENT-7",
+      "sourceId": "DEMO-FEEDBACK-EVENT-7",
+      "kind": "pod",
+      "status": "held",
+      "plannedFor": "2026-10-01T10:00:00Z"
+    },
+    {
+      "eventId": "DEMO-FEEDBACK-EVENT-8",
+      "sourceId": "DEMO-FEEDBACK-EVENT-8",
+      "kind": "mentor_call",
+      "status": "held",
+      "plannedFor": "2026-10-01T10:00:00Z"
+    },
+    {
+      "eventId": "DEMO-FEEDBACK-EVENT-9",
+      "sourceId": "DEMO-FEEDBACK-EVENT-9",
+      "kind": "peer_session",
+      "status": "held",
+      "plannedFor": "2026-10-02T10:00:00Z"
+    },
+    {
+      "eventId": "DEMO-FEEDBACK-EVENT-10",
+      "sourceId": "DEMO-FEEDBACK-EVENT-10",
+      "kind": "podcast",
+      "status": "held",
+      "plannedFor": "2026-10-02T10:00:00Z"
+    },
+    {
+      "eventId": "DEMO-FEEDBACK-EVENT-11",
+      "sourceId": "DEMO-FEEDBACK-EVENT-11",
+      "kind": "podcast",
+      "status": "held",
+      "plannedFor": "2026-10-02T10:00:00Z"
+    },
+    {
+      "eventId": "DEMO-FEEDBACK-EVENT-12",
+      "sourceId": "DEMO-FEEDBACK-EVENT-12",
+      "kind": "competition",
+      "status": "held",
+      "plannedFor": "2026-10-02T10:00:00Z"
+    },
+    {
+      "eventId": "DEMO-FEEDBACK-EVENT-13",
+      "sourceId": "DEMO-FEEDBACK-EVENT-13",
+      "kind": "parent_workshop",
+      "status": "held",
+      "plannedFor": "2026-10-02T10:00:00Z"
+    },
+    {
+      "eventId": "DEMO-FEEDBACK-EVENT-14",
+      "sourceId": "DEMO-FEEDBACK-EVENT-14",
+      "kind": "trip",
+      "status": "held",
+      "plannedFor": "2026-10-02T10:00:00Z"
+    },
+    {
+      "eventId": "DEMO-FEEDBACK-EVENT-15",
+      "sourceId": "DEMO-FEEDBACK-EVENT-15",
+      "kind": "social_work",
+      "status": "held",
+      "plannedFor": "2026-10-02T10:00:00Z"
+    },
+    {
+      "eventId": "DEMO-FEEDBACK-EVENT-16",
+      "sourceId": "DEMO-FEEDBACK-EVENT-16",
+      "kind": "summer_support",
+      "status": "held",
+      "plannedFor": "2026-10-02T10:00:00Z"
+    }
+  ],
+  "adminPages": [
+    {
+      "total": 8,
+      "rows": [
+        {
+          "id": "DEMO-ADMIN-FB-1",
+          "sessionId": "DEMO-FEEDBACK-EVENT-1",
+          "studentId": "DEMO-STUDENT-1",
+          "sessionType": "Academic",
+          "q1Rating": 5,
+          "q2Rating": 3,
+          "q3Rating": 4,
+          "compositeScore": 4.15,
+          "openComment": null,
+          "submittedAt": "2026-10-01T11:00:00Z"
+        },
+        {
+          "id": "DEMO-ADMIN-FB-2",
+          "sessionId": "DEMO-FEEDBACK-EVENT-2",
+          "studentId": "DEMO-STUDENT-1",
+          "sessionType": "Career",
+          "q1Rating": 5,
+          "q2Rating": 3,
+          "q3Rating": 4,
+          "compositeScore": 4.15,
+          "openComment": null,
+          "submittedAt": "2026-10-01T11:00:00Z"
+        },
+        {
+          "id": "DEMO-ADMIN-FB-3",
+          "sessionId": "DEMO-FEEDBACK-EVENT-3",
+          "studentId": "DEMO-STUDENT-1",
+          "sessionType": "Personal",
+          "q1Rating": 5,
+          "q2Rating": 3,
+          "q3Rating": 4,
+          "compositeScore": 4.15,
+          "openComment": null,
+          "submittedAt": "2026-10-01T11:00:00Z"
+        },
+        {
+          "id": "DEMO-ADMIN-FB-4",
+          "sessionId": "DEMO-FEEDBACK-EVENT-4",
+          "studentId": "DEMO-STUDENT-1",
+          "sessionType": "Mindset",
+          "q1Rating": 5,
+          "q2Rating": 3,
+          "q3Rating": 4,
+          "compositeScore": 4.15,
+          "openComment": null,
+          "submittedAt": "2026-10-01T11:00:00Z"
+        }
+      ]
+    },
+    {
+      "total": 8,
+      "rows": [
+        {
+          "id": "DEMO-ADMIN-FB-5",
+          "sessionId": "DEMO-FEEDBACK-EVENT-5",
+          "studentId": "DEMO-STUDENT-1",
+          "sessionType": "DeepWork",
+          "q1Rating": 5,
+          "q2Rating": 3,
+          "q3Rating": 4,
+          "compositeScore": 4.15,
+          "openComment": null,
+          "submittedAt": "2026-10-01T11:00:00Z"
+        },
+        {
+          "id": "DEMO-ADMIN-FB-6",
+          "sessionId": "DEMO-FEEDBACK-EVENT-6",
+          "studentId": "DEMO-STUDENT-1",
+          "sessionType": "Workshop",
+          "q1Rating": 5,
+          "q2Rating": 3,
+          "q3Rating": 4,
+          "compositeScore": 4.15,
+          "openComment": null,
+          "submittedAt": "2026-10-01T11:00:00Z"
+        },
+        {
+          "id": "DEMO-ADMIN-FB-7",
+          "sessionId": "DEMO-FEEDBACK-EVENT-7",
+          "studentId": "DEMO-STUDENT-1",
+          "sessionType": "PodSession",
+          "q1Rating": 5,
+          "q2Rating": 3,
+          "q3Rating": 4,
+          "compositeScore": 4.15,
+          "openComment": null,
+          "submittedAt": "2026-10-01T11:00:00Z"
+        },
+        {
+          "id": "DEMO-ADMIN-FB-8",
+          "sessionId": "DEMO-FEEDBACK-EVENT-8",
+          "studentId": "DEMO-STUDENT-1",
+          "sessionType": "Mentor",
+          "q1Rating": 5,
+          "q2Rating": 3,
+          "q3Rating": 4,
+          "compositeScore": 4.15,
+          "openComment": null,
+          "submittedAt": "2026-10-01T11:00:00Z"
+        }
+      ]
+    }
+  ],
+  "exportResponse": {
+    "rows": [
+      {
+        "id": "DEMO-EXPORT-FB-9",
+        "studentId": "DEMO-STUDENT-1",
+        "eventId": "DEMO-FEEDBACK-EVENT-9",
+        "kind": "session",
+        "q1Rating": 4,
+        "q2Rating": 3,
+        "q3Rating": 5,
+        "compositeScore": 4.2,
+        "hasComment": false,
+        "submittedAt": "2026-10-02T18:45:00Z"
+      },
+      {
+        "id": "DEMO-EXPORT-FB-10",
+        "studentId": "DEMO-STUDENT-1",
+        "eventId": "DEMO-FEEDBACK-EVENT-10",
+        "kind": "podcast_shoot",
+        "q1Rating": 4,
+        "q2Rating": 3,
+        "q3Rating": 5,
+        "compositeScore": 4.2,
+        "hasComment": false,
+        "submittedAt": "2026-10-02T18:45:00Z"
+      },
+      {
+        "id": "DEMO-EXPORT-FB-11",
+        "studentId": "DEMO-STUDENT-1",
+        "eventId": "DEMO-FEEDBACK-EVENT-11",
+        "kind": "podcast_post",
+        "q1Rating": 4,
+        "q2Rating": 3,
+        "q3Rating": 5,
+        "compositeScore": 4.2,
+        "hasComment": false,
+        "submittedAt": "2026-10-02T18:45:00Z"
+      },
+      {
+        "id": "DEMO-EXPORT-FB-12",
+        "studentId": "DEMO-STUDENT-1",
+        "eventId": "DEMO-FEEDBACK-EVENT-12",
+        "kind": "competition",
+        "q1Rating": 4,
+        "q2Rating": 3,
+        "q3Rating": 5,
+        "compositeScore": 4.2,
+        "hasComment": false,
+        "submittedAt": "2026-10-02T18:45:00Z"
+      },
+      {
+        "id": "DEMO-EXPORT-FB-13",
+        "studentId": "DEMO-STUDENT-1",
+        "eventId": "DEMO-FEEDBACK-EVENT-13",
+        "kind": "session",
+        "q1Rating": 4,
+        "q2Rating": 3,
+        "q3Rating": 5,
+        "compositeScore": 4.2,
+        "hasComment": false,
+        "submittedAt": "2026-10-02T18:45:00Z"
+      },
+      {
+        "id": "DEMO-EXPORT-FB-14",
+        "studentId": "DEMO-STUDENT-1",
+        "eventId": "DEMO-FEEDBACK-EVENT-14",
+        "kind": "session",
+        "q1Rating": 4,
+        "q2Rating": 3,
+        "q3Rating": 5,
+        "compositeScore": 4.2,
+        "hasComment": false,
+        "submittedAt": "2026-10-02T18:45:00Z"
+      },
+      {
+        "id": "DEMO-EXPORT-FB-15",
+        "studentId": "DEMO-STUDENT-1",
+        "eventId": "DEMO-FEEDBACK-EVENT-15",
+        "kind": "social_work",
+        "q1Rating": 4,
+        "q2Rating": 3,
+        "q3Rating": 5,
+        "compositeScore": 4.2,
+        "hasComment": false,
+        "submittedAt": "2026-10-02T18:45:00Z"
+      },
+      {
+        "id": "DEMO-EXPORT-FB-16",
+        "studentId": "DEMO-STUDENT-1",
+        "eventId": "DEMO-FEEDBACK-EVENT-16",
+        "kind": "summer_support",
+        "q1Rating": 4,
+        "q2Rating": 3,
+        "q3Rating": 5,
+        "compositeScore": 4.2,
+        "hasComment": false,
+        "submittedAt": "2026-10-02T18:45:00Z"
+      },
+      {
+        "id": "DEMO-EXPORT-FB-17",
+        "studentId": "DEMO-STUDENT-1",
+        "eventId": null,
+        "kind": "roadmap",
+        "q1Rating": 4,
+        "q2Rating": 3,
+        "q3Rating": 5,
+        "compositeScore": 4.2,
+        "hasComment": false,
+        "submittedAt": "2026-10-02T18:45:00Z"
+      },
+      {
+        "id": "DEMO-EXPORT-FB-18",
+        "studentId": "DEMO-STUDENT-1",
+        "eventId": null,
+        "kind": "entrepreneurship",
+        "q1Rating": 4,
+        "q2Rating": null,
+        "q3Rating": null,
+        "compositeScore": 4,
+        "hasComment": false,
+        "submittedAt": "2026-10-02T18:45:00Z"
+      }
+    ]
+  }
+}

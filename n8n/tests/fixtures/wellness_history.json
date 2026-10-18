@@ -1,0 +1,13 @@
+{
+ "success": true,
+ "data": {
+  "history": [
+   { "date": "2026-10-15", "dataSource": "WHOOP", "dayStrain": 8, "recoveryScore": 32, "sleepPerformancePct": 90,
+     "sleepStageLightMs": "21600000", "sleepStageDeepMs": "3600000", "sleepStageRemMs": "3600000" },
+   { "date": "2026-10-16", "dataSource": "WHOOP", "dayStrain": 16, "recoveryScore": 71, "sleepPerformancePct": null,
+     "sleepStageLightMs": null, "sleepStageDeepMs": null, "sleepStageRemMs": null },
+   { "date": "2026-10-17", "dataSource": "MANUAL", "dayStrain": 12, "recoveryScore": 70, "sleepPerformancePct": null,
+     "sleepStageLightMs": null, "sleepStageDeepMs": null, "sleepStageRemMs": null }
+  ]
+ }
+}

@@ -1,0 +1,21 @@
+# Light theme only: a cool off-white page, tinted sidebar, white cards (see ui.CSS) and a soft indigo accent. The status colours (green, amber, red) are fixed in ui.py.
+[theme]
+base = "light"
+primaryColor = "#5b74e0"
+backgroundColor = "#f6f8fc"
+secondaryBackgroundColor = "#edf1fa"
+textColor = "#2a3350"
+font = "sans serif"
+
+[theme.sidebar]
+backgroundColor = "#eef2fb"
+secondaryBackgroundColor = "#e1e8f7"
+
+[client]
+toolbarMode = "minimal"
+
+[browser]
+gatherUsageStats = false
+
+[server]
+headless = true

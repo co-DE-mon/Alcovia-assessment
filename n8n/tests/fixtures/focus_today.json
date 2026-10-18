@@ -1,0 +1,150 @@
+{
+ "totalFocusScore": 84.25,
+ "sessionCount": 13,
+ "totalMinutes": 85.68333333333334,
+ "sessions": [
+  {
+   "id": "bbd1912a-4a1d-5ef9-a058-ca08e0349698",
+   "status": "Failed",
+   "startTime": "2026-10-17T17:40:54.427Z",
+   "durationMinutes": 0.2,
+   "tapCount": 2,
+   "focusScore": 0,
+   "walkMultiplier": 1,
+   "focusQualityScore": 0,
+   "failReason": "give_up"
+  },
+  {
+   "id": "c3fe8a3c-3beb-5c8a-8a21-156a94815c77",
+   "status": "Failed",
+   "startTime": "2026-10-17T12:17:02.445Z",
+   "durationMinutes": 73,
+   "tapCount": 0,
+   "focusScore": 73,
+   "walkMultiplier": 1,
+   "focusQualityScore": null,
+   "failReason": "abandoned"
+  },
+  {
+   "id": "bf26ca70-d315-5ff4-9bde-b72a3c900855",
+   "status": "Failed",
+   "startTime": "2026-10-17T12:05:47.863Z",
+   "durationMinutes": 10.7,
+   "tapCount": 1,
+   "focusScore": 10.2,
+   "walkMultiplier": 1,
+   "focusQualityScore": 99.06832298136646,
+   "failReason": "app_switch"
+  },
+  {
+   "id": "342ac81d-71ae-59f5-bd3c-4a6ec91e7899",
+   "status": "Failed",
+   "startTime": "2026-10-17T12:05:02.306Z",
+   "durationMinutes": 0.5,
+   "tapCount": 1,
+   "focusScore": 0,
+   "walkMultiplier": 1,
+   "focusQualityScore": 79.3103448275862,
+   "failReason": "app_switch"
+  },
+  {
+   "id": "5892cfb5-7872-5a20-8811-aafea2b3f1ac",
+   "status": "Failed",
+   "startTime": "2026-10-17T12:04:29.583Z",
+   "durationMinutes": 0.2,
+   "tapCount": 0,
+   "focusScore": 0.2,
+   "walkMultiplier": 1,
+   "focusQualityScore": 100,
+   "failReason": "app_switch"
+  },
+  {
+   "id": "225d0023-a228-5c7b-b9ce-0d0f321b0602",
+   "status": "Failed",
+   "startTime": "2026-10-17T08:47:31.913Z",
+   "durationMinutes": 0.1,
+   "tapCount": 0,
+   "focusScore": 0.1,
+   "walkMultiplier": 1,
+   "focusQualityScore": 100,
+   "failReason": "give_up"
+  },
+  {
+   "id": "6bebf7e5-4bbf-5772-afd7-15712706d7a1",
+   "status": "Failed",
+   "startTime": "2026-10-17T08:45:43.182Z",
+   "durationMinutes": 0.3,
+   "tapCount": 4,
+   "focusScore": 0,
+   "walkMultiplier": 1,
+   "focusQualityScore": 0,
+   "failReason": "app_switch"
+  },
+  {
+   "id": "bd2206fd-9a44-5d82-9703-5732161fd348",
+   "status": "Failed",
+   "startTime": "2026-10-17T08:42:57.539Z",
+   "durationMinutes": 0,
+   "tapCount": 0,
+   "focusScore": 0,
+   "walkMultiplier": 1,
+   "focusQualityScore": 100,
+   "failReason": "give_up"
+  },
+  {
+   "id": "6a95d351-c70d-5fbf-9090-b894cc0a0072",
+   "status": "Failed",
+   "startTime": "2026-10-17T08:42:08.228Z",
+   "durationMinutes": 0.2,
+   "tapCount": 0,
+   "focusScore": 0.2,
+   "walkMultiplier": 1,
+   "focusQualityScore": 100,
+   "failReason": "give_up"
+  },
+  {
+   "id": "2a07929e-8148-52fe-bc97-ca5f3801bbaf",
+   "status": "Failed",
+   "startTime": "2026-10-17T08:03:54.061Z",
+   "durationMinutes": 0.4,
+   "tapCount": 0,
+   "focusScore": 0.4,
+   "walkMultiplier": 1,
+   "focusQualityScore": 100,
+   "failReason": "give_up"
+  },
+  {
+   "id": "5ad3286e-06c4-5642-a92e-4241e96d6d06",
+   "status": "Failed",
+   "startTime": "2026-10-17T07:41:18.392Z",
+   "durationMinutes": 0,
+   "tapCount": 0,
+   "focusScore": 0,
+   "walkMultiplier": 1,
+   "focusQualityScore": 100,
+   "failReason": "interrupted"
+  },
+  {
+   "id": "f0c87788-4770-5d1c-8cc5-42046af6fa30",
+   "status": "Failed",
+   "startTime": "2026-10-17T07:30:04.117Z",
+   "durationMinutes": 0,
+   "tapCount": 0,
+   "focusScore": 0,
+   "walkMultiplier": 1,
+   "focusQualityScore": 100,
+   "failReason": null
+  },
+  {
+   "id": "e9d91e58-e614-5bea-a289-0c73652b1c1c",
+   "status": "Failed",
+   "startTime": "2026-10-16T23:13:17.324Z",
+   "durationMinutes": 0.3,
+   "tapCount": 0,
+   "focusScore": 0.3,
+   "walkMultiplier": 1,
+   "focusQualityScore": 100,
+   "failReason": "app_switch"
+  }
+ ]
+}

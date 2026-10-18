@@ -1,0 +1,4 @@
+duckdb
+pyyaml
+pytest
+streamlit

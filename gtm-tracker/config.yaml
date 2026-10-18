@@ -1,0 +1,25 @@
+# GTM tracker thresholds and targets. The app and the metric SQL read this file; change a number and the dashboard follows.
+# All data is dummy. Values marked "brief" come from the assessment document; everything else is our assumption.
+
+campaign:
+  frequency_change_at: 3          # brief: ad-set frequency of 3+ means change the ad set
+  trend_window_days: 14           # CTR trend compares the last N days with the N days before
+
+renewals:
+  lookahead_days: 30              # trial renewals due within this many days are "upcoming"
+
+rca:                            # campaign decision rules summarised in README.md; each number is a provisional demo setting
+  lookback_days: 90             # program verdicts look back this far from the timeline's end date
+  mature_after_days: 28         # a lead is "mature" once it is this old; a prototype setting taken from the dummy data's timing, to re-measure on real ClickUp timestamps
+  min_days_running: 14          # initial assessment: days a campaign has been running
+  min_qualified_leads: 30       # initial assessment: qualified leads (program: in the lookback; workshop: in the period); sign-up verdicts apply it to mature qualified leads
+  pause_cost_per_paid_program: 50000   # provisional: 10% of the Rs 5,00,000 full-program fee; validate against real margins
+  worsening_ratio: 1.30         # recent cost per qualified lead over the mature figure; above this blocks Scale
+  ctr_decline: 0.15             # ad-set CTR fall, latest 14 days against the 14 before, that triggers Refresh (frequency 3 or more also does)
+  weak_ad_below_median: 0.50    # an ad whose CTR is at least this far below its campaign's median ad is flagged for creative review
+  landing_drop_off: 0.50        # landing page drop-off above this is flagged for a page fix
+  landing_load_seconds: 4       # landing page load time above this is flagged for a page fix
+  overspend_program: 50000      # program spend with zero paid customers (any lead age) that raises an overspend alert
+  overspend_workshop: 3999      # workshop spend with zero paid seats that raises an overspend alert
+  workshop_min_revenue_ratio: 1.0   # collected revenue over ad spend below this means Pause (advertising only, delivery costs not deducted)
+  followup_days: 60             # days after a workshop seat in which a later program purchase counts as a follow-up conversion

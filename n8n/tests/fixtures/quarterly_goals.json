@@ -1,0 +1,1196 @@
+{
+ "success": true,
+ "data": [
+  {
+   "id": "fee10e97-1794-5883-bfd2-e612a7c7ab1a",
+   "studentId": "8e68ff82-8992-5ba8-a8df-67a9703fa818",
+   "quarterId": "4be58104-77d0-501a-aa29-0dbb3f2a779d",
+   "categoryId": "d4c3a08d-a1b9-54ea-9ae7-97ce3bd45bd5",
+   "description": "description 21",
+   "status": "InProgress",
+   "progressPct": 50,
+   "dueDate": "2026-08-31T00:00:00.000Z",
+   "annualGoalId": null,
+   "syncSourceKey": null,
+   "monthlyGoals": [
+    {
+     "id": "0f2c6914-9fb3-5ef3-a506-7b9865dddc97",
+     "quarterlyGoalId": "fee10e97-1794-5883-bfd2-e612a7c7ab1a",
+     "monthName": "July",
+     "description": "description 22",
+     "status": "NotStarted",
+     "progressPct": 0,
+     "remarks": null,
+     "dueDate": "2026-07-31T00:00:00.000Z",
+     "lastUpdatedSource": null,
+     "syncSourceKey": null,
+     "dailyGoals": [
+      {
+       "id": "a10a9476-289d-5361-afea-7c7d975a7873",
+       "monthlyGoalId": "0f2c6914-9fb3-5ef3-a506-7b9865dddc97",
+       "title": "title 31",
+       "description": null,
+       "status": "NotStarted",
+       "dueDate": "2026-07-31T00:00:00.000Z",
+       "priority": "normal",
+       "createdAt": "2026-07-14T05:35:51.842Z",
+       "updatedAt": "2026-07-14T05:35:51.842Z"
+      },
+      {
+       "id": "fabe73c5-9677-51b0-bf32-601521237a86",
+       "monthlyGoalId": "0f2c6914-9fb3-5ef3-a506-7b9865dddc97",
+       "title": "title 32",
+       "description": null,
+       "status": "NotStarted",
+       "dueDate": "2026-07-31T00:00:00.000Z",
+       "priority": "normal",
+       "createdAt": "2026-07-14T05:35:51.842Z",
+       "updatedAt": "2026-07-14T05:35:51.842Z"
+      },
+      {
+       "id": "c3c936b0-e0af-53c1-ab13-be6a1c190244",
+       "monthlyGoalId": "0f2c6914-9fb3-5ef3-a506-7b9865dddc97",
+       "title": "title 33",
+       "description": null,
+       "status": "NotStarted",
+       "dueDate": "2026-07-31T00:00:00.000Z",
+       "priority": "normal",
+       "createdAt": "2026-07-14T05:35:51.842Z",
+       "updatedAt": "2026-07-14T05:35:51.842Z"
+      },
+      {
+       "id": "84277730-1aad-5640-afd4-b922fcaca293",
+       "monthlyGoalId": "0f2c6914-9fb3-5ef3-a506-7b9865dddc97",
+       "title": "title 34",
+       "description": null,
+       "status": "NotStarted",
+       "dueDate": "2026-07-31T00:00:00.000Z",
+       "priority": "normal",
+       "createdAt": "2026-07-14T05:35:51.842Z",
+       "updatedAt": "2026-07-14T05:35:51.842Z"
+      },
+      {
+       "id": "0e853180-347a-54d5-ba66-35834fe0eed0",
+       "monthlyGoalId": "0f2c6914-9fb3-5ef3-a506-7b9865dddc97",
+       "title": "title 35",
+       "description": null,
+       "status": "NotStarted",
+       "dueDate": "2026-07-31T00:00:00.000Z",
+       "priority": "low",
+       "createdAt": "2026-07-14T05:35:51.842Z",
+       "updatedAt": "2026-07-14T05:35:51.842Z"
+      }
+     ]
+    },
+    {
+     "id": "f2281944-47d0-5939-8ed7-f4a910569746",
+     "quarterlyGoalId": "fee10e97-1794-5883-bfd2-e612a7c7ab1a",
+     "monthName": "August",
+     "description": "description 23",
+     "status": "Achieved",
+     "progressPct": 100,
+     "remarks": null,
+     "dueDate": "2026-08-31T00:00:00.000Z",
+     "lastUpdatedSource": "Service Dashboard",
+     "syncSourceKey": null,
+     "dailyGoals": [
+      {
+       "id": "abd033f1-00c9-5ebb-a715-60466f1b94da",
+       "monthlyGoalId": "f2281944-47d0-5939-8ed7-f4a910569746",
+       "title": "title 36",
+       "description": null,
+       "status": "Achieved",
+       "dueDate": "2026-08-31T00:00:00.000Z",
+       "priority": "normal",
+       "createdAt": "2026-07-14T05:35:53.066Z",
+       "updatedAt": "2026-09-12T10:18:51.372Z"
+      },
+      {
+       "id": "c0447ba7-fca7-505d-b55d-532285f82ec3",
+       "monthlyGoalId": "f2281944-47d0-5939-8ed7-f4a910569746",
+       "title": "title 37",
+       "description": null,
+       "status": "Achieved",
+       "dueDate": "2026-08-31T00:00:00.000Z",
+       "priority": "low",
+       "createdAt": "2026-07-14T05:35:53.066Z",
+       "updatedAt": "2026-09-12T10:18:51.786Z"
+      },
+      {
+       "id": "fe90938b-3329-51ae-91eb-1efb62a21bb5",
+       "monthlyGoalId": "f2281944-47d0-5939-8ed7-f4a910569746",
+       "title": "title 38",
+       "description": null,
+       "status": "Achieved",
+       "dueDate": "2026-08-31T00:00:00.000Z",
+       "priority": "normal",
+       "createdAt": "2026-07-14T05:35:53.066Z",
+       "updatedAt": "2026-09-12T10:18:52.218Z"
+      },
+      {
+       "id": "b48a47f2-57aa-5dee-92c1-1a71b1c2763b",
+       "monthlyGoalId": "f2281944-47d0-5939-8ed7-f4a910569746",
+       "title": "title 39",
+       "description": null,
+       "status": "Achieved",
+       "dueDate": "2026-08-31T00:00:00.000Z",
+       "priority": "high",
+       "createdAt": "2026-07-14T05:35:53.066Z",
+       "updatedAt": "2026-09-12T10:18:50.117Z"
+      },
+      {
+       "id": "f9fdfb3c-953c-5e63-b83a-084891bd6f4a",
+       "monthlyGoalId": "f2281944-47d0-5939-8ed7-f4a910569746",
+       "title": "title 40",
+       "description": null,
+       "status": "Achieved",
+       "dueDate": "2026-08-31T00:00:00.000Z",
+       "priority": "low",
+       "createdAt": "2026-07-14T05:35:53.066Z",
+       "updatedAt": "2026-09-12T10:18:50.772Z"
+      },
+      {
+       "id": "f9ae68ac-7455-533d-91bd-99747948bbea",
+       "monthlyGoalId": "f2281944-47d0-5939-8ed7-f4a910569746",
+       "title": "title 41",
+       "description": null,
+       "status": "Achieved",
+       "dueDate": "2026-08-31T00:00:00.000Z",
+       "priority": "normal",
+       "createdAt": "2026-07-14T05:35:53.066Z",
+       "updatedAt": "2026-09-12T10:18:51.906Z"
+      },
+      {
+       "id": "007524ce-a1ca-598a-b2a1-ef266c9fe97c",
+       "monthlyGoalId": "f2281944-47d0-5939-8ed7-f4a910569746",
+       "title": "title 42",
+       "description": null,
+       "status": "Achieved",
+       "dueDate": "2026-08-31T00:00:00.000Z",
+       "priority": "normal",
+       "createdAt": "2026-07-14T05:35:53.066Z",
+       "updatedAt": "2026-09-12T10:18:52.285Z"
+      }
+     ]
+    }
+   ],
+   "category": {
+    "id": "d4c3a08d-a1b9-54ea-9ae7-97ce3bd45bd5",
+    "type": "Personal"
+   },
+   "quarter": {
+    "id": "4be58104-77d0-501a-aa29-0dbb3f2a779d",
+    "name": "name 41",
+    "academicYearId": "b701b773-bf4d-5644-815f-6c0e96fc499e",
+    "isActive": false
+   }
+  },
+  {
+   "id": "7e0a27b9-7cf5-505b-b368-c3a6d90da05d",
+   "studentId": "8e68ff82-8992-5ba8-a8df-67a9703fa818",
+   "quarterId": "4be58104-77d0-501a-aa29-0dbb3f2a779d",
+   "categoryId": "d1bca055-d6b2-5cb8-b48f-84c1d55a73a5",
+   "description": "description 24",
+   "status": "NotStarted",
+   "progressPct": 0,
+   "dueDate": "2026-07-31T00:00:00.000Z",
+   "annualGoalId": null,
+   "syncSourceKey": null,
+   "monthlyGoals": [
+    {
+     "id": "58cd3a7f-6e9a-5a65-894e-6860831f1ed9",
+     "quarterlyGoalId": "7e0a27b9-7cf5-505b-b368-c3a6d90da05d",
+     "monthName": "July",
+     "description": "description 25",
+     "status": "NotStarted",
+     "progressPct": 0,
+     "remarks": null,
+     "dueDate": "2026-07-31T00:00:00.000Z",
+     "lastUpdatedSource": null,
+     "syncSourceKey": null,
+     "dailyGoals": [
+      {
+       "id": "09267da5-6a6a-55b8-ba8d-9e9955c2829e",
+       "monthlyGoalId": "58cd3a7f-6e9a-5a65-894e-6860831f1ed9",
+       "title": "title 43",
+       "description": "description 26",
+       "status": "NotStarted",
+       "dueDate": "2026-07-31T00:00:00.000Z",
+       "priority": "normal",
+       "createdAt": "2026-07-04T06:55:44.539Z",
+       "updatedAt": "2026-07-04T06:55:44.539Z"
+      },
+      {
+       "id": "5b595402-9652-546a-bc66-c73134f2ac4b",
+       "monthlyGoalId": "58cd3a7f-6e9a-5a65-894e-6860831f1ed9",
+       "title": "title 44",
+       "description": "description 27",
+       "status": "NotStarted",
+       "dueDate": "2026-07-31T00:00:00.000Z",
+       "priority": "high",
+       "createdAt": "2026-07-04T06:55:44.539Z",
+       "updatedAt": "2026-07-04T06:55:44.539Z"
+      },
+      {
+       "id": "236ab880-040d-5a1e-a4a7-cee22f042e6f",
+       "monthlyGoalId": "58cd3a7f-6e9a-5a65-894e-6860831f1ed9",
+       "title": "title 45",
+       "description": "description 28",
+       "status": "NotStarted",
+       "dueDate": "2026-07-31T00:00:00.000Z",
+       "priority": "normal",
+       "createdAt": "2026-07-04T06:55:44.539Z",
+       "updatedAt": "2026-07-04T06:55:44.539Z"
+      },
+      {
+       "id": "5ed186b7-a634-50c5-a58a-fbd40a358510",
+       "monthlyGoalId": "58cd3a7f-6e9a-5a65-894e-6860831f1ed9",
+       "title": "title 46",
+       "description": "description 29",
+       "status": "NotStarted",
+       "dueDate": "2026-07-31T00:00:00.000Z",
+       "priority": "normal",
+       "createdAt": "2026-07-04T06:55:44.539Z",
+       "updatedAt": "2026-07-04T06:55:44.539Z"
+      }
+     ]
+    }
+   ],
+   "category": {
+    "id": "d1bca055-d6b2-5cb8-b48f-84c1d55a73a5",
+    "type": "Career"
+   },
+   "quarter": {
+    "id": "4be58104-77d0-501a-aa29-0dbb3f2a779d",
+    "name": "name 42",
+    "academicYearId": "b701b773-bf4d-5644-815f-6c0e96fc499e",
+    "isActive": false
+   }
+  },
+  {
+   "id": "2333adbd-ae73-5993-80ca-60a702f88fc8",
+   "studentId": "8e68ff82-8992-5ba8-a8df-67a9703fa818",
+   "quarterId": "db128041-f070-5e49-a9eb-1243d18ad958",
+   "categoryId": "d1bca055-d6b2-5cb8-b48f-84c1d55a73a5",
+   "description": "description 30",
+   "status": "InProgress",
+   "progressPct": 66.66666666666667,
+   "dueDate": null,
+   "annualGoalId": null,
+   "syncSourceKey": null,
+   "monthlyGoals": [
+    {
+     "id": "1b8f0984-de69-5a39-899f-5f18f532df33",
+     "quarterlyGoalId": "2333adbd-ae73-5993-80ca-60a702f88fc8",
+     "monthName": "December",
+     "description": null,
+     "status": "NotStarted",
+     "progressPct": 0,
+     "remarks": null,
+     "dueDate": null,
+     "lastUpdatedSource": null,
+     "syncSourceKey": null,
+     "dailyGoals": []
+    },
+    {
+     "id": "5808ba8f-4b06-52b8-baf3-a6c742f776d6",
+     "quarterlyGoalId": "2333adbd-ae73-5993-80ca-60a702f88fc8",
+     "monthName": "October",
+     "description": null,
+     "status": "Achieved",
+     "progressPct": 100,
+     "remarks": null,
+     "dueDate": null,
+     "lastUpdatedSource": "Service Dashboard",
+     "syncSourceKey": null,
+     "dailyGoals": []
+    },
+    {
+     "id": "5e472ee1-af8f-5dc3-b381-53e44ba47762",
+     "quarterlyGoalId": "2333adbd-ae73-5993-80ca-60a702f88fc8",
+     "monthName": "November",
+     "description": null,
+     "status": "Achieved",
+     "progressPct": 100,
+     "remarks": null,
+     "dueDate": null,
+     "lastUpdatedSource": "Service Dashboard",
+     "syncSourceKey": null,
+     "dailyGoals": []
+    }
+   ],
+   "category": {
+    "id": "d1bca055-d6b2-5cb8-b48f-84c1d55a73a5",
+    "type": "Career"
+   },
+   "quarter": {
+    "id": "db128041-f070-5e49-a9eb-1243d18ad958",
+    "name": "name 43",
+    "academicYearId": "b701b773-bf4d-5644-815f-6c0e96fc499e",
+    "isActive": false
+   }
+  },
+  {
+   "id": "5c275cba-1b34-5d82-9462-a95d758c7250",
+   "studentId": "8e68ff82-8992-5ba8-a8df-67a9703fa818",
+   "quarterId": "a8341bcc-7555-55b6-a293-483c4e98245b",
+   "categoryId": "aa664701-39f1-5153-87aa-cfdc99fc924f",
+   "description": "description 31",
+   "status": "InProgress",
+   "progressPct": 10,
+   "dueDate": "2026-06-30T00:00:00.000Z",
+   "annualGoalId": null,
+   "syncSourceKey": null,
+   "monthlyGoals": [
+    {
+     "id": "deb5b3cb-b519-50bc-a3e3-e58798424a86",
+     "quarterlyGoalId": "5c275cba-1b34-5d82-9462-a95d758c7250",
+     "monthName": "June",
+     "description": "description 32",
+     "status": "NotStarted",
+     "progressPct": 0,
+     "remarks": null,
+     "dueDate": "2026-06-30T00:00:00.000Z",
+     "lastUpdatedSource": null,
+     "syncSourceKey": null,
+     "dailyGoals": [
+      {
+       "id": "d192dd5e-4bb6-55e0-a07a-1d17106d5e42",
+       "monthlyGoalId": "deb5b3cb-b519-50bc-a3e3-e58798424a86",
+       "title": "title 47",
+       "description": "description 33",
+       "status": "NotStarted",
+       "dueDate": "2026-06-30T00:00:00.000Z",
+       "priority": "normal",
+       "createdAt": "2026-07-04T06:32:45.618Z",
+       "updatedAt": "2026-07-04T06:32:45.618Z"
+      },
+      {
+       "id": "82b9dd61-4a0d-52a4-9b59-a0bc9a4cca75",
+       "monthlyGoalId": "deb5b3cb-b519-50bc-a3e3-e58798424a86",
+       "title": "title 48",
+       "description": "description 34",
+       "status": "NotStarted",
+       "dueDate": "2026-06-30T00:00:00.000Z",
+       "priority": "high",
+       "createdAt": "2026-07-04T06:32:45.618Z",
+       "updatedAt": "2026-07-04T06:32:45.618Z"
+      },
+      {
+       "id": "babe0a71-55c5-5aa7-8e50-d3790c5ff544",
+       "monthlyGoalId": "deb5b3cb-b519-50bc-a3e3-e58798424a86",
+       "title": "title 49",
+       "description": "description 35",
+       "status": "NotStarted",
+       "dueDate": "2026-06-30T00:00:00.000Z",
+       "priority": "normal",
+       "createdAt": "2026-07-04T06:32:45.618Z",
+       "updatedAt": "2026-07-04T06:32:45.618Z"
+      },
+      {
+       "id": "6cb9a1c6-74b3-57e6-98a2-b1c03657b5ba",
+       "monthlyGoalId": "deb5b3cb-b519-50bc-a3e3-e58798424a86",
+       "title": "title 50",
+       "description": "description 36",
+       "status": "NotStarted",
+       "dueDate": "2026-06-30T00:00:00.000Z",
+       "priority": "normal",
+       "createdAt": "2026-07-04T06:32:45.618Z",
+       "updatedAt": "2026-07-04T06:32:45.618Z"
+      }
+     ]
+    },
+    {
+     "id": "aa0e48b4-eb7e-5a16-a0a2-0f96e3af3bfb",
+     "quarterlyGoalId": "5c275cba-1b34-5d82-9462-a95d758c7250",
+     "monthName": "May",
+     "description": "description 37",
+     "status": "InProgress",
+     "progressPct": 20,
+     "remarks": null,
+     "dueDate": "2026-05-31T00:00:00.000Z",
+     "lastUpdatedSource": "Service Dashboard",
+     "syncSourceKey": null,
+     "dailyGoals": [
+      {
+       "id": "c80f1523-f681-5a30-a505-7739c1cd68cd",
+       "monthlyGoalId": "aa0e48b4-eb7e-5a16-a0a2-0f96e3af3bfb",
+       "title": "title 51",
+       "description": "description 38",
+       "status": "NotStarted",
+       "dueDate": "2026-05-31T00:00:00.000Z",
+       "priority": "normal",
+       "createdAt": "2026-07-04T06:32:43.467Z",
+       "updatedAt": "2026-07-04T06:32:43.467Z"
+      },
+      {
+       "id": "06c69314-39fd-521c-9f12-5dc906fd9a9a",
+       "monthlyGoalId": "aa0e48b4-eb7e-5a16-a0a2-0f96e3af3bfb",
+       "title": "title 52",
+       "description": "description 39",
+       "status": "NotStarted",
+       "dueDate": "2026-05-31T00:00:00.000Z",
+       "priority": "normal",
+       "createdAt": "2026-07-04T06:32:43.467Z",
+       "updatedAt": "2026-07-04T06:32:43.467Z"
+      },
+      {
+       "id": "f1700f69-c0fe-5527-9784-1502e563ff69",
+       "monthlyGoalId": "aa0e48b4-eb7e-5a16-a0a2-0f96e3af3bfb",
+       "title": "title 53",
+       "description": "description 40",
+       "status": "NotStarted",
+       "dueDate": "2026-05-31T00:00:00.000Z",
+       "priority": "low",
+       "createdAt": "2026-07-04T06:32:43.467Z",
+       "updatedAt": "2026-07-04T06:32:43.467Z"
+      },
+      {
+       "id": "73cfe2f1-8102-510b-8b66-25c11ee02ad0",
+       "monthlyGoalId": "aa0e48b4-eb7e-5a16-a0a2-0f96e3af3bfb",
+       "title": "title 54",
+       "description": "description 41",
+       "status": "NotStarted",
+       "dueDate": "2026-05-31T00:00:00.000Z",
+       "priority": "normal",
+       "createdAt": "2026-07-04T06:32:43.467Z",
+       "updatedAt": "2026-07-04T06:32:43.467Z"
+      },
+      {
+       "id": "f74a9022-50e4-5022-80c2-8c25b7c92c61",
+       "monthlyGoalId": "aa0e48b4-eb7e-5a16-a0a2-0f96e3af3bfb",
+       "title": "title 55",
+       "description": "description 42",
+       "status": "Achieved",
+       "dueDate": "2026-05-31T00:00:00.000Z",
+       "priority": "normal",
+       "createdAt": "2026-07-04T06:32:43.467Z",
+       "updatedAt": "2026-10-15T10:16:55.482Z"
+      }
+     ]
+    }
+   ],
+   "category": {
+    "id": "aa664701-39f1-5153-87aa-cfdc99fc924f",
+    "type": "Academic"
+   },
+   "quarter": {
+    "id": "a8341bcc-7555-55b6-a293-483c4e98245b",
+    "name": "name 44",
+    "academicYearId": "b701b773-bf4d-5644-815f-6c0e96fc499e",
+    "isActive": true
+   }
+  },
+  {
+   "id": "0e5efee8-19b8-55fc-80c2-04738596453c",
+   "studentId": "8e68ff82-8992-5ba8-a8df-67a9703fa818",
+   "quarterId": "4be58104-77d0-501a-aa29-0dbb3f2a779d",
+   "categoryId": "d4c3a08d-a1b9-54ea-9ae7-97ce3bd45bd5",
+   "description": "description 43",
+   "status": "NotStarted",
+   "progressPct": 0,
+   "dueDate": "2026-07-31T00:00:00.000Z",
+   "annualGoalId": null,
+   "syncSourceKey": null,
+   "monthlyGoals": [
+    {
+     "id": "2b75264e-4c39-5efb-acf9-6d9753fcb790",
+     "quarterlyGoalId": "0e5efee8-19b8-55fc-80c2-04738596453c",
+     "monthName": "July",
+     "description": "description 44",
+     "status": "NotStarted",
+     "progressPct": 0,
+     "remarks": null,
+     "dueDate": "2026-07-31T00:00:00.000Z",
+     "lastUpdatedSource": null,
+     "syncSourceKey": null,
+     "dailyGoals": [
+      {
+       "id": "8d5331ec-3d21-5ea5-9e9e-12814adbb175",
+       "monthlyGoalId": "2b75264e-4c39-5efb-acf9-6d9753fcb790",
+       "title": "title 56",
+       "description": "description 45",
+       "status": "NotStarted",
+       "dueDate": "2026-07-31T00:00:00.000Z",
+       "priority": "normal",
+       "createdAt": "2026-07-04T06:55:49.762Z",
+       "updatedAt": "2026-07-04T06:55:49.762Z"
+      },
+      {
+       "id": "de7d26e4-b8f2-59c3-9976-9c651564c83d",
+       "monthlyGoalId": "2b75264e-4c39-5efb-acf9-6d9753fcb790",
+       "title": "title 57",
+       "description": "description 46",
+       "status": "NotStarted",
+       "dueDate": "2026-07-31T00:00:00.000Z",
+       "priority": "low",
+       "createdAt": "2026-07-04T06:55:49.762Z",
+       "updatedAt": "2026-07-04T06:55:49.762Z"
+      },
+      {
+       "id": "492cbca2-c0e2-5f7a-bc70-c56e8f72b2da",
+       "monthlyGoalId": "2b75264e-4c39-5efb-acf9-6d9753fcb790",
+       "title": "title 58",
+       "description": "description 47",
+       "status": "NotStarted",
+       "dueDate": "2026-07-31T00:00:00.000Z",
+       "priority": "normal",
+       "createdAt": "2026-07-04T06:55:49.762Z",
+       "updatedAt": "2026-07-04T06:55:49.762Z"
+      }
+     ]
+    }
+   ],
+   "category": {
+    "id": "d4c3a08d-a1b9-54ea-9ae7-97ce3bd45bd5",
+    "type": "Personal"
+   },
+   "quarter": {
+    "id": "4be58104-77d0-501a-aa29-0dbb3f2a779d",
+    "name": "name 45",
+    "academicYearId": "b701b773-bf4d-5644-815f-6c0e96fc499e",
+    "isActive": false
+   }
+  },
+  {
+   "id": "1221179d-80a4-52b0-8f0a-47d96f99b2f6",
+   "studentId": "8e68ff82-8992-5ba8-a8df-67a9703fa818",
+   "quarterId": "4be58104-77d0-501a-aa29-0dbb3f2a779d",
+   "categoryId": "d4c3a08d-a1b9-54ea-9ae7-97ce3bd45bd5",
+   "description": "description 48",
+   "status": "NotStarted",
+   "progressPct": 0,
+   "dueDate": "2026-07-31T00:00:00.000Z",
+   "annualGoalId": null,
+   "syncSourceKey": null,
+   "monthlyGoals": [
+    {
+     "id": "eb3c2b52-43d1-5162-8ef1-6cad708061cb",
+     "quarterlyGoalId": "1221179d-80a4-52b0-8f0a-47d96f99b2f6",
+     "monthName": "July",
+     "description": "description 49",
+     "status": "NotStarted",
+     "progressPct": 0,
+     "remarks": null,
+     "dueDate": "2026-07-31T00:00:00.000Z",
+     "lastUpdatedSource": null,
+     "syncSourceKey": null,
+     "dailyGoals": [
+      {
+       "id": "3ebfa0de-841a-5684-b435-936af841f0a2",
+       "monthlyGoalId": "eb3c2b52-43d1-5162-8ef1-6cad708061cb",
+       "title": "title 59",
+       "description": "description 50",
+       "status": "NotStarted",
+       "dueDate": "2026-07-31T00:00:00.000Z",
+       "priority": "normal",
+       "createdAt": "2026-07-04T06:23:18.109Z",
+       "updatedAt": "2026-07-04T06:23:18.109Z"
+      },
+      {
+       "id": "7da7a7db-0011-57d8-9626-ba824a6e5031",
+       "monthlyGoalId": "eb3c2b52-43d1-5162-8ef1-6cad708061cb",
+       "title": "title 60",
+       "description": "description 51",
+       "status": "NotStarted",
+       "dueDate": "2026-07-31T00:00:00.000Z",
+       "priority": "low",
+       "createdAt": "2026-07-04T06:23:18.109Z",
+       "updatedAt": "2026-07-04T06:23:18.109Z"
+      },
+      {
+       "id": "6a5c01d8-648b-5449-9f6a-de14b39e4f1e",
+       "monthlyGoalId": "eb3c2b52-43d1-5162-8ef1-6cad708061cb",
+       "title": "title 61",
+       "description": "description 52",
+       "status": "NotStarted",
+       "dueDate": "2026-07-31T00:00:00.000Z",
+       "priority": "normal",
+       "createdAt": "2026-07-04T06:23:18.109Z",
+       "updatedAt": "2026-07-04T06:23:18.109Z"
+      }
+     ]
+    }
+   ],
+   "category": {
+    "id": "d4c3a08d-a1b9-54ea-9ae7-97ce3bd45bd5",
+    "type": "Personal"
+   },
+   "quarter": {
+    "id": "4be58104-77d0-501a-aa29-0dbb3f2a779d",
+    "name": "name 46",
+    "academicYearId": "b701b773-bf4d-5644-815f-6c0e96fc499e",
+    "isActive": false
+   }
+  },
+  {
+   "id": "2e661ab5-9255-5ad3-9534-8c9ce2b0e59d",
+   "studentId": "8e68ff82-8992-5ba8-a8df-67a9703fa818",
+   "quarterId": "4be58104-77d0-501a-aa29-0dbb3f2a779d",
+   "categoryId": "aa664701-39f1-5153-87aa-cfdc99fc924f",
+   "description": "description 53",
+   "status": "Achieved",
+   "progressPct": 100,
+   "dueDate": "2026-07-31T00:00:00.000Z",
+   "annualGoalId": null,
+   "syncSourceKey": null,
+   "monthlyGoals": [
+    {
+     "id": "8f623f51-c585-530d-8bb8-58bbeb4aee02",
+     "quarterlyGoalId": "2e661ab5-9255-5ad3-9534-8c9ce2b0e59d",
+     "monthName": "July",
+     "description": "description 54",
+     "status": "Achieved",
+     "progressPct": 100,
+     "remarks": null,
+     "dueDate": "2026-07-31T00:00:00.000Z",
+     "lastUpdatedSource": "Service Dashboard",
+     "syncSourceKey": null,
+     "dailyGoals": [
+      {
+       "id": "5bd5bc38-2773-5106-b5cc-d5617b1e592e",
+       "monthlyGoalId": "8f623f51-c585-530d-8bb8-58bbeb4aee02",
+       "title": "title 62",
+       "description": "description 55",
+       "status": "NotStarted",
+       "dueDate": "2026-07-31T00:00:00.000Z",
+       "priority": "normal",
+       "createdAt": "2026-07-04T06:32:47.989Z",
+       "updatedAt": "2026-07-04T06:32:47.989Z"
+      },
+      {
+       "id": "138be200-4735-5f1a-8333-33cbc40604d9",
+       "monthlyGoalId": "8f623f51-c585-530d-8bb8-58bbeb4aee02",
+       "title": "title 63",
+       "description": "description 56",
+       "status": "NotStarted",
+       "dueDate": "2026-07-31T00:00:00.000Z",
+       "priority": "normal",
+       "createdAt": "2026-07-04T06:32:47.989Z",
+       "updatedAt": "2026-07-04T06:32:47.989Z"
+      },
+      {
+       "id": "877f7c68-f273-51ab-a635-a429d1bbabb0",
+       "monthlyGoalId": "8f623f51-c585-530d-8bb8-58bbeb4aee02",
+       "title": "title 64",
+       "description": "description 57",
+       "status": "NotStarted",
+       "dueDate": "2026-07-31T00:00:00.000Z",
+       "priority": "low",
+       "createdAt": "2026-07-04T06:32:47.989Z",
+       "updatedAt": "2026-07-04T06:32:47.989Z"
+      },
+      {
+       "id": "3eebcf79-71b2-591b-9300-643c2d332e61",
+       "monthlyGoalId": "8f623f51-c585-530d-8bb8-58bbeb4aee02",
+       "title": "title 65",
+       "description": "description 58",
+       "status": "NotStarted",
+       "dueDate": "2026-07-31T00:00:00.000Z",
+       "priority": "normal",
+       "createdAt": "2026-07-04T06:32:47.989Z",
+       "updatedAt": "2026-07-04T06:32:47.989Z"
+      }
+     ]
+    }
+   ],
+   "category": {
+    "id": "aa664701-39f1-5153-87aa-cfdc99fc924f",
+    "type": "Academic"
+   },
+   "quarter": {
+    "id": "4be58104-77d0-501a-aa29-0dbb3f2a779d",
+    "name": "name 47",
+    "academicYearId": "b701b773-bf4d-5644-815f-6c0e96fc499e",
+    "isActive": false
+   }
+  },
+  {
+   "id": "8098ef66-3549-58c8-9abd-1a08ad3a676f",
+   "studentId": "8e68ff82-8992-5ba8-a8df-67a9703fa818",
+   "quarterId": "a8341bcc-7555-55b6-a293-483c4e98245b",
+   "categoryId": "d1bca055-d6b2-5cb8-b48f-84c1d55a73a5",
+   "description": "description 59",
+   "status": "InProgress",
+   "progressPct": 50,
+   "dueDate": "2026-06-30T00:00:00.000Z",
+   "annualGoalId": null,
+   "syncSourceKey": null,
+   "monthlyGoals": [
+    {
+     "id": "445153d9-1d30-55dc-a307-ef1976d5c4e0",
+     "quarterlyGoalId": "8098ef66-3549-58c8-9abd-1a08ad3a676f",
+     "monthName": "June",
+     "description": "description 60",
+     "status": "NotStarted",
+     "progressPct": 0,
+     "remarks": null,
+     "dueDate": "2026-06-30T00:00:00.000Z",
+     "lastUpdatedSource": null,
+     "syncSourceKey": null,
+     "dailyGoals": [
+      {
+       "id": "5ad78b9e-1770-5e11-a34a-b23bdbfbf1e5",
+       "monthlyGoalId": "445153d9-1d30-55dc-a307-ef1976d5c4e0",
+       "title": "title 66",
+       "description": "description 61",
+       "status": "NotStarted",
+       "dueDate": "2026-06-30T00:00:00.000Z",
+       "priority": "normal",
+       "createdAt": "2026-07-04T06:24:24.231Z",
+       "updatedAt": "2026-07-04T06:24:24.231Z"
+      },
+      {
+       "id": "1f36f618-f689-57b4-9098-925f06e85ada",
+       "monthlyGoalId": "445153d9-1d30-55dc-a307-ef1976d5c4e0",
+       "title": "title 67",
+       "description": "description 62",
+       "status": "NotStarted",
+       "dueDate": "2026-06-30T00:00:00.000Z",
+       "priority": "normal",
+       "createdAt": "2026-07-04T06:24:24.231Z",
+       "updatedAt": "2026-07-04T06:24:24.231Z"
+      }
+     ]
+    },
+    {
+     "id": "3cc9be2c-2e7a-5573-9f1f-8965694add94",
+     "quarterlyGoalId": "8098ef66-3549-58c8-9abd-1a08ad3a676f",
+     "monthName": "May",
+     "description": "description 63",
+     "status": "Achieved",
+     "progressPct": 100,
+     "remarks": null,
+     "dueDate": "2026-05-31T00:00:00.000Z",
+     "lastUpdatedSource": "Service Dashboard",
+     "syncSourceKey": null,
+     "dailyGoals": [
+      {
+       "id": "512f24d0-1b29-5933-be66-78197b35e6f4",
+       "monthlyGoalId": "3cc9be2c-2e7a-5573-9f1f-8965694add94",
+       "title": "title 68",
+       "description": "description 64",
+       "status": "Achieved",
+       "dueDate": "2026-05-31T00:00:00.000Z",
+       "priority": "normal",
+       "createdAt": "2026-07-04T06:24:22.583Z",
+       "updatedAt": "2026-10-15T14:18:47.350Z"
+      },
+      {
+       "id": "3d42a81b-bf1c-5236-bcfd-fac7b89bbe05",
+       "monthlyGoalId": "3cc9be2c-2e7a-5573-9f1f-8965694add94",
+       "title": "title 69",
+       "description": "description 65",
+       "status": "Achieved",
+       "dueDate": "2026-05-31T00:00:00.000Z",
+       "priority": "normal",
+       "createdAt": "2026-07-04T06:24:22.583Z",
+       "updatedAt": "2026-10-15T14:18:53.258Z"
+      },
+      {
+       "id": "21cb8a3b-f806-5084-a5a5-207559f1d92b",
+       "monthlyGoalId": "3cc9be2c-2e7a-5573-9f1f-8965694add94",
+       "title": "title 70",
+       "description": "description 66",
+       "status": "Achieved",
+       "dueDate": "2026-05-31T00:00:00.000Z",
+       "priority": "low",
+       "createdAt": "2026-07-04T06:24:22.583Z",
+       "updatedAt": "2026-10-17T08:46:22.161Z"
+      },
+      {
+       "id": "e1170b3b-f332-564d-97cc-002fd20cf3ca",
+       "monthlyGoalId": "3cc9be2c-2e7a-5573-9f1f-8965694add94",
+       "title": "title 71",
+       "description": "description 67",
+       "status": "Achieved",
+       "dueDate": "2026-05-31T00:00:00.000Z",
+       "priority": "high",
+       "createdAt": "2026-07-04T06:24:22.583Z",
+       "updatedAt": "2026-10-17T08:46:28.752Z"
+      },
+      {
+       "id": "d86338b1-b46c-551c-868a-53113c417ece",
+       "monthlyGoalId": "3cc9be2c-2e7a-5573-9f1f-8965694add94",
+       "title": "title 72",
+       "description": "description 68",
+       "status": "Achieved",
+       "dueDate": "2026-05-31T00:00:00.000Z",
+       "priority": "normal",
+       "createdAt": "2026-07-04T06:24:22.583Z",
+       "updatedAt": "2026-10-15T14:18:33.471Z"
+      }
+     ]
+    }
+   ],
+   "category": {
+    "id": "d1bca055-d6b2-5cb8-b48f-84c1d55a73a5",
+    "type": "Career"
+   },
+   "quarter": {
+    "id": "a8341bcc-7555-55b6-a293-483c4e98245b",
+    "name": "name 48",
+    "academicYearId": "b701b773-bf4d-5644-815f-6c0e96fc499e",
+    "isActive": true
+   }
+  },
+  {
+   "id": "bffee131-f3b5-5878-a38e-757d67d669ec",
+   "studentId": "8e68ff82-8992-5ba8-a8df-67a9703fa818",
+   "quarterId": "4be58104-77d0-501a-aa29-0dbb3f2a779d",
+   "categoryId": "d4c3a08d-a1b9-54ea-9ae7-97ce3bd45bd5",
+   "description": "description 69",
+   "status": "NotStarted",
+   "progressPct": 0,
+   "dueDate": "2026-07-31T00:00:00.000Z",
+   "annualGoalId": null,
+   "syncSourceKey": null,
+   "monthlyGoals": [
+    {
+     "id": "6fc3938d-641b-59bf-8fc2-777eb627a26a",
+     "quarterlyGoalId": "bffee131-f3b5-5878-a38e-757d67d669ec",
+     "monthName": "July",
+     "description": "description 70",
+     "status": "NotStarted",
+     "progressPct": 0,
+     "remarks": null,
+     "dueDate": "2026-07-31T00:00:00.000Z",
+     "lastUpdatedSource": null,
+     "syncSourceKey": null,
+     "dailyGoals": [
+      {
+       "id": "966d93fd-b073-50e7-9e62-3d25c1860480",
+       "monthlyGoalId": "6fc3938d-641b-59bf-8fc2-777eb627a26a",
+       "title": "title 73",
+       "description": "description 71",
+       "status": "NotStarted",
+       "dueDate": "2026-07-31T00:00:00.000Z",
+       "priority": "normal",
+       "createdAt": "2026-07-04T06:32:58.862Z",
+       "updatedAt": "2026-07-04T06:32:58.862Z"
+      },
+      {
+       "id": "75480582-7c16-5002-b527-c3257e5f7829",
+       "monthlyGoalId": "6fc3938d-641b-59bf-8fc2-777eb627a26a",
+       "title": "title 74",
+       "description": "description 72",
+       "status": "NotStarted",
+       "dueDate": "2026-07-31T00:00:00.000Z",
+       "priority": "low",
+       "createdAt": "2026-07-04T06:32:58.862Z",
+       "updatedAt": "2026-07-04T06:32:58.862Z"
+      },
+      {
+       "id": "44ad2cc3-ceb2-5afd-9f4f-fce895358c3f",
+       "monthlyGoalId": "6fc3938d-641b-59bf-8fc2-777eb627a26a",
+       "title": "title 75",
+       "description": "description 73",
+       "status": "NotStarted",
+       "dueDate": "2026-07-31T00:00:00.000Z",
+       "priority": "normal",
+       "createdAt": "2026-07-04T06:32:58.862Z",
+       "updatedAt": "2026-07-04T06:32:58.862Z"
+      }
+     ]
+    }
+   ],
+   "category": {
+    "id": "d4c3a08d-a1b9-54ea-9ae7-97ce3bd45bd5",
+    "type": "Personal"
+   },
+   "quarter": {
+    "id": "4be58104-77d0-501a-aa29-0dbb3f2a779d",
+    "name": "name 49",
+    "academicYearId": "b701b773-bf4d-5644-815f-6c0e96fc499e",
+    "isActive": false
+   }
+  },
+  {
+   "id": "109f053c-8051-5ef5-b49b-ace77d463878",
+   "studentId": "8e68ff82-8992-5ba8-a8df-67a9703fa818",
+   "quarterId": "4be58104-77d0-501a-aa29-0dbb3f2a779d",
+   "categoryId": "aa664701-39f1-5153-87aa-cfdc99fc924f",
+   "description": "description 74",
+   "status": "NotStarted",
+   "progressPct": 0,
+   "dueDate": "2026-07-31T00:00:00.000Z",
+   "annualGoalId": null,
+   "syncSourceKey": null,
+   "monthlyGoals": [
+    {
+     "id": "fd2cd699-08ad-5e24-8ecc-bfc438251265",
+     "quarterlyGoalId": "109f053c-8051-5ef5-b49b-ace77d463878",
+     "monthName": "July",
+     "description": "description 75",
+     "status": "NotStarted",
+     "progressPct": 0,
+     "remarks": null,
+     "dueDate": "2026-07-31T00:00:00.000Z",
+     "lastUpdatedSource": null,
+     "syncSourceKey": null,
+     "dailyGoals": [
+      {
+       "id": "a200f96f-e001-5fd4-bd13-7503ab8818df",
+       "monthlyGoalId": "fd2cd699-08ad-5e24-8ecc-bfc438251265",
+       "title": "title 76",
+       "description": "description 76",
+       "status": "NotStarted",
+       "dueDate": "2026-07-31T00:00:00.000Z",
+       "priority": "normal",
+       "createdAt": "2026-07-04T06:23:06.965Z",
+       "updatedAt": "2026-07-04T06:23:06.965Z"
+      },
+      {
+       "id": "45d259c5-bc2d-5073-b769-9a630dcc3125",
+       "monthlyGoalId": "fd2cd699-08ad-5e24-8ecc-bfc438251265",
+       "title": "title 77",
+       "description": "description 77",
+       "status": "NotStarted",
+       "dueDate": "2026-07-31T00:00:00.000Z",
+       "priority": "normal",
+       "createdAt": "2026-07-04T06:23:06.965Z",
+       "updatedAt": "2026-07-04T06:23:06.965Z"
+      },
+      {
+       "id": "d0c723d4-4d56-5e39-bd4f-d0a1153b8637",
+       "monthlyGoalId": "fd2cd699-08ad-5e24-8ecc-bfc438251265",
+       "title": "title 78",
+       "description": "description 78",
+       "status": "NotStarted",
+       "dueDate": "2026-07-31T00:00:00.000Z",
+       "priority": "low",
+       "createdAt": "2026-07-04T06:23:06.965Z",
+       "updatedAt": "2026-07-04T06:23:06.965Z"
+      },
+      {
+       "id": "bdd88c35-aec6-5154-bfd3-ff09703e4504",
+       "monthlyGoalId": "fd2cd699-08ad-5e24-8ecc-bfc438251265",
+       "title": "title 79",
+       "description": "description 79",
+       "status": "NotStarted",
+       "dueDate": "2026-07-31T00:00:00.000Z",
+       "priority": "normal",
+       "createdAt": "2026-07-04T06:23:06.965Z",
+       "updatedAt": "2026-07-04T06:23:06.965Z"
+      }
+     ]
+    }
+   ],
+   "category": {
+    "id": "aa664701-39f1-5153-87aa-cfdc99fc924f",
+    "type": "Academic"
+   },
+   "quarter": {
+    "id": "4be58104-77d0-501a-aa29-0dbb3f2a779d",
+    "name": "name 50",
+    "academicYearId": "b701b773-bf4d-5644-815f-6c0e96fc499e",
+    "isActive": false
+   }
+  },
+  {
+   "id": "1615be94-1681-5b8d-89dd-796b5b3513b8",
+   "studentId": "8e68ff82-8992-5ba8-a8df-67a9703fa818",
+   "quarterId": "4be58104-77d0-501a-aa29-0dbb3f2a779d",
+   "categoryId": "d4c3a08d-a1b9-54ea-9ae7-97ce3bd45bd5",
+   "description": "description 80",
+   "status": "NotStarted",
+   "progressPct": 0,
+   "dueDate": "2026-07-31T00:00:00.000Z",
+   "annualGoalId": null,
+   "syncSourceKey": null,
+   "monthlyGoals": [
+    {
+     "id": "cc7d9d0b-dc77-5f6a-943a-9d512fa187ec",
+     "quarterlyGoalId": "1615be94-1681-5b8d-89dd-796b5b3513b8",
+     "monthName": "July",
+     "description": "description 81",
+     "status": "NotStarted",
+     "progressPct": 0,
+     "remarks": null,
+     "dueDate": "2026-07-31T00:00:00.000Z",
+     "lastUpdatedSource": null,
+     "syncSourceKey": null,
+     "dailyGoals": [
+      {
+       "id": "4fcb5d5a-0ee1-5ee6-a830-c299d620917f",
+       "monthlyGoalId": "cc7d9d0b-dc77-5f6a-943a-9d512fa187ec",
+       "title": "title 80",
+       "description": "description 82",
+       "status": "NotStarted",
+       "dueDate": "2026-07-31T00:00:00.000Z",
+       "priority": "normal",
+       "createdAt": "2026-07-04T06:24:30.976Z",
+       "updatedAt": "2026-07-04T06:24:30.976Z"
+      },
+      {
+       "id": "0e0192a2-bfe4-5ba6-91bc-f2c56ec988d5",
+       "monthlyGoalId": "cc7d9d0b-dc77-5f6a-943a-9d512fa187ec",
+       "title": "title 81",
+       "description": "description 83",
+       "status": "NotStarted",
+       "dueDate": "2026-07-31T00:00:00.000Z",
+       "priority": "low",
+       "createdAt": "2026-07-04T06:24:30.976Z",
+       "updatedAt": "2026-07-04T06:24:30.976Z"
+      },
+      {
+       "id": "94a7ab48-04ec-5919-a79b-c695f59ad3d6",
+       "monthlyGoalId": "cc7d9d0b-dc77-5f6a-943a-9d512fa187ec",
+       "title": "title 82",
+       "description": "description 84",
+       "status": "NotStarted",
+       "dueDate": "2026-07-31T00:00:00.000Z",
+       "priority": "normal",
+       "createdAt": "2026-07-04T06:24:30.976Z",
+       "updatedAt": "2026-07-04T06:24:30.976Z"
+      }
+     ]
+    }
+   ],
+   "category": {
+    "id": "d4c3a08d-a1b9-54ea-9ae7-97ce3bd45bd5",
+    "type": "Personal"
+   },
+   "quarter": {
+    "id": "4be58104-77d0-501a-aa29-0dbb3f2a779d",
+    "name": "name 51",
+    "academicYearId": "b701b773-bf4d-5644-815f-6c0e96fc499e",
+    "isActive": false
+   }
+  },
+  {
+   "id": "314e45d5-508a-5aa4-b004-b1e789986db7",
+   "studentId": "8e68ff82-8992-5ba8-a8df-67a9703fa818",
+   "quarterId": "a8341bcc-7555-55b6-a293-483c4e98245b",
+   "categoryId": "d1bca055-d6b2-5cb8-b48f-84c1d55a73a5",
+   "description": "description 85",
+   "status": "NotStarted",
+   "progressPct": 0,
+   "dueDate": "2026-06-30T00:00:00.000Z",
+   "annualGoalId": null,
+   "syncSourceKey": null,
+   "monthlyGoals": [
+    {
+     "id": "5697b4a4-f2e9-5b9a-9c41-3a0a7990afef",
+     "quarterlyGoalId": "314e45d5-508a-5aa4-b004-b1e789986db7",
+     "monthName": "May",
+     "description": "description 86",
+     "status": "NotStarted",
+     "progressPct": 0,
+     "remarks": null,
+     "dueDate": "2026-05-31T00:00:00.000Z",
+     "lastUpdatedSource": null,
+     "syncSourceKey": null,
+     "dailyGoals": [
+      {
+       "id": "6eafcb14-0474-5f5f-baf1-fdfa4cb3e4d9",
+       "monthlyGoalId": "5697b4a4-f2e9-5b9a-9c41-3a0a7990afef",
+       "title": "title 83",
+       "description": "description 87",
+       "status": "NotStarted",
+       "dueDate": "2026-05-31T00:00:00.000Z",
+       "priority": "high",
+       "createdAt": "2026-07-04T06:32:50.383Z",
+       "updatedAt": "2026-07-04T06:32:50.383Z"
+      },
+      {
+       "id": "4a6c3370-0709-58d2-8cbe-497348b03133",
+       "monthlyGoalId": "5697b4a4-f2e9-5b9a-9c41-3a0a7990afef",
+       "title": "title 84",
+       "description": "description 88",
+       "status": "NotStarted",
+       "dueDate": "2026-05-31T00:00:00.000Z",
+       "priority": "low",
+       "createdAt": "2026-07-04T06:32:50.383Z",
+       "updatedAt": "2026-07-04T06:32:50.383Z"
+      },
+      {
+       "id": "062be1af-1e8b-5272-908d-005be1897945",
+       "monthlyGoalId": "5697b4a4-f2e9-5b9a-9c41-3a0a7990afef",
+       "title": "title 85",
+       "description": "description 89",
+       "status": "NotStarted",
+       "dueDate": "2026-05-31T00:00:00.000Z",
+       "priority": "normal",
+       "createdAt": "2026-07-04T06:32:50.383Z",
+       "updatedAt": "2026-07-04T06:32:50.383Z"
+      },
+      {
+       "id": "d6d7dea8-7201-5bad-9aad-712fe0b78762",
+       "monthlyGoalId": "5697b4a4-f2e9-5b9a-9c41-3a0a7990afef",
+       "title": "title 86",
+       "description": "description 90",
+       "status": "NotStarted",
+       "dueDate": "2026-05-31T00:00:00.000Z",
+       "priority": "normal",
+       "createdAt": "2026-07-04T06:32:50.383Z",
+       "updatedAt": "2026-07-04T06:32:50.383Z"
+      },
+      {
+       "id": "bdddb2c9-6906-51c2-a1ac-92eec0b43920",
+       "monthlyGoalId": "5697b4a4-f2e9-5b9a-9c41-3a0a7990afef",
+       "title": "title 87",
+       "description": "description 91",
+       "status": "NotStarted",
+       "dueDate": "2026-05-31T00:00:00.000Z",
+       "priority": "normal",
+       "createdAt": "2026-07-04T06:32:50.383Z",
+       "updatedAt": "2026-07-04T06:32:50.383Z"
+      }
+     ]
+    },
+    {
+     "id": "9665b535-7b14-5b66-92bf-62f27267fb2b",
+     "quarterlyGoalId": "314e45d5-508a-5aa4-b004-b1e789986db7",
+     "monthName": "June",
+     "description": "description 92",
+     "status": "NotStarted",
+     "progressPct": 0,
+     "remarks": null,
+     "dueDate": "2026-06-30T00:00:00.000Z",
+     "lastUpdatedSource": null,
+     "syncSourceKey": null,
+     "dailyGoals": [
+      {
+       "id": "8360afd7-3745-5a51-acd3-7d25aede9b05",
+       "monthlyGoalId": "9665b535-7b14-5b66-92bf-62f27267fb2b",
+       "title": "title 88",
+       "description": "description 93",
+       "status": "NotStarted",
+       "dueDate": "2026-06-30T00:00:00.000Z",
+       "priority": "normal",
+       "createdAt": "2026-07-04T06:32:52.045Z",
+       "updatedAt": "2026-07-04T06:32:52.045Z"
+      },
+      {
+       "id": "07f23987-27e4-5a53-8021-98dbfd94c84b",
+       "monthlyGoalId": "9665b535-7b14-5b66-92bf-62f27267fb2b",
+       "title": "title 89",
+       "description": "description 94",
+       "status": "NotStarted",
+       "dueDate": "2026-06-30T00:00:00.000Z",
+       "priority": "normal",
+       "createdAt": "2026-07-04T06:32:52.045Z",
+       "updatedAt": "2026-07-04T06:32:52.045Z"
+      }
+     ]
+    }
+   ],
+   "category": {
+    "id": "d1bca055-d6b2-5cb8-b48f-84c1d55a73a5",
+    "type": "Career"
+   },
+   "quarter": {
+    "id": "a8341bcc-7555-55b6-a293-483c4e98245b",
+    "name": "name 52",
+    "academicYearId": "b701b773-bf4d-5644-815f-6c0e96fc499e",
+    "isActive": true
+   }
+  }
+ ],
+ "meta": {
+  "page": 1,
+  "limit": 100,
+  "total": 12
+ }
+}

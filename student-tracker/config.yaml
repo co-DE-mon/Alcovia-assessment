@@ -1,0 +1,143 @@
+# Student tracker thresholds and targets. The app and the metric SQL read this file; change a number here and the dashboard follows.
+# Every value below is OUR assumption unless the comment says it came from the brief (see README.md#assumption-reference-index).
+
+quiz:
+  entry_window_minutes: 15        # from the app: "15-minute entry window from the quiz start time"
+  start_hour: 20                  # brief: quiz at 8pm [A4]
+  regular_taker_days: [4, 7]      # "took at least 4 of the last 7 quizzes" [A32]
+
+focus:
+  daily_target_minutes: 60        # [A6] assumption, not given by Alcovia
+
+wellness:
+  strain_band: [8, 16]            # [A6] Whoop day strain, 0-21 scale; assumption
+  sleep_target_hours: 8           # [A6]
+  low_recovery_pct: 33            # recovery below this counts as a low-recovery day [A6]
+  connected_after_days: 30        # "still connected after 30 days" liked proxy [A2]
+
+syllabus:
+  quarter_target_pct: 25          # brief: 25% of the syllabus a quarter [A13]
+  on_track_ratio: 0.8             # on track when completion is at least this share of the pace target [A55]
+  stages_total: 5                 # brief: read, notes, practice above 70%, timed past paper, exam accuracy above 80%
+  practice_accuracy_pct: 70       # brief; read by the n8n step that derives stage_reached from chapter scores (demo chapter loader) [A16]
+  readiness_accuracy_pct: 80      # brief; same use as above
+
+roadmap:
+  on_track_pct: 80                # items done by deadline / items due by today [A30]
+
+branding:
+  view_target: 1500               # [A62] a posted clip counts as reaching its audience at this many views; our assumption, Alcovia gave no target
+
+sessions:
+  policy_per_month:               # from the app, grade 10 account; may differ by grade [A33]
+    career: 4
+    academic: 2
+    personal: 2
+
+events_per_month:
+  workshop: 2                     # brief: Workshop 1 and 2 [A17]
+  mentor_call: 1                  # brief
+  pod_group_size: 5               # brief: 5 Alcovians per pod [A35]
+  peer_session: 1                 # our target [A18]
+
+scorecard:
+  on_track_min: 0.8               # a KPI at or above this share is on track [A57]
+  watch_min: 0.5                  # at or above this (and below on_track_min) is watch; below it is off track [A57]
+  window_days: 30                 # daily, weekly and monthly KPIs look at the last N days; quarterly and roadmap KPIs look at the quarter so far
+  lookback_days: 7                # per-student check: no quiz or valid focus minutes in the last N days
+  off_track_min_reasons: 2        # a student is listed when at least this many reasons apply [A57]
+
+weekly:
+  input_window_days: 7            # students fill in their inputs at this cadence: a to-do of their own or a completion within these days [A54]
+
+quarters:
+  first_month_of_each: [3, 6, 9, 12]   # from the app: /academics/time-budget academic year 2026-27 has Q1 Mar-May, Q2 Jun-Aug, Q3 Sep-Nov, Q4 Dec-Feb [A38]
+
+advisor_input_kinds:              # from the brief's "input metrics for the academic advisor" and roadmap reviews [A31]
+  - targets_aligned
+  - guardrails_set
+  - inputs_at_cadence
+  - deadline_messages_sent
+  - tutor_input_set
+  - sprint_made
+  - syllabus_review
+  - rigour_check
+  - career_roadmap_reviewed
+  - personal_milestones_set
+
+data_freshness:
+  wearable_silent_days: 2         # a Whoop student with no reading for more than this many days is listed as needing to reconnect
+  stale_after_hours: 36           # ingest_log: warn when a source has no OK run for this long (read by the dashboard freshness panel, not built yet)
+
+# Demonstration rules only; not verified Alcovia policy. Thresholds stay in syllabus above.
+chapter_loader:
+  stage_order: [reading, recollection, practice, timed_paper, readiness]
+  task_types:
+    reading: [read_textbook]
+    recollection: [notes]
+    practice: [textbook_qs, worksheets]
+  allowed_task_types: [read_textbook, videos, notes, textbook_qs, worksheets, worksheets_checked]
+  done_status: Done
+  incomplete_statuses: [NotStarted, HaveStarted, InProgress, SignificantlyDone]
+  unknown_statuses: [NotRequired]
+  score_types:
+    practice: Worksheet
+    readiness: Mocktest
+  score_tolerance_pct: 0.1
+
+# Explicit quiz demonstration mappings; not a verified server delivery contract.
+quiz_loader:
+  event_id_prefix: 'quiz:'
+  status_map:
+    DRAFT: ignore
+    SCHEDULED: planned
+    ACTIVE: held
+    COMPLETED: held
+  preserve_final_status: true
+  history_event_status: held  # a real started attempt is demo evidence that a quiz ran
+
+# Synthetic wellness demonstration policy; populated server responses remain unverified.
+wellness_loader:
+  source_map:
+    WHOOP: whoop
+    MANUAL: manual
+  source_priority: [whoop, manual]  # one source per student/day; never mix manual sleep into a Whoop row
+  strain_range: [0, 21]
+  recovery_pct_range: [0, 100]
+  sleep_hours_range: [0, 24]
+
+# Feedback demonstration policy. Export rows are a proposed input contract, not an existing Alcovia API.
+feedback_loader:
+  id_prefix: 'feedback:'
+  rating_range: [1, 5]
+  monthly_kinds: [roadmap, entrepreneurship]
+  session_type_map:
+    academic: session
+    career: session
+    personal: session
+    mindset: session
+    deepwork: session
+    workshop: workshop
+    podsession: pod
+    mentor: mentor
+  kind_event_map:
+    session: [academic_session, career_session, personal_session, mindset_session, deep_work_session, peer_session, parent_workshop, trip]
+    workshop: [workshop]
+    pod: [pod]
+    mentor: [mentor_call]
+    mindset: [mindset_session]
+    deep_work: [deep_work_session]
+    podcast_shoot: [podcast]
+    podcast_post: [podcast]
+    competition: [competition]
+    social_work: [social_work]
+    summer_support: [summer_support]
+    roadmap: []
+    entrepreneurship: []
+
+wearable_loader:                    # Apple, Samsung, Garmin daily sleep. Field names and units are ASSUMED (no vendor API was reachable); only sleep_hours is filled
+  vendors:
+    apple:   {date_field: date,         sleep_field: asleepMinutes,    per_hour: 60}
+    samsung: {date_field: day,          sleep_field: sleepDurationMs,  per_hour: 3600000}
+    garmin:  {date_field: calendarDate, sleep_field: sleepTimeSeconds, per_hour: 3600}
+  sleep_hours_range: [0, 24]

@@ -1,0 +1,79 @@
+{
+  "demo": true,
+  "label": "SYNTHETIC wellness history and daily snapshots; not verified live responses",
+  "asOf": "2026-10-08T18:45:00Z",
+  "studentId": "DEMO-STUDENT-1",
+  "history": {
+    "success": true,
+    "data": {
+      "history": [
+        {
+          "date": "2026-10-01",
+          "dataSource": "WHOOP",
+          "dayStrain": 8,
+          "recoveryScore": 32,
+          "sleepPerformancePct": 90,
+          "sleepStageLightMs": "21600000",
+          "sleepStageDeepMs": "3600000",
+          "sleepStageRemMs": "3600000"
+        },
+        {
+          "date": "2026-10-02",
+          "dataSource": "WHOOP",
+          "dayStrain": 16,
+          "recoveryScore": 33,
+          "sleepPerformancePct": 90,
+          "sleepStageLightMs": "18000000",
+          "sleepStageDeepMs": "3600000",
+          "sleepStageRemMs": "3600000"
+        },
+        {
+          "date": "2026-10-03",
+          "dataSource": "WHOOP",
+          "dayStrain": 0,
+          "recoveryScore": 100,
+          "sleepPerformancePct": 90,
+          "sleepStageLightMs": "25200000",
+          "sleepStageDeepMs": "3600000",
+          "sleepStageRemMs": "3600000"
+        },
+        {
+          "date": "2026-10-04",
+          "dataSource": "MANUAL",
+          "dayStrain": 12,
+          "recoveryScore": 70,
+          "sleepStageLightMs": null,
+          "sleepStageDeepMs": null,
+          "sleepStageRemMs": null
+        },
+        {
+          "date": "2026-10-05",
+          "dataSource": "WHOOP",
+          "dayStrain": null,
+          "recoveryScore": null,
+          "sleepStageLightMs": null,
+          "sleepStageDeepMs": null,
+          "sleepStageRemMs": null
+        }
+      ]
+    }
+  },
+  "dailySnapshots": [
+    {
+      "requestedDay": "2026-10-04",
+      "response": {
+        "success": true,
+        "data": {
+          "id": "DEMO-WELLNESS-SNAPSHOT",
+          "studentId": "DEMO-STUDENT-1",
+          "date": "2026-10-04",
+          "dataSource": "MANUAL",
+          "manualSleepHours": 8,
+          "manualActivityLevel": 5,
+          "recoveryScore": 70,
+          "dayStrain": 12
+        }
+      }
+    }
+  ]
+}

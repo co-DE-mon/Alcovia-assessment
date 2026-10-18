@@ -1,0 +1,255 @@
+[
+ {
+  "tasks": [
+   {
+    "id": "t1",
+    "name": "DEMO-STUDENT-1 2026-10",
+    "date_updated": "1760000000000",
+    "custom_fields": [
+     {
+      "id": "f1",
+      "name": "student_id",
+      "type": "short_text",
+      "value": "DEMO-STUDENT-1"
+     },
+     {
+      "id": "f2",
+      "name": "month",
+      "type": "short_text",
+      "value": "2026-10"
+     },
+     {
+      "id": "f-targets_aligned",
+      "name": "targets_aligned",
+      "type": "checkbox",
+      "value": "true"
+     },
+     {
+      "id": "f-guardrails_set",
+      "name": "guardrails_set",
+      "type": "checkbox",
+      "value": "true"
+     },
+     {
+      "id": "f-inputs_at_cadence",
+      "name": "inputs_at_cadence",
+      "type": "checkbox",
+      "value": "true"
+     },
+     {
+      "id": "f-deadline_messages_sent",
+      "name": "deadline_messages_sent",
+      "type": "checkbox",
+      "value": "true"
+     },
+     {
+      "id": "f-tutor_input_set",
+      "name": "tutor_input_set",
+      "type": "checkbox",
+      "value": "true"
+     },
+     {
+      "id": "f-sprint_made",
+      "name": "sprint_made",
+      "type": "checkbox",
+      "value": "true"
+     },
+     {
+      "id": "f-syllabus_review",
+      "name": "syllabus_review",
+      "type": "checkbox",
+      "value": "true"
+     },
+     {
+      "id": "f-rigour_check",
+      "name": "rigour_check",
+      "type": "checkbox",
+      "value": "true"
+     },
+     {
+      "id": "f-career_roadmap_reviewed",
+      "name": "career_roadmap_reviewed",
+      "type": "checkbox",
+      "value": "true"
+     },
+     {
+      "id": "f-personal_milestones_set",
+      "name": "personal_milestones_set",
+      "type": "checkbox",
+      "value": "true"
+     },
+     {
+      "id": "f99",
+      "name": "advisor notes",
+      "type": "text",
+      "value": "free text, ignored"
+     }
+    ]
+   },
+   {
+    "id": "t2",
+    "name": "DEMO-STUDENT-2 2026-10",
+    "date_updated": "1760000000000",
+    "custom_fields": [
+     {
+      "id": "f1",
+      "name": "student_id",
+      "type": "short_text",
+      "value": "DEMO-STUDENT-2"
+     },
+     {
+      "id": "f2",
+      "name": "month",
+      "type": "short_text",
+      "value": "2026-10"
+     },
+     {
+      "id": "f-targets_aligned",
+      "name": "targets_aligned",
+      "type": "checkbox",
+      "value": "true"
+     },
+     {
+      "id": "f-guardrails_set",
+      "name": "guardrails_set",
+      "type": "checkbox",
+      "value": "true"
+     },
+     {
+      "id": "f-inputs_at_cadence",
+      "name": "inputs_at_cadence",
+      "type": "checkbox",
+      "value": "true"
+     },
+     {
+      "id": "f-deadline_messages_sent",
+      "name": "deadline_messages_sent",
+      "type": "checkbox"
+     },
+     {
+      "id": "f-tutor_input_set",
+      "name": "tutor_input_set",
+      "type": "checkbox"
+     },
+     {
+      "id": "f-sprint_made",
+      "name": "sprint_made",
+      "type": "checkbox"
+     },
+     {
+      "id": "f-syllabus_review",
+      "name": "syllabus_review",
+      "type": "checkbox"
+     },
+     {
+      "id": "f-rigour_check",
+      "name": "rigour_check",
+      "type": "checkbox"
+     },
+     {
+      "id": "f-career_roadmap_reviewed",
+      "name": "career_roadmap_reviewed",
+      "type": "checkbox"
+     },
+     {
+      "id": "f-personal_milestones_set",
+      "name": "personal_milestones_set",
+      "type": "checkbox"
+     },
+     {
+      "id": "f99",
+      "name": "advisor notes",
+      "type": "text",
+      "value": "free text, ignored"
+     }
+    ]
+   }
+  ],
+  "last_page": false
+ },
+ {
+  "tasks": [
+   {
+    "id": "t3",
+    "name": "DEMO-STUDENT-1 2026-09-01",
+    "date_updated": "1759000000000",
+    "custom_fields": [
+     {
+      "id": "f1",
+      "name": "student_id",
+      "type": "short_text",
+      "value": "DEMO-STUDENT-1"
+     },
+     {
+      "id": "f2",
+      "name": "month",
+      "type": "short_text",
+      "value": "2026-09-01"
+     },
+     {
+      "id": "f-targets_aligned",
+      "name": "targets_aligned",
+      "type": "checkbox",
+      "value": "true"
+     },
+     {
+      "id": "f-guardrails_set",
+      "name": "guardrails_set",
+      "type": "checkbox",
+      "value": "true"
+     },
+     {
+      "id": "f-inputs_at_cadence",
+      "name": "inputs_at_cadence",
+      "type": "checkbox",
+      "value": "true"
+     },
+     {
+      "id": "f-deadline_messages_sent",
+      "name": "deadline_messages_sent",
+      "type": "checkbox",
+      "value": "true"
+     },
+     {
+      "id": "f-tutor_input_set",
+      "name": "tutor_input_set",
+      "type": "checkbox",
+      "value": "true"
+     },
+     {
+      "id": "f-sprint_made",
+      "name": "sprint_made",
+      "type": "checkbox"
+     },
+     {
+      "id": "f-syllabus_review",
+      "name": "syllabus_review",
+      "type": "checkbox"
+     },
+     {
+      "id": "f-rigour_check",
+      "name": "rigour_check",
+      "type": "checkbox"
+     },
+     {
+      "id": "f-career_roadmap_reviewed",
+      "name": "career_roadmap_reviewed",
+      "type": "checkbox"
+     },
+     {
+      "id": "f-personal_milestones_set",
+      "name": "personal_milestones_set",
+      "type": "checkbox"
+     },
+     {
+      "id": "f99",
+      "name": "advisor notes",
+      "type": "text",
+      "value": "free text, ignored"
+     }
+    ]
+   }
+  ],
+  "last_page": true
+ }
+]

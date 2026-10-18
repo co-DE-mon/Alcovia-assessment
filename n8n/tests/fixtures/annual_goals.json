@@ -1,0 +1,54 @@
+{
+ "success": true,
+ "data": [
+  {
+   "id": "0e72c522-7b49-57ff-9615-e88d925d254d",
+   "studentId": "8e68ff82-8992-5ba8-a8df-67a9703fa818",
+   "year": 2026,
+   "category": "Career",
+   "title": "title 90",
+   "description": "description 95",
+   "status": "NotStarted",
+   "progressPct": 0,
+   "createdAt": "2026-05-24T19:28:54.711Z",
+   "updatedAt": "2026-05-24T19:28:54.711Z",
+   "quarterlyGoals": [
+    {
+     "id": "f4314818-cb11-55e3-ad5c-0a53fe5e3809",
+     "status": "Achieved"
+    }
+   ]
+  },
+  {
+   "id": "5b66126e-3f82-53a9-8443-069a26276eb6",
+   "studentId": "8e68ff82-8992-5ba8-a8df-67a9703fa818",
+   "year": 2026,
+   "category": "Career",
+   "title": "title 91",
+   "description": null,
+   "status": "NotStarted",
+   "progressPct": 0,
+   "createdAt": "2026-05-26T04:31:48.981Z",
+   "updatedAt": "2026-05-26T04:31:48.981Z",
+   "quarterlyGoals": [
+    {
+     "id": "670f3810-2d0f-5e11-9afa-9e98052ec6ff",
+     "status": "NotStarted"
+    }
+   ]
+  },
+  {
+   "id": "a1e2f1fe-14c3-56a1-b3bc-02dda482c109",
+   "studentId": "8e68ff82-8992-5ba8-a8df-67a9703fa818",
+   "year": 2026,
+   "category": "Personal",
+   "title": "title 92",
+   "description": "description 96",
+   "status": "NotStarted",
+   "progressPct": 0,
+   "createdAt": "2026-05-24T19:28:55.484Z",
+   "updatedAt": "2026-05-24T19:28:55.484Z",
+   "quarterlyGoals": []
+  }
+ ]
+}

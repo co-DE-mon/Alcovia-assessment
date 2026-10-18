@@ -1,0 +1,21 @@
+{
+ "success": true,
+ "data": {
+  "id": "8e68ff82-8992-5ba8-a8df-67a9703fa818",
+  "name": "Demo Student",
+  "email": "person@example.test",
+  "role": "Student",
+  "board": "CBSE",
+  "programStartDate": "2026-03-01T00:00:00.000Z",
+  "advisorId": "3d40421c-720c-5f0f-8743-40fa2c30c16a",
+  "estimateHoursUnlocked": true,
+  "careerCounselorId": null,
+  "createdAt": "2026-03-01T00:00:00.000Z",
+  "advisor": {
+   "id": "3d40421c-720c-5f0f-8743-40fa2c30c16a",
+   "name": "Demo Advisor",
+   "email": "person@example.test"
+  },
+  "careerCounselor": null
+ }
+}

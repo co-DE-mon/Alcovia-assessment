@@ -1,0 +1,178 @@
+{
+  "demo": true,
+  "label": "SYNTHETIC quiz demonstration; delivery ledger is supplemental evidence, not an API response",
+  "asOf": "2026-10-08T16:00:00Z",
+  "studentId": "DEMO-STUDENT-1",
+  "scheduledSnapshots": [
+    {
+      "quiz": {
+        "id": "DEMO-QUIZ-1",
+        "title": "Demo topic 1",
+        "scheduledAt": "2026-10-01T14:30:00Z",
+        "status": "COMPLETED",
+        "questionCount": 10,
+        "participation": null
+      }
+    },
+    {
+      "quiz": {
+        "id": "DEMO-QUIZ-2",
+        "title": "Demo topic 2",
+        "scheduledAt": "2026-10-02T14:30:00Z",
+        "status": "COMPLETED",
+        "questionCount": 10,
+        "participation": null
+      }
+    },
+    {
+      "quiz": {
+        "id": "DEMO-QUIZ-3",
+        "title": "Demo topic 3",
+        "scheduledAt": "2026-10-03T14:30:00Z",
+        "status": "COMPLETED",
+        "questionCount": 10,
+        "participation": null
+      }
+    },
+    {
+      "quiz": {
+        "id": "DEMO-QUIZ-4",
+        "title": "Demo topic 4",
+        "scheduledAt": "2026-10-04T14:30:00Z",
+        "status": "COMPLETED",
+        "questionCount": 10,
+        "participation": {
+          "id": "DEMO-P4",
+          "startedAt": "2026-10-04T14:35:00Z",
+          "completedAt": null,
+          "score": 0
+        }
+      }
+    },
+    {
+      "quiz": {
+        "id": "DEMO-QUIZ-5",
+        "title": "Demo topic 5",
+        "scheduledAt": "2026-10-05T14:30:00Z",
+        "status": "COMPLETED",
+        "questionCount": 10,
+        "participation": null
+      }
+    },
+    {
+      "quiz": {
+        "id": "DEMO-QUIZ-6",
+        "title": "Demo topic 6",
+        "scheduledAt": "2026-10-06T14:30:00Z",
+        "status": "COMPLETED",
+        "questionCount": 10,
+        "participation": null
+      }
+    },
+    {
+      "quiz": {
+        "id": "DEMO-QUIZ-7",
+        "title": "Demo topic 7",
+        "scheduledAt": "2026-10-07T14:30:00Z",
+        "status": "COMPLETED",
+        "questionCount": 10,
+        "participation": null
+      }
+    },
+    {
+      "quiz": {
+        "id": "DEMO-QUIZ-8",
+        "title": "Demo topic 8",
+        "scheduledAt": "2026-10-08T14:30:00Z",
+        "status": "SCHEDULED",
+        "questionCount": 10,
+        "participation": null
+      }
+    },
+    {
+      "quiz": {
+        "id": "DEMO-QUIZ-9",
+        "title": "Demo topic 9",
+        "scheduledAt": "2026-10-09T14:30:00Z",
+        "status": "SCHEDULED",
+        "questionCount": 10,
+        "participation": null
+      }
+    }
+  ],
+  "delivery": [
+    {
+      "quizId": "DEMO-QUIZ-1",
+      "status": "held"
+    },
+    {
+      "quizId": "DEMO-QUIZ-2",
+      "status": "held"
+    },
+    {
+      "quizId": "DEMO-QUIZ-3",
+      "status": "held"
+    },
+    {
+      "quizId": "DEMO-QUIZ-4",
+      "status": "held"
+    },
+    {
+      "quizId": "DEMO-QUIZ-5",
+      "status": "held"
+    },
+    {
+      "quizId": "DEMO-QUIZ-6",
+      "status": "held"
+    },
+    {
+      "quizId": "DEMO-QUIZ-7",
+      "status": "held"
+    },
+    {
+      "quizId": "DEMO-QUIZ-8",
+      "status": "cancelled"
+    },
+    {
+      "quizId": "DEMO-QUIZ-9",
+      "status": "planned"
+    }
+  ],
+  "history": {
+    "success": true,
+    "data": {
+      "history": [
+        {
+          "quizId": "DEMO-QUIZ-1",
+          "quizTitle": "Demo topic 1",
+          "scheduledAt": "2026-10-01T14:30:00Z",
+          "startedAt": "2026-10-01T14:30:00Z",
+          "completedAt": "2026-10-01T14:50:00Z",
+          "score": 8,
+          "totalQuestions": 10
+        },
+        {
+          "quizId": "DEMO-QUIZ-2",
+          "quizTitle": "Demo topic 2",
+          "scheduledAt": "2026-10-02T14:30:00Z",
+          "startedAt": "2026-10-02T14:45:00Z",
+          "completedAt": "2026-10-02T14:50:00Z",
+          "score": 8,
+          "totalQuestions": 10
+        },
+        {
+          "quizId": "DEMO-QUIZ-3",
+          "quizTitle": "Demo topic 3",
+          "scheduledAt": "2026-10-03T14:30:00Z",
+          "startedAt": "2026-10-03T14:45:01Z",
+          "completedAt": "2026-10-03T14:50:00Z",
+          "score": 8,
+          "totalQuestions": 10
+        }
+      ]
+    },
+    "meta": {
+      "total": 3
+    }
+  }
+}

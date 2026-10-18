@@ -1,0 +1,147 @@
+{
+  "scope": "Student tracker only; static client evidence, no fresh server observations",
+  "schema_sha256": "b4cc6219dbd814d69db884635625432363047a0f806654b8e7f9e079ef944967",
+  "blocks": {
+    "task": {
+      "path": "app/modules/app/m1997.js",
+      "first_line": 712,
+      "last_line": 743,
+      "fields": [
+        "actualTimeHours",
+        "chapterId",
+        "estimatedTimeHours",
+        "id",
+        "taskStatus",
+        "taskType",
+        "timeDeviationHours"
+      ]
+    },
+    "revision": {
+      "path": "app/modules/app/m1997.js",
+      "first_line": 743,
+      "last_line": 778,
+      "fields": [
+        "actualTimeHours",
+        "attemptNo",
+        "chapterId",
+        "estimatedTimeHours",
+        "id",
+        "revisionStatus",
+        "revisionType",
+        "timeDeviationHours"
+      ]
+    },
+    "score": {
+      "path": "app/modules/app/m1997.js",
+      "first_line": 778,
+      "last_line": 815,
+      "fields": [
+        "accuracyPercentage",
+        "attemptNo",
+        "chapterId",
+        "id",
+        "marksObtained",
+        "maxMarks",
+        "name",
+        "recordedOn",
+        "scoreType"
+      ]
+    },
+    "chapter": {
+      "path": "app/modules/app/m1997.js",
+      "first_line": 857,
+      "last_line": 931,
+      "fields": [
+        "blockLabels",
+        "id",
+        "isComingInExam",
+        "name",
+        "progress",
+        "quarter",
+        "quarterId",
+        "revisions",
+        "scores",
+        "subjectId",
+        "tasks"
+      ]
+    }
+  },
+  "references": [
+    {
+      "path": "app/modules/app/m1996.js",
+      "line": 229,
+      "match": "'/academics/chapters'"
+    },
+    {
+      "path": "app/modules/app/m1996.js",
+      "line": 116,
+      "match": "'/academics/context'"
+    },
+    {
+      "path": "app/modules/routes/academics_chapter_id_.tsx.js",
+      "line": 5369,
+      "match": "'key': 'read_textbook'"
+    },
+    {
+      "path": "app/modules/routes/academics_chapter_id_.tsx.js",
+      "line": 5383,
+      "match": "'key': 'revise_notes'"
+    },
+    {
+      "path": "app/modules/app/m1997.js",
+      "line": 700,
+      "match": "['NotStarted', 'HaveStarted', 'InProgress', 'SignificantlyDone', 'Done', 'NotRequired']"
+    },
+    {
+      "path": "app/modules/app/m1997.js",
+      "line": 710,
+      "match": "['Worksheet', 'Mocktest']"
+    },
+    {
+      "path": "app/modules/routes/academics_study-planner.tsx.js",
+      "line": 927,
+      "match": "r10 = r8.TimeBudgetTrendChart;"
+    },
+    {
+      "path": "student-tracker/sql/schema/student.sql",
+      "line": 140,
+      "match": "CREATE TABLE IF NOT EXISTS chapter_progress"
+    },
+    {
+      "path": "student-tracker/sql/metrics/given.sql",
+      "line": 120,
+      "match": "-- name: chapter_activity"
+    }
+  ],
+  "missing_in_inspected_blocks": {
+    "task": [
+      "plannedMonth",
+      "planned_month",
+      "completedAt",
+      "updatedAt",
+      "timedPastPaper"
+    ],
+    "revision": [
+      "plannedMonth",
+      "planned_month",
+      "completedAt",
+      "updatedAt",
+      "timedPastPaper"
+    ],
+    "score": [
+      "plannedMonth",
+      "planned_month",
+      "completedAt",
+      "updatedAt",
+      "timedPastPaper"
+    ],
+    "chapter": [
+      "plannedMonth",
+      "planned_month",
+      "completedAt",
+      "updatedAt",
+      "timedPastPaper"
+    ]
+  },
+  "warning": "Absence in these client schemas does not prove absence from the backend. Prior docs report live completedAt extras; obtain a sanitized sample to reconcile."
+}
