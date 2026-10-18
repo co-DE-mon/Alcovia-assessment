@@ -8,11 +8,11 @@
 -- name: quiz_by_day
 -- Grain: one row per day of the period. Source: events. Feeds: Quizzes held / days.
 -- Edge cases: one quiz a day is assumed, as in daily.sql. A day with no quiz event shows "No quiz scheduled".
-SELECT d.day AS "Day", q.title AS "Topic",
+SELECT q.event_id AS "Event ID", d.day AS "Day", q.title AS "Topic",
        CASE q.status WHEN 'held' THEN 'Held' WHEN 'cancelled' THEN 'Cancelled' WHEN 'planned' THEN 'Planned' ELSE 'No quiz scheduled' END AS "Status",
        coalesce(q.status = 'held', false)::INTEGER AS "Held"
 FROM period_days($start, $end) d
-LEFT JOIN (SELECT planned_for::DATE AS day, title, status FROM events WHERE kind = 'quiz') q ON q.day = d.day
+LEFT JOIN (SELECT event_id, planned_for::DATE AS day, title, status FROM events WHERE kind = 'quiz') q ON q.day = d.day
 ORDER BY d.day;
 
 -- name: quiz_by_student
@@ -200,7 +200,7 @@ GROUP BY s.student_id, s.name ORDER BY s.name;
 
 -- name: advisor_todos_rows
 -- Grain: one row per advisor-assigned to-do due in the period. Source: todos, students. Feeds: Advisor-assigned to-dos done (on time).
-SELECT s.name AS "Student", s.student_id AS "ID", t.title AS "To-do", t.due_date AS "Due", t.status AS "Status", t.updated_at::DATE AS "Last updated",
+SELECT s.name AS "Student", s.student_id AS "ID", t.todo_id AS "To-do ID", t.title AS "To-do", t.due_date AS "Due", t.status AS "Status", t.updated_at::DATE AS "Last updated",
        (t.status = 'done')::INTEGER AS "Done",
        (t.status = 'done' AND t.updated_at::DATE <= t.due_date)::INTEGER AS "Done on time"
 FROM todos t JOIN students s USING (student_id)
@@ -221,7 +221,7 @@ WHERE is_active(s.program_start_date, s.left_on, $end::DATE) GROUP BY s.student_
 -- name: events_list
 -- Grain: one row per event of $kind in the period. Source: events. Feeds: every "held" KPI (held / scheduled, and held vs expected).
 -- Edge cases: an event still planned is shown but is neither scheduled nor held, as in events.sql.
-SELECT planned_for::DATE AS "Date", title AS "Title", group_id AS "Group",
+SELECT event_id AS "Event ID", planned_for::DATE AS "Date", title AS "Title", group_id AS "Group",
        CASE status WHEN 'held' THEN 'Held' WHEN 'cancelled' THEN 'Cancelled' ELSE 'Planned' END AS "Status",
        (status IN ('held', 'cancelled'))::INTEGER AS "Scheduled", (status = 'held')::INTEGER AS "Held"
 FROM events WHERE kind = $kind AND planned_for::DATE BETWEEN $start AND $end ORDER BY planned_for;
@@ -229,7 +229,7 @@ FROM events WHERE kind = $kind AND planned_for::DATE BETWEEN $start AND $end ORD
 -- name: attendance_rows
 -- Grain: one row per student invited to a held event of $kind in the period. Source: events, event_attendance, students.
 -- Feeds: every attendance KPI. Invitees are not filtered by active status: an invitation records who the event was for.
-SELECT e.planned_for::DATE AS "Date", e.title AS "Event", coalesce(s.name, a.student_id) AS "Student", a.student_id AS "ID",
+SELECT e.event_id AS "Event ID", e.planned_for::DATE AS "Date", e.title AS "Event", coalesce(s.name, a.student_id) AS "Student", a.student_id AS "ID",
        a.invited::INTEGER AS "Invited", (a.attended IS NOT NULL)::INTEGER AS "Attendance recorded", coalesce(a.attended, false)::INTEGER AS "Attended"
 FROM events e JOIN event_attendance a USING (event_id) LEFT JOIN students s ON s.student_id = a.student_id
 WHERE e.status = 'held' AND e.kind = $kind AND e.planned_for::DATE BETWEEN $start AND $end
@@ -237,7 +237,7 @@ ORDER BY e.planned_for, s.name;
 
 -- name: session_feedback_rows
 -- Grain: one row per session feedback form for a held session in the period. Source: feedback, events, students. Feeds: Session feedback.
-SELECT e.planned_for::DATE AS "Date", e.kind AS "Session type", coalesce(s.name, f.student_id) AS "Student", f.student_id AS "ID",
+SELECT e.event_id AS "Event ID", f.feedback_id AS "Feedback ID", e.planned_for::DATE AS "Date", e.kind AS "Session type", coalesce(s.name, f.student_id) AS "Student", f.student_id AS "ID",
        f.q1_rating AS "Rating 1", f.q2_rating AS "Rating 2", f.q3_rating AS "Rating 3", round(f.composite, 2) AS "Average rating"
 FROM feedback f JOIN events e USING (event_id) LEFT JOIN students s ON s.student_id = f.student_id
 WHERE f.kind = 'session' AND e.status = 'held' AND e.planned_for::DATE BETWEEN $start AND $end
@@ -246,7 +246,7 @@ ORDER BY e.planned_for, s.name;
 
 -- name: event_feedback_rows
 -- Grain: one row per feedback form for a held event of $kind in the period. Source: feedback, events, students. Feeds: every "rating (average / 5)" KPI.
-SELECT e.planned_for::DATE AS "Date", e.title AS "Event", coalesce(s.name, f.student_id) AS "Student", f.student_id AS "ID",
+SELECT e.event_id AS "Event ID", f.feedback_id AS "Feedback ID", e.planned_for::DATE AS "Date", e.title AS "Event", coalesce(s.name, f.student_id) AS "Student", f.student_id AS "ID",
        f.q1_rating AS "Rating 1", f.q2_rating AS "Rating 2", f.q3_rating AS "Rating 3", round(f.composite, 2) AS "Average rating"
 FROM feedback f JOIN events e USING (event_id) LEFT JOIN students s ON s.student_id = f.student_id
 WHERE e.status = 'held' AND e.kind = $kind AND e.planned_for::DATE BETWEEN $start AND $end
@@ -254,12 +254,12 @@ ORDER BY e.planned_for, s.name;
 
 -- name: event_nps_rows
 -- Grain: one row per held event of $kind with an NPS score. Source: events. Feeds: Workshop NPS. The KPI averages events, not responses.
-SELECT planned_for::DATE AS "Date", title AS "Event", nps_score AS "NPS (out of 10)"
+SELECT event_id AS "Event ID", planned_for::DATE AS "Date", title AS "Event", nps_score AS "NPS (out of 10)"
 FROM events WHERE status = 'held' AND kind = $kind AND nps_score IS NOT NULL AND planned_for::DATE BETWEEN $start AND $end ORDER BY planned_for;
 
 -- name: posted_rows
 -- Grain: one row per held event of $kind (branding shoot or podcast) in the period. Source: events. Feeds: Shoots posted, Episodes posted.
-SELECT planned_for::DATE AS "Date", title AS "Title", posted_on AS "Posted on",
+SELECT event_id AS "Event ID", planned_for::DATE AS "Date", title AS "Title", posted_on AS "Posted on",
        CASE WHEN posted_on IS NOT NULL AND posted_on <= $end::DATE THEN date_diff('day', planned_for::DATE, posted_on) END AS "Days to post",
        views AS "Views", shares AS "Shares",
        (posted_on IS NOT NULL AND posted_on <= $end::DATE)::INTEGER AS "Posted"
@@ -355,7 +355,7 @@ ORDER BY "Still syncing", s.name;
 
 -- name: clip_reach_rows
 -- Grain: one row per held clip of $kind in the period. Source: events. Feeds: Posted clips reaching the view target. A clip not yet posted has no audience to count.
-SELECT planned_for::DATE AS "Date", title AS "Title", posted_on AS "Posted on", views AS "Views", shares AS "Shares",
+SELECT event_id AS "Event ID", planned_for::DATE AS "Date", title AS "Title", posted_on AS "Posted on", views AS "Views", shares AS "Shares",
        (posted_on IS NOT NULL AND posted_on <= $end::DATE)::INTEGER AS "Posted",
        (posted_on IS NOT NULL AND posted_on <= $end::DATE AND views >= $branding_view_target)::INTEGER AS "Reached the view target"
 FROM events WHERE kind = $kind AND status = 'held' AND planned_for::DATE BETWEEN $start AND $end ORDER BY planned_for;

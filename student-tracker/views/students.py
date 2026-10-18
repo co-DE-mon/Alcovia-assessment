@@ -4,7 +4,7 @@ import streamlit as st
 
 import data
 import ui
-from views.common import show, table_height
+from views.common import record_table, show, table_height
 
 
 def frame(rows, cfg):
@@ -56,20 +56,21 @@ def detail(s, end, cfg):
         else:
             st.info(f"No valid focus minutes in the last {days} days.")
         with st.expander("Table view"):
-            st.dataframe(pd.DataFrame(tl), hide_index=True, width="stretch")
+            record_table([{"Day": r["day"], **{k: v for k, v in r.items() if k != "day"}} for r in tl],
+                         f'student-timeline-{s["student_id"]}', end)
     else:
         st.info("This student has no days in the window.")
 
 
-def records(profile):
+def records(profile, end, key, *, level=0):
     """The tabs of the student dialog: every section's records, or a note when a section has none."""
     tabs = st.tabs(list(profile["sections"]))
     for tab, parts in zip(tabs, profile["sections"].values()):
         with tab:
-            for heading, rows in parts:
+            for i, (heading, rows) in enumerate(parts):
                 st.caption(f"{heading}: {len(rows)} record{'s' if len(rows) != 1 else ''}")
                 if rows:
-                    st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch", height=table_height(len(rows), 360))
+                    record_table(rows, f"{key}-{tab}-{i}", end, cap=360, level=level)
 
 
 def open_student(s, end, cfg):
@@ -81,7 +82,7 @@ def open_student(s, end, cfg):
             with st.expander("Profile"):
                 st.dataframe(pd.DataFrame([{"Field": k, "Value": "–" if v is None else str(v)} for k, v in profile["identity"].items()]), hide_index=True, width="stretch")
         show(ui.h2("All records", "Everything the tracker holds about this student."))
-        records(profile)
+        records(profile, end, f'person-{s["student_id"]}')
     body()
 
 

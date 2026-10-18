@@ -2,7 +2,9 @@
 
 I built this for the weekly student review described in Problem 4. It brings cohort progress and individual student records into one view, so you can see where the programme is falling behind and open the records behind each number.
 
-I’ve used **synthetic data throughout**, with `DEMO-` IDs and a default reporting date of **24 October 2026**. The dashboard and connected data-flow demo work on this data. I haven’t connected them to live Alcovia/ClickUp data or deployed the dashboard yet.
+I’ve used **synthetic data throughout**, with `DEMO-` IDs and a default reporting date of **24 October 2026**. The [dashboard](https://alcovia-assessment-wr3mxh9irsdkorfvkdxvrf.streamlit.app/) and connected data-flow demo work on this data. I haven’t connected them to live Alcovia/ClickUp data.
+
+To inspect a number, open its records from the overview or cadence page, then select a row. Student rows open the student profile and its source tables; event rows open attendance and feedback, and group rows open their events. The daily trend opens that day's events and focus sessions. The Students and Data health tables use the same row selection. All detail views keep the selected reporting date.
 
 ## What it covers
 
@@ -143,7 +145,7 @@ I’ve limited the exporter to an explicit synthetic `DEMO-` cohort. It reads al
 - [Demo generator](seed/generate.py), [dashboard pages](views/) and [tests](tests/).
 - I’ve kept the Definitions page tied to the KPI catalogue and assumptions below, so this README is also the dashboard’s reference. The SQL and current loader/configuration rules define the implemented behavior.
 
-I still need to deploy the dashboard and add its URL. The entry point for Streamlit Community Cloud is `student-tracker/app.py`. The working synthetic prototype doesn’t establish live ingestion. I’ve kept team allocation, delivery dates from 1 November and the advisor’s scope for non-tuition subjects outside this README; those need to be covered in the overall executive writeup.
+The entry point for Streamlit Community Cloud is `student-tracker/app.py`. The working synthetic prototype doesn’t establish live ingestion. I’ve kept team allocation, delivery dates from 1 November and the advisor’s scope for non-tuition subjects outside this README; those need to be covered in the overall executive writeup.
 
 ## KPI catalogue
 

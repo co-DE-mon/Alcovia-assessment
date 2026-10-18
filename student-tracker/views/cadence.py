@@ -5,7 +5,7 @@ import data
 import insights
 import scorecard
 import ui
-from views.common import kpi_frame, kpi_with_drill, show, window_of, window_text
+from views.common import drill_content, kpi_frame, kpi_with_drill, record_table, show, window_of, window_text
 
 
 def by_activity(rows):
@@ -27,7 +27,8 @@ def trends(end):
         st.caption("Valid focus minutes per active student (completed sessions only)")
         st.line_chart(focus, height=230, color="#6b86e8")
     with st.expander("Table view of the trend"):
-        st.dataframe(quiz.join(focus), width="stretch")
+        from views.common import record_table
+        record_table(quiz.join(focus).reset_index().to_dict("records"), "daily-trend", end=data.as_of())
 
 
 def page(cadence):
@@ -63,4 +64,7 @@ def page(cadence):
     if cadence == "daily":
         trends(end)
     with st.expander("Table view"):
-        st.dataframe(kpi_frame(rows, cfg), hide_index=True, width="stretch")
+        selected = record_table(kpi_frame(rows, cfg).to_dict("records"), f"cadence-kpis-{cadence}", end, level=2)
+        if selected:
+            row = next(r for r in rows if r["activity"] == selected["Activity"] and r["kpi"] == selected["KPI"])
+            drill_content(row, end, f"cadence-table-{cadence}-{selected['Activity']}-{selected['KPI']}")

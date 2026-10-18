@@ -4,7 +4,7 @@ import streamlit as st
 
 import data
 import ui
-from views.common import show, table_height
+from views.common import record_table, show, table_height
 
 RUN_ICON = {"ok": "✓ ok", "partial": "! partial", "failed": "✕ failed"}
 
@@ -22,7 +22,7 @@ def affected(end):
         return
     if people:
         show(ui.h2("Students who need to reconnect Whoop", "Their wearable data has stopped, so every Whoop KPI is missing their days. Ask them to reconnect in the app."))
-        st.dataframe(pd.DataFrame(people), hide_index=True, width="stretch", height=table_height(len(people), 260))
+        record_table(people, "health-reconnect", end, cap=260)
     if problems:
         show(ui.h2("Runs that did not load completely", "Last 14 days, newest first."))
         rows = []
@@ -30,10 +30,9 @@ def affected(end):
             effect = EFFECT[r["status"]].format(source=r["source"])
             if r["source"] == "whoop" and r["status"] == "partial" and people:
                 effect = "Some students' rows were not loaded: the students listed above."
-            rows.append({"Started": f'{ui.fmt_short(r["started_at"])} · {r["started_at"]:%H:%M}', "Source": r["source"], "Result": RUN_ICON[r["status"]],
+            rows.append({"Run ID": r["run_id"], "Started": f'{ui.fmt_short(r["started_at"])} · {r["started_at"]:%H:%M}', "Source": r["source"], "Result": RUN_ICON[r["status"]],
                          "Error": r["error"] or "", "What it means": effect})
-        st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch", height=table_height(len(rows), 300),
-                     column_config={"Error": st.column_config.TextColumn(width="large"), "What it means": st.column_config.TextColumn(width="large")})
+        record_table(rows, "health-problems", end, cap=300)
 
 
 def page():
@@ -49,9 +48,6 @@ def page():
     runs = data.runs(end)
     show(ui.h2("Run history", "Every load in the last 14 days. n8n writes one row per run per source."))
     source = st.selectbox("Source", ["All sources"] + sorted({r["source"] for r in runs}))
-    df = pd.DataFrame([{"Started": f'{ui.fmt_short(r["started_at"])} · {r["started_at"]:%H:%M}', "Source": r["source"], "Result": RUN_ICON[r["status"]],
-                        "Rows loaded": r["rows_upserted"], "Note": r["error"] or ""} for r in runs if source in ("All sources", r["source"])])
-    st.dataframe(df, hide_index=True, width="stretch", height=table_height(len(df)), column_config={
-        "Started": st.column_config.TextColumn(width="small"), "Source": st.column_config.TextColumn(width="small"),
-        "Result": st.column_config.TextColumn(width="small"), "Rows loaded": st.column_config.NumberColumn(width="small"),
-        "Note": st.column_config.TextColumn(width="large")})
+    rows = [{"Run ID": r["run_id"], "Started": f'{ui.fmt_short(r["started_at"])} · {r["started_at"]:%H:%M}', "Source": r["source"], "Result": RUN_ICON[r["status"]],
+                        "Rows loaded": r["rows_upserted"], "Note": r["error"] or ""} for r in runs if source in ("All sources", r["source"])]
+    record_table(rows, f"health-runs-{source}", end)

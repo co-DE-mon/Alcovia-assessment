@@ -9,7 +9,7 @@ import nav
 import scorecard
 import ui
 from views import health, students
-from views.common import kpi_frame, kpi_with_drill, show, table_height, tinted, window_of, window_text
+from views.common import drill_content, kpi_frame, kpi_with_drill, record_table, show, table_height, window_of, window_text
 
 
 def _table(frame, caption):
@@ -19,43 +19,47 @@ def _table(frame, caption):
 
 @st.dialog("Active students", width="large")
 def _active_dialog(people):
-    _table(pd.DataFrame([{"Student": s["name"], "ID": s["student_id"], "Advisor": s["advisor_id"], "Days enrolled": s["days_enrolled"],
+    record_table([{"Student": s["name"], "ID": s["student_id"], "Advisor": s["advisor_id"], "Days enrolled": s["days_enrolled"],
                           "Last active": ui.ago(s["days_since_activity"]), "New": "Yes" if s["new_student"] else "",
-                          "Needs attention": "Yes" if s["listed"] else "No"} for s in people]), f"{len(people)} active students")
+                          "Needs attention": "Yes" if s["listed"] else "No"} for s in people], "overview-active", data.as_of())
 
 
 @st.dialog("Students who need attention", width="large")
 def _attention_dialog(listed, cfg):
-    _table(pd.DataFrame([{"Student": s["name"], "Advisor": s["advisor_id"], "Last active": ui.ago(s["days_since_activity"]), "Warning signs": len(s["reasons"]),
-                          "What is wrong": "; ".join(s["explanations"])} for s in listed]),
-           f"{len(listed)} students with {cfg['scorecard']['off_track_min_reasons']} or more warning signs, most first")
+    st.caption(f"{len(listed)} students with {cfg['scorecard']['off_track_min_reasons']} or more warning signs, most first")
+    record_table([{"Student": s["name"], "ID": s["student_id"], "Advisor": s["advisor_id"], "Last active": ui.ago(s["days_since_activity"]), "Warning signs": len(s["reasons"]),
+                   "What is wrong": "; ".join(s["explanations"])} for s in listed], "overview-attention", data.as_of())
 
 
 @st.dialog("Every KPI", width="large")
 def _kpis_dialog(rows, cfg):
     only = st.toggle("Only KPIs that are not on track", key="overview-kpis-only")
     shown = [r for r in rows if not only or r["status"] != "on_track"]
-    _table(kpi_frame(shown, cfg), f"{len(shown)} of {len(rows)} KPIs. Change is against the previous {cfg['scorecard']['window_days']} days.")
+    st.caption(f"{len(shown)} of {len(rows)} KPIs. Change is against the previous {cfg['scorecard']['window_days']} days.")
+    selected = record_table(kpi_frame(shown, cfg).to_dict("records"), f"overview-kpis-{only}", data.as_of(), level=2)
+    if selected:
+        row = next(r for r in shown if r["activity"] == selected["Activity"] and r["kpi"] == selected["KPI"])
+        drill_content(row, data.as_of(), f"overview-kpi-{selected['Activity']}-{selected['KPI']}")
 
 
 @st.dialog("Data sources", width="large")
 def _sources_dialog(freshness, end):
-    _table(pd.DataFrame([{"Source": r["source"], "State": "✕ Stale" if r["stale"] else "✓ Fresh",
+    record_table([{"Source": r["source"], "State": "✕ Stale" if r["stale"] else "✓ Fresh",
                           "Last successful run": "never" if r["last_ok_at"] is None else f'{r["last_ok_at"]:%d %b %H:%M}',
                           "Hours since": r["hours_since_ok"], "Latest run": r["last_status"] or "never run",
-                          "Failed (7 d)": r["failed_7d"], "Partial (7 d)": r["partial_7d"]} for r in freshness]), f"{len(freshness)} sources")
+                          "Failed (7 d)": r["failed_7d"], "Partial (7 d)": r["partial_7d"]} for r in freshness], "overview-sources", end)
     health.affected(end)
 
 
 @st.dialog("Who shows this behaviour", width="large")
 def _engagement_dialog(item):
     st.markdown(f"**{item['label']}**: {item['note']}.")
-    rows = [{"Result": "–" if ok is None else "✓ Yes" if ok else "✕ No", "Student": s["name"], "Advisor": s["advisor_id"], "Detail": number}
+    rows = [{"Result": "–" if ok is None else "✓ Yes" if ok else "✕ No", "Student": s["name"], "ID": s["student_id"], "Advisor": s["advisor_id"], "Detail": number}
             for s, ok, number in sorted(item["who"], key=lambda w: (w[1] is not False, w[1] is None, w[0]["name"]))]
     only = st.toggle("Only students who do not", key=f"overview-eng-{item['label']}")
     shown = [r for r in rows if not only or r["Result"].startswith("✕")]
     st.caption(f"{item['count']} of {item['base']} students show it. Showing {len(shown)} rows, students who do not first.")
-    st.dataframe(tinted(pd.DataFrame(shown)), hide_index=True, width="stretch", height=table_height(len(shown)))
+    record_table(shown, f"overview-engagement-{item['label']}-{only}", data.as_of(), style=True)
 
 
 def page():
@@ -153,4 +157,7 @@ def page():
                 nav.link(c, ui.CADENCE_LABEL[c])
 
     with st.expander("Table view of every KPI"):
-        st.dataframe(kpi_frame(rows, cfg), hide_index=True, width="stretch")
+        selected = record_table(kpi_frame(rows, cfg).to_dict("records"), "overview-kpis-full", end, level=2)
+        if selected:
+            row = next(r for r in rows if r["activity"] == selected["Activity"] and r["kpi"] == selected["KPI"])
+            drill_content(row, end, f"overview-full-{selected['Activity']}-{selected['KPI']}")

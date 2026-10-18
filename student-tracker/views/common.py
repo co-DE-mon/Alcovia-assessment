@@ -54,27 +54,31 @@ def _tint(text):
 def _drill_dialog(row, end):
     @st.dialog(f'{row["activity"]} · {row["kpi"]}', width="large")
     def body():
-        cfg = data.config()
-        out = data.drill(end, row["activity"], row["kpi"])
-        show(f'<div class="sv-sub" style="margin:0 0 .5rem">{ui.e(ui.plain_text(row["kpi"], cfg))}</div>')
-        if out["kind"] == "ratio":
-            tail = f'{out["counted"]:g} of {out["base"]:g} counted'
-            show(f'<div class="sv-h2" style="margin:.2rem 0">{ui.pct(out["headline"], cfg)} {ui.chip(scorecard.status(out["headline"], cfg))} <span class="sv-muted" style="font-weight:400;font-size:.9rem">· {tail}</span></div>')
-        elif out["kind"] == "mean":
-            show(f'<div class="sv-h2" style="margin:.2rem 0">{ui.pct(out["headline"], cfg)} {ui.chip(scorecard.status(out["headline"], cfg))} <span class="sv-muted" style="font-weight:400;font-size:.9rem">· average {out["value"]:.2f} over {sum(r[out["spec"].value] is not None for r in out["rows"])} records</span></div>')
-        elif row.get("detail"):
-            show(f'<div class="sv-h2" style="margin:.2rem 0">{ui.e(row["detail"])}</div>')
-        if not out["rows"]:
-            st.info("No records behind this KPI in its window.")
-            return
-        rows = drill.table(out)
-        if out["kind"] == "ratio":
-            only = st.toggle("Only rows that pulled the number down", key=f'only-{row["activity"]}-{row["kpi"]}')
-            rows = [r for r in rows if not only or not r["Result"].startswith(("✓", "–"))]
-        st.caption(f"{len(rows)} of {len(out['rows'])} rows")
-        frame = pd.DataFrame(rows).round(2)      # drill queries return exact values so totals reconcile; show two decimals
-        st.dataframe(tinted(frame), hide_index=True, width="stretch", height=table_height(len(rows)))
+        drill_content(row, end, "dialog")
     body()
+
+
+def drill_content(row, end, key):
+    """Render KPI evidence inside either its dialog or an already-open table panel."""
+    cfg = data.config()
+    out = data.drill(end, row["activity"], row["kpi"])
+    show(f'<div class="sv-sub" style="margin:0 0 .5rem">{ui.e(ui.plain_text(row["kpi"], cfg))}</div>')
+    if out["kind"] == "ratio":
+        tail = f'{out["counted"]:g} of {out["base"]:g} counted'
+        show(f'<div class="sv-h2" style="margin:.2rem 0">{ui.pct(out["headline"], cfg)} {ui.chip(scorecard.status(out["headline"], cfg))} <span class="sv-muted" style="font-weight:400;font-size:.9rem">· {tail}</span></div>')
+    elif out["kind"] == "mean":
+        show(f'<div class="sv-h2" style="margin:.2rem 0">{ui.pct(out["headline"], cfg)} {ui.chip(scorecard.status(out["headline"], cfg))} <span class="sv-muted" style="font-weight:400;font-size:.9rem">· average {out["value"]:.2f} over {sum(r[out["spec"].value] is not None for r in out["rows"])} records</span></div>')
+    elif row.get("detail"):
+        show(f'<div class="sv-h2" style="margin:.2rem 0">{ui.e(row["detail"])}</div>')
+    if not out["rows"]:
+        st.info("No records behind this KPI in its window.")
+        return
+    rows = drill.table(out)
+    if out["kind"] == "ratio":
+        only = st.toggle("Only rows that pulled the number down", key=f'only-{key}-{row["activity"]}-{row["kpi"]}')
+        rows = [r for r in rows if not only or not r["Result"].startswith(("✓", "–"))]
+    st.caption(f"{len(rows)} of {len(out['rows'])} rows")
+    record_table(rows, f'{key}-rows-{row["activity"]}-{row["kpi"]}-{len(rows)}', end, style=True)
 
 
 def kpi_with_drill(row, cfg, key):
@@ -88,3 +92,63 @@ def kpi_with_drill(row, cfg, key):
 def tinted(frame, column="Result"):
     """The frame with its Result column tinted in the status colours, as in the records dialog."""
     return frame.style.map(_tint, subset=[column]) if column in frame else frame
+
+
+def record_table(rows, key, end, *, style=False, cap=520, level=0):
+    """Select a row to see its complete displayed fields and the records linked by stable IDs."""
+    if not rows:
+        st.info("No records for this selection.")
+        return None
+    frame = pd.DataFrame(rows)
+    st.caption("Select a row to inspect its fields and related records.")
+    picked = st.dataframe(tinted(frame) if style else frame, hide_index=True, width="stretch",
+                          height=table_height(len(rows), cap), on_select="rerun", selection_mode="single-row", key=key)
+    if picked.selection.rows:
+        selected = rows[picked.selection.rows[0]]
+        st.caption("Selected row · fields and related records")
+        st.dataframe(pd.DataFrame([{"Field": k, "Value": "—" if pd.isna(v) else str(v)} for k, v in selected.items()]),
+                     hide_index=True, width="stretch", height=table_height(len(selected), 360))
+        if level >= 2:
+            return selected
+        event_id = selected.get("Event ID")
+        if isinstance(event_id, str) and event_id:
+            event = data.event(end, event_id)
+            if event["detail"]:
+                with st.expander("Event, attendance and feedback", expanded=True):
+                    st.dataframe(pd.DataFrame(event["detail"]), hide_index=True, width="stretch")
+                    st.caption(f'{len(event["people"])} attendance records')
+                    if event["people"]:
+                        record_table(event["people"], f"{key}-event-people-{event_id}", end, level=level + 1)
+                    if event["feedback"]:
+                        st.caption(f'{len(event["feedback"])} feedback records')
+                        record_table(event["feedback"], f"{key}-event-feedback-{event_id}", end, level=level + 1)
+        group_id = selected.get("Group")
+        if isinstance(group_id, str) and group_id:
+            with st.expander("Events in this group", expanded=True):
+                record_table(data.group(end, group_id), f"{key}-group-{group_id}", end, level=level + 1)
+        selected_day = selected.get("Day")
+        if selected_day is not None and not event_id:
+            from datetime import date
+            if isinstance(selected_day, date) and selected_day <= end:
+                evidence = data.day_records(end, selected_day)
+                with st.expander("Activity on this day", expanded=True):
+                    st.caption("Events")
+                    if evidence["events"]:
+                        record_table(evidence["events"], f"{key}-day-events-{selected_day}", end, level=level + 1)
+                    else:
+                        st.caption("No events recorded.")
+                    st.caption("Focus sessions")
+                    if evidence["focus"]:
+                        record_table(evidence["focus"], f"{key}-day-focus-{selected_day}", end, level=level + 1)
+                    else:
+                        st.caption("No focus sessions recorded.")
+        student_id = selected.get("ID")
+        if isinstance(student_id, str) and student_id and level < 2:
+            from views import students
+            person = next((s for s in data.students(end) if s["student_id"] == student_id), None)
+            if person:
+                with st.expander(f'Student profile · {person["name"]}', expanded=True):
+                    students.detail(person, end, data.config())
+                    students.records(data.profile(end, student_id), end, f"{key}-profile-{student_id}", level=2)
+        return selected
+    return None

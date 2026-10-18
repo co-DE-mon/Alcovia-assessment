@@ -80,6 +80,28 @@ def profile(day, student_id):
 
 
 @st.cache_data(show_spinner=False)
+def event(day, event_id):
+    prm = {"event_id": event_id, "end": day}
+    con = cursor()
+    return {"detail": metrics.run(con, "profile", "event_detail", prm),
+            "people": metrics.run(con, "profile", "event_people", prm),
+            "feedback": metrics.run(con, "profile", "event_feedback", prm)}
+
+
+@st.cache_data(show_spinner=False)
+def group(day, group_id):
+    return metrics.run(cursor(), "profile", "group_events", {"group_id": group_id, "end": day})
+
+
+@st.cache_data(show_spinner=False)
+def day_records(end, day):
+    prm = {"day": day, "end": end}
+    con = cursor()
+    return {"events": metrics.run(con, "profile", "day_events", prm),
+            "focus": metrics.run(con, "profile", "day_focus", prm)}
+
+
+@st.cache_data(show_spinner=False)
 def timeline(day, student_id):
     return scorecard.student_timeline(cursor(), config(), day, student_id)
 
@@ -109,5 +131,5 @@ def daily_trends(day):
 
 def refresh():
     """An explicit refresh clears data results and reopens the atomically published snapshot."""
-    for cached in (front, drill, students, profile, timeline, reconnect, runs, daily_trends, config, _database):
+    for cached in (front, drill, students, profile, event, group, day_records, timeline, reconnect, runs, daily_trends, config, _database):
         cached.clear()
