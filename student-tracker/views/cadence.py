@@ -60,7 +60,7 @@ def page(cadence):
                         show('<div class="sv-sub sv-muted">No KPI for this lens yet</div>')
                         continue
                     for k in kp:
-                        kpi_with_drill(k, cfg, f'drill-{cadence}-{k["activity"]}-{k["kpi"]}')
+                        kpi_with_drill(k, cfg, f'drill-{cadence}-{k["activity"]}-{k["kpi"]}', card=True)
 
     if cadence == "daily":
         trends(end)

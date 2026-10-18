@@ -81,9 +81,9 @@ def drill_content(row, end, key):
     record_table(rows, f'{key}-rows-{row["activity"]}-{row["kpi"]}-{len(rows)}', end, style=True)
 
 
-def kpi_with_drill(row, cfg, key):
+def kpi_with_drill(row, cfg, key, *, card=False):
     """The KPI row, and under it a button that opens the records behind the number (which student, which event, which to-do)."""
-    with st.container(gap="xxsmall"):
+    with st.container(border=card, gap="xxsmall"):
         show(ui.kpi_row(row, cfg))
         if st.button("See the records ▸", key=key, type="tertiary"):
             _drill_dialog(row, data.as_of())
