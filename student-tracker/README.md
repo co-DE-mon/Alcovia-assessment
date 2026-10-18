@@ -145,7 +145,7 @@ I’ve limited the exporter to an explicit synthetic `DEMO-` cohort. It reads al
 - [Demo generator](seed/generate.py), [dashboard pages](views/) and [tests](tests/).
 - I’ve kept the Definitions page tied to the KPI catalogue and assumptions below, so this README is also the dashboard’s reference. The SQL and current loader/configuration rules define the implemented behavior.
 
-The entry point for Streamlit Community Cloud is `student-tracker/app.py`. The working synthetic prototype doesn’t establish live ingestion. I’ve kept team allocation, delivery dates from 1 November and the advisor’s scope for non-tuition subjects outside this README; those need to be covered in the overall executive writeup.
+The entry point for Streamlit Community Cloud is `student-tracker/app.py`. The working synthetic prototype doesn’t establish live ingestion. Team allocation, delivery dates from 1 November and the advisor’s scope for non-tuition subjects are in the [executive writeup](../Docs/executive-writeup.md).
 
 ## KPI catalogue
 

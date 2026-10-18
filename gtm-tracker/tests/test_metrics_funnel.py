@@ -51,11 +51,23 @@ def test_show_up_and_drop_off_rates_by_hand(tiny, cfg):
 
 
 def test_headline_by_hand(tiny, cfg):
+    tiny.execute("INSERT INTO enrollments VALUES ('DEMO-EN-1', 'DEMO-ST-1', 'DEMO-L-1', 'program', '2026-10-10', NULL, 500000)")
+    tiny.execute("INSERT INTO invoices VALUES ('DEMO-INV-1', 'DEMO-EN-1', '2026-10-10', '2026-10-17', 500000, '2026-10-10')")
     row = run(tiny, cfg, "headline")[0]
     assert row["cost_per_qualified_lead"] == pytest.approx(1000 / 3)        # Rs 1000 over L1, L2, L5 (paid, qualified); the organic one is excluded
-    assert row["program_conversion_rate"] == pytest.approx(1 / 5)           # 1 sign-up in the period over 5 leads created in it
+    assert row["program_conversion_rate"] == pytest.approx(1 / 5)           # one paid enrollment; the unpaid trial is excluded
     assert row["organic_leads"] == 1
     assert row["avg_journey_days"] == pytest.approx((9 + 2 + 0 + 0.5 + 7) / 5)
+
+
+def test_program_conversion_needs_a_payment_by_the_selected_end(tiny, cfg):
+    tiny.execute("INSERT INTO enrollments VALUES ('DEMO-EN-1', 'DEMO-ST-1', 'DEMO-L-1', 'program', '2026-10-10', NULL, 500000)")
+    tiny.execute("INSERT INTO invoices VALUES ('DEMO-INV-1', 'DEMO-EN-1', '2026-10-10', '2026-10-17', 500000, NULL)")
+    assert run(tiny, cfg, "headline")[0]["program_conversion_rate"] == 0
+    tiny.execute("UPDATE invoices SET paid_on = '2026-10-11' WHERE invoice_id = 'DEMO-INV-1'")
+    assert run(tiny, cfg, "headline")[0]["program_conversion_rate"] == 0
+    tiny.execute("UPDATE invoices SET paid_on = '2026-10-10' WHERE invoice_id = 'DEMO-INV-1'")
+    assert run(tiny, cfg, "headline")[0]["program_conversion_rate"] == pytest.approx(1 / 5)
 
 
 def test_by_campaign_null_cost_when_nobody_qualified(tiny, cfg):

@@ -68,7 +68,7 @@ def page():
     section("Top metrics")
     h = data.query("funnel", "headline", start, end).iloc[0]
     tiles([("Cost per qualified lead", fmt.inr(num(h["cost_per_qualified_lead"])), "paid spend / qualified paid leads", None),
-           ("Program conversion", fmt.pct(num(h["program_conversion_rate"])), "sign-ups / leads in the period", None),
+           ("Program conversion", fmt.pct(num(h["program_conversion_rate"])), "paid program or trial buyers / leads created in the period", None),
            ("Organic leads", fmt.num(num(h["organic_leads"])), "no campaign attached", None),
            ("Average lead journey", "–" if num(h["avg_journey_days"]) is None else f"{h['avg_journey_days']:.1f} days", "first contact to last stage", None)])
 

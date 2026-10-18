@@ -43,4 +43,4 @@ Diwali falls on 8 November. I would avoid using the following week as the main s
 
 Monday: 30 minutes to choose work. Daily: a short ClickUp update. Friday: 30 minutes to demonstrate the flow and review results. I resolve blockers lasting more than one working day.
 
-[Excel workplan: tasks, capacity and acceptance checks](alcovia-delivery-workplan.xlsx)
+[Excel workplan: tasks, capacity and acceptance checks](delivery-workplan.xlsx)

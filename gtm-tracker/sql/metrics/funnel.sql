@@ -55,23 +55,25 @@ FROM c
 -- name: headline
 -- Definition: the four top metrics.
 --   cost_per_qualified_lead = all paid spend in the period / paid leads created in the period that reached 'qualified'.
---   program_conversion_rate = leads that reached 'signed' inside the period / leads created in the period [A: brief says "those who pay and sign up in the period reviewed"; read as a flow ratio].
+--   program_conversion_rate = leads created in the period with a program or trial enrollment and at least one invoice paid by $end / leads created in the period.
 --   organic_leads = leads whose ClickUp source lead is Organic, created in the period. Brochure leads are neither organic nor paid.
 --   cost_per_qualified_lead divides by paid-ads leads only, so a brochure lead never lowers it.
 --   avg_journey_days = mean days from creation to the last stage reached, for leads created in the period, whether they signed or dropped off.
--- Grain: one row. Source: leads, lead_stages, ad_daily.
+-- Grain: one row. Source: leads, lead_stages, ad_daily, enrollments, invoices.
 -- Edge cases: no qualified paid leads gives a NULL cost; no leads gives NULL conversion and journey; spend with no leads still shows in by_campaign.
+--   An unpaid enrollment or payment after $end is not converted; multiple invoices for one lead count once. Recent lead cohorts may still be in progress.
 WITH cohort AS (SELECT * FROM leads WHERE created_at::DATE BETWEEN $start::DATE AND $end::DATE),
 q AS (SELECT count(*) AS n FROM cohort c JOIN lead_stages s USING (lead_id) WHERE s.stage = 'qualified' AND c.source_lead = 'paid_ads' AND s.reached_at::DATE <= $end::DATE),
 sp AS (SELECT coalesce(sum(spend), 0) AS amount FROM ad_daily WHERE day BETWEEN $start::DATE AND $end::DATE),
-sg AS (SELECT count(*) AS n FROM lead_stages WHERE stage = 'signed' AND reached_at::DATE BETWEEN $start::DATE AND $end::DATE),
+paid AS (SELECT count(DISTINCT c.lead_id) AS n FROM cohort c JOIN enrollments e ON e.lead_id = c.lead_id AND e.started_on <= $end::DATE
+         JOIN invoices i ON i.enrollment_id = e.enrollment_id AND i.paid_on <= $end::DATE),
 j AS (SELECT avg((epoch(m.last_at) - epoch(c.created_at)) / 86400.0) AS days
       FROM cohort c JOIN (SELECT lead_id, max(reached_at) AS last_at FROM lead_stages WHERE reached_at::DATE <= $end::DATE GROUP BY lead_id) m USING (lead_id))
 SELECT sp.amount / nullif(q.n, 0) AS cost_per_qualified_lead,
-       sg.n * 1.0 / nullif((SELECT count(*) FROM cohort), 0) AS program_conversion_rate,
+       paid.n * 1.0 / nullif((SELECT count(*) FROM cohort), 0) AS program_conversion_rate,
        (SELECT count(*) FROM cohort WHERE source_lead = 'organic')::INTEGER AS organic_leads,
        j.days AS avg_journey_days
-FROM q, sp, sg, j
+FROM q, sp, paid, j
 
 -- name: by_campaign
 -- Definition: per campaign, leads created in the period, how many qualified and signed, spend in the period, and cost per qualified lead.

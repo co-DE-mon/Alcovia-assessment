@@ -2,7 +2,7 @@
 
 I built this tracker for Problem 2 to bring revenue, the lead journey and campaign performance into one view, with the numbers behind each budget recommendation available to inspect.
 
-I’ve used **synthetic data throughout**: a year ending **18 October 2026**, with generated contacts and `DEMO-` IDs. The dashboard works on this data. I haven’t connected it to live ClickUp, Meta or Razorpay data, or deployed it yet.
+I’ve used **synthetic data throughout**: a year ending **18 October 2026**, with generated contacts and `DEMO-` IDs. The [dashboard](https://alcovia-assessment-kbzzwsknrq3jkznzvbpfzq.streamlit.app/) works on this data. I haven’t connected it to live ClickUp, Meta or Razorpay data.
 
 ## What it covers
 
@@ -27,7 +27,7 @@ I’ve used Streamlit and DuckDB so you can run the prototype without setting up
 - **I use different dates for workshop cash and workshop events.** Achieved revenue and the program/workshop split count payments inside the period. For the workshop chart, I select workshops held inside the period and include their payments up to the end date, including payments before the start. Those totals need not match. Seats can exceed payment or buyer counts.
 - **For the funnel, I follow leads created in the period**, using outcomes known by its end. They include paid, organic and brochure leads, across program and workshop campaigns. CPQL uses **all period ad spend / qualified paid-ad leads created in the period**; organic and brochure leads do not lower it. Brochure is a separate source, not organic.
 - **I calculate show-up as attended/scheduled, and ambition drop-off as 1 − architect/ambition.** That drop-off figure includes people still waiting for an architect session, so I wouldn’t read all of it as confirmed loss. For “Qualified”, I use the recorded ClickUp stage; I’m not calculating a qualification score here. Review and qualification-conveyed stages appear in histories; rejected and nurture exits are separate. The model assumes a complete, ordered path and records one timestamp per lead/stage, not repeat calls or re-entry cycles.
-- **I currently show headline conversion as sign-ups in the period / leads created in the period.** This can include older leads in the numerator, exceed 100%, and span both campaign types. It also doesn’t verify payment, so I still need to reconcile it with the brief’s paid-sign-up requirement. Campaign and attribute breakdowns instead count sign-ups from their creation cohort. RCA checks paid invoices separately. Average journey is creation to the **last recorded stage**, including leads still progressing; it is not elapsed time to today or a completed-sales-cycle average.
+- **I show headline program conversion as paid program or trial buyers from the selected lead cohort / leads created in the selected period.** A buyer needs a linked enrollment and at least one invoice paid by the selected end date. Each lead counts once, even with multiple invoices. A recent cohort may still be progressing, so its rate can understate eventual conversion. Campaign and attribute breakdowns show ClickUp sign-up stages rather than paid enrollments; RCA checks paid invoices separately. Average journey is creation to the **last recorded stage**, including leads still progressing; it is not elapsed time to today or a completed-sales-cycle average.
 - **For unpaid invoices**, I include invoices issued in the selected period, so a short range can hide older debt. **For renewals**, I include trial end dates from the selected end date through 30 days later, including both boundaries. Already expired trials aren’t included.
 - I’ve used the supplied pricing notes for demo fees: **₹5,00,000 for the full program and ₹1,75,000 for the trial**. Targets and results remain illustrative.
 
@@ -144,4 +144,4 @@ The tests cover calculations, payment reconciliation, date boundaries, historica
 - [Metric queries](sql/metrics/): definitions, calculation grain, sources and edge cases alongside each query.
 - [Demo generator](seed/generate.py), [decision rules](rca.py), [dashboard pages](views/) and [tests](tests/).
 
-I still need to deploy the dashboard, add its URL and reconcile headline conversion to paid sign-ups. Live ingestion and authentication also remain open. I’ve kept team allocation and delivery timelines outside this README; those need to be covered in the overall executive writeup.
+Live ingestion and authentication remain open. Team allocation and delivery timelines are in the [executive writeup](../Docs/executive-writeup.md).
