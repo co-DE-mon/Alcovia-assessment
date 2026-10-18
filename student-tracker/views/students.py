@@ -4,7 +4,7 @@ import streamlit as st
 
 import data
 import ui
-from views.common import record_table, show, table_height
+from views.common import open_pending_record, record_table, show, table_height
 
 
 def frame(rows, cfg):
@@ -88,6 +88,7 @@ def open_student(s, end, cfg):
 
 def page():
     cfg, end = data.config(), data.as_of()
+    open_pending_record()
     rows = data.students(end)
     show(ui.page_header("Students", f"{len(rows)} active students · as of {ui.fmt_date(end)}"))
 

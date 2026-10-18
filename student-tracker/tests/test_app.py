@@ -1,5 +1,6 @@
 """The dashboard renders every page without an error and shows what it promises. Streamlit's AppTest runs the real pages in-process."""
 from datetime import timedelta
+from types import SimpleNamespace
 
 import pytest
 from streamlit.testing.v1 import AppTest
@@ -76,6 +77,45 @@ def test_a_student_dialog_shows_the_summary_and_every_record_section():
     assert not at.exception, [e.value for e in at.exception]
     assert "Demo Student 17" in body and "sv-strip" in body and "All records" in body
     assert tabs == ["Quizzes", "Focus", "To-dos", "Events and sessions", "Roadmaps", "Academics", "Wearable"]
+
+
+def test_record_cell_click_queues_a_dialog_instead_of_expanding_below(monkeypatch):
+    from views import common
+
+    class Rerun(Exception):
+        pass
+
+    state = {}
+    fake_st = SimpleNamespace(
+        session_state=state,
+        caption=lambda *_: None,
+        dataframe=lambda *_, **__: SimpleNamespace(selection=SimpleNamespace(cells=[(1, "Student")])),
+        rerun=lambda: (_ for _ in ()).throw(Rerun()),
+    )
+    monkeypatch.setattr(common, "st", fake_st)
+    rows = [{"Student": "First", "ID": "DEMO-S01"}, {"Student": "Second", "ID": "DEMO-S02"}]
+    with pytest.raises(Rerun):
+        common.record_table(rows, "test-records", AS_OF)
+    assert state["_sv_pending_record"] == (rows[1], "test-records", AS_OF, 0)
+    assert state["_sv_record_table_test-records"] == 1
+
+
+def test_pending_record_opens_in_a_dialog():
+    call = ('st.session_state["_sv_pending_record"] = ({"Student": "Demo Student 01", "ID": "DEMO-S01"}, '
+            '"test-records", data.as_of(), 0)\noverview.page()')
+    at = run("overview", "import data\n" + call)
+    assert not at.exception, [e.value for e in at.exception]
+    assert "Fields and related records" in text(at)
+    assert any(e.label == "Student profile · Demo Student 01" for e in at.expander)
+
+
+def test_pending_kpi_row_opens_its_evidence_dialog():
+    call = ('import data\nfrom views.common import kpi_frame\n'
+            'row = kpi_frame(data.front(data.as_of())["kpis"], data.config()).to_dict("records")[0]\n'
+            'st.session_state["_sv_pending_record"] = (row, "test-kpis", data.as_of(), 2)\noverview.page()')
+    at = run("overview", call)
+    assert not at.exception, [e.value for e in at.exception]
+    assert any(c.value.endswith(" rows") for c in at.caption) or any("No records" in i.value for i in at.info)
 
 
 def test_data_health_names_the_students_behind_the_whoop_problem():

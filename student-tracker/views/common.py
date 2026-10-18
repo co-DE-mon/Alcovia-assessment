@@ -95,66 +95,93 @@ def tinted(frame, column="Result"):
 
 
 def record_table(rows, key, end, *, style=False, cap=520, level=0):
-    """Click a cell to see its row's fields and the records linked by stable IDs."""
+    """Click a cell to open its row and related records in a dialog."""
     if not rows:
         st.info("No records for this selection.")
         return None
     frame = pd.DataFrame(rows)
-    st.caption("Click any cell to inspect its row and related records.")
+    st.caption("Click any cell to open its row and related records.")
+    counter = f"_sv_record_table_{key}"
+    st.session_state.setdefault(counter, 0)
     picked = st.dataframe(tinted(frame) if style else frame, hide_index=True, width="stretch",
-                          height=table_height(len(rows), cap), on_select="rerun", selection_mode="single-cell", key=key)
+                          height=table_height(len(rows), cap), on_select="rerun", selection_mode="single-cell",
+                          key=f"{key}-{st.session_state[counter]}")
     if picked.selection.cells:
-        selected = rows[picked.selection.cells[0][0]]
-        st.caption("Selected row · fields and related records")
-        st.dataframe(pd.DataFrame([{"Field": k, "Value": "—" if pd.isna(v) else str(v)} for k, v in selected.items()]),
-                     hide_index=True, width="stretch", height=table_height(len(selected), 360))
-        if level >= 3:
-            return selected
-        event_id = selected.get("Event ID")
-        if isinstance(event_id, str) and event_id:
-            event = data.event(end, event_id)
-            if event["detail"]:
-                with st.expander("Event, attendance and feedback", expanded=True):
-                    st.dataframe(pd.DataFrame(event["detail"]), hide_index=True, width="stretch")
-                    st.caption(f'{len(event["people"])} attendance records')
-                    if event["people"]:
-                        record_table(event["people"], f"{key}-event-people-{event_id}", end, level=level + 1)
-                    if event["feedback"]:
-                        st.caption(f'{len(event["feedback"])} feedback records')
-                        record_table(event["feedback"], f"{key}-event-feedback-{event_id}", end, level=level + 1)
-        group_id = selected.get("Group")
-        if isinstance(group_id, str) and group_id:
-            with st.expander("Events in this group", expanded=True):
-                record_table(data.group(end, group_id), f"{key}-group-{group_id}", end, level=level + 1)
-        selected_day = selected.get("Day")
-        if selected_day is not None and not event_id:
-            from datetime import date
-            if isinstance(selected_day, date) and selected_day <= end:
-                evidence = data.day_records(end, selected_day)
-                with st.expander("Activity on this day", expanded=True):
-                    st.caption("Events")
-                    if evidence["events"]:
-                        record_table(evidence["events"], f"{key}-day-events-{selected_day}", end, level=level + 1)
-                    else:
-                        st.caption("No events recorded.")
-                    st.caption("Focus sessions")
-                    if evidence["focus"]:
-                        record_table(evidence["focus"], f"{key}-day-focus-{selected_day}", end, level=level + 1)
-                    else:
-                        st.caption("No focus sessions recorded.")
-        student_id = selected.get("ID")
-        if isinstance(student_id, str) and student_id and level < 2:
-            from views import students
-            person = next((s for s in data.students(end) if s["student_id"] == student_id), None)
-            profile = data.profile(end, student_id)
-            if profile["identity"]:
-                with st.expander(f'Student profile · {profile["identity"]["Name"]}', expanded=True):
-                    if not person:
-                        st.caption("This student is outside the active cohort on the selected date.")
-                        st.dataframe(pd.DataFrame([{"Field": k, "Value": str(v)} for k, v in profile["identity"].items()]),
-                                     hide_index=True, width="stretch")
-                    else:
-                        students.detail(person, end, data.config())
-                    students.records(profile, end, f"{key}-profile-{student_id}", level=2)
-        return selected
+        st.session_state[counter] += 1
+        st.session_state["_sv_pending_record"] = (rows[picked.selection.cells[0][0]], key, end, level)
+        st.rerun()
     return None
+
+
+def open_pending_record():
+    """Open a cell-picked record on the page rerun, replacing any current dialog."""
+    pending = st.session_state.pop("_sv_pending_record", None)
+    if pending is None:
+        return
+    selected, key, end, level = pending
+    if "Activity" in selected and "KPI" in selected and "Source query" in selected:
+        row = next((r for r in data.front(end)["kpis"] if r["activity"] == selected["Activity"] and r["kpi"] == selected["KPI"]), None)
+        if row is not None:
+            _drill_dialog(row, end)
+            return
+    label = selected.get("Student") or selected.get("Item") or selected.get("Event ID") or selected.get("Run ID") or "Record details"
+
+    @st.dialog(str(label), width="large", on_dismiss="rerun")
+    def body():
+        _record_content(selected, key, end, level)
+
+    body()
+
+
+def _record_content(selected, key, end, level):
+    st.caption("Fields and related records")
+    st.dataframe(pd.DataFrame([{"Field": k, "Value": "—" if pd.isna(v) else str(v)} for k, v in selected.items()]),
+                 hide_index=True, width="stretch", height=table_height(len(selected), 360))
+    if level >= 3:
+        return
+    event_id = selected.get("Event ID")
+    if isinstance(event_id, str) and event_id:
+        event = data.event(end, event_id)
+        if event["detail"]:
+            with st.expander("Event, attendance and feedback", expanded=True):
+                st.dataframe(pd.DataFrame(event["detail"]), hide_index=True, width="stretch")
+                st.caption(f'{len(event["people"])} attendance records')
+                if event["people"]:
+                    record_table(event["people"], f"{key}-event-people-{event_id}", end, level=level + 1)
+                if event["feedback"]:
+                    st.caption(f'{len(event["feedback"])} feedback records')
+                    record_table(event["feedback"], f"{key}-event-feedback-{event_id}", end, level=level + 1)
+    group_id = selected.get("Group")
+    if isinstance(group_id, str) and group_id:
+        with st.expander("Events in this group", expanded=True):
+            record_table(data.group(end, group_id), f"{key}-group-{group_id}", end, level=level + 1)
+    selected_day = selected.get("Day")
+    if selected_day is not None and not event_id:
+        from datetime import date
+        if isinstance(selected_day, date) and selected_day <= end:
+            evidence = data.day_records(end, selected_day)
+            with st.expander("Activity on this day", expanded=True):
+                st.caption("Events")
+                if evidence["events"]:
+                    record_table(evidence["events"], f"{key}-day-events-{selected_day}", end, level=level + 1)
+                else:
+                    st.caption("No events recorded.")
+                st.caption("Focus sessions")
+                if evidence["focus"]:
+                    record_table(evidence["focus"], f"{key}-day-focus-{selected_day}", end, level=level + 1)
+                else:
+                    st.caption("No focus sessions recorded.")
+    student_id = selected.get("ID")
+    if isinstance(student_id, str) and student_id and level < 2:
+        from views import students
+        person = next((s for s in data.students(end) if s["student_id"] == student_id), None)
+        profile = data.profile(end, student_id)
+        if profile["identity"]:
+            with st.expander(f'Student profile · {profile["identity"]["Name"]}', expanded=True):
+                if not person:
+                    st.caption("This student is outside the active cohort on the selected date.")
+                    st.dataframe(pd.DataFrame([{"Field": k, "Value": str(v)} for k, v in profile["identity"].items()]),
+                                 hide_index=True, width="stretch")
+                else:
+                    students.detail(person, end, data.config())
+                students.records(profile, end, f"{key}-profile-{student_id}", level=2)

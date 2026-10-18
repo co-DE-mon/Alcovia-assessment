@@ -5,7 +5,7 @@ import data
 import insights
 import scorecard
 import ui
-from views.common import drill_content, kpi_frame, kpi_with_drill, record_table, show, window_of, window_text
+from views.common import kpi_frame, kpi_with_drill, open_pending_record, record_table, show, window_of, window_text
 
 
 def by_activity(rows):
@@ -33,6 +33,7 @@ def trends(end):
 
 def page(cadence):
     cfg, end = data.config(), data.as_of()
+    open_pending_record()
     out = data.front(end)
     rows = [r for r in out["kpis"] if r["cadence"] == cadence]
     show(ui.page_header(ui.CADENCE_LABEL[cadence], ui.CADENCE_BLURB[cadence]))
@@ -64,7 +65,4 @@ def page(cadence):
     if cadence == "daily":
         trends(end)
     with st.expander("Table view"):
-        selected = record_table(kpi_frame(rows, cfg).to_dict("records"), f"cadence-kpis-{cadence}", end, level=2)
-        if selected:
-            row = next(r for r in rows if r["activity"] == selected["Activity"] and r["kpi"] == selected["KPI"])
-            drill_content(row, end, f"cadence-table-{cadence}-{selected['Activity']}-{selected['KPI']}")
+        record_table(kpi_frame(rows, cfg).to_dict("records"), f"cadence-kpis-{cadence}", end, level=2)

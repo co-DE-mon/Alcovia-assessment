@@ -9,7 +9,7 @@ import nav
 import scorecard
 import ui
 from views import health, students
-from views.common import drill_content, kpi_frame, kpi_with_drill, record_table, show, table_height, window_of, window_text
+from views.common import kpi_frame, kpi_with_drill, open_pending_record, record_table, show, table_height, window_of, window_text
 
 
 def _table(frame, caption):
@@ -36,10 +36,7 @@ def _kpis_dialog(rows, cfg):
     only = st.toggle("Only KPIs that are not on track", key="overview-kpis-only")
     shown = [r for r in rows if not only or r["status"] != "on_track"]
     st.caption(f"{len(shown)} of {len(rows)} KPIs. Change is against the previous {cfg['scorecard']['window_days']} days.")
-    selected = record_table(kpi_frame(shown, cfg).to_dict("records"), f"overview-kpis-{only}", data.as_of(), level=2)
-    if selected:
-        row = next(r for r in shown if r["activity"] == selected["Activity"] and r["kpi"] == selected["KPI"])
-        drill_content(row, data.as_of(), f"overview-kpi-{selected['Activity']}-{selected['KPI']}")
+    record_table(kpi_frame(shown, cfg).to_dict("records"), f"overview-kpis-{only}", data.as_of(), level=2)
 
 
 @st.dialog("Data sources", width="large")
@@ -64,6 +61,7 @@ def _engagement_dialog(item):
 
 def page():
     cfg, end = data.config(), data.as_of()
+    open_pending_record()
     out, people = data.front(end), data.students(end)
     rows = out["kpis"]
     listed = [s for s in people if s["listed"]]
@@ -159,7 +157,4 @@ def page():
                 nav.link(c, ui.CADENCE_LABEL[c])
 
     with st.expander("Table view of every KPI"):
-        selected = record_table(kpi_frame(rows, cfg).to_dict("records"), "overview-kpis-full", end, level=2)
-        if selected:
-            row = next(r for r in rows if r["activity"] == selected["Activity"] and r["kpi"] == selected["KPI"])
-            drill_content(row, end, f"overview-full-{selected['Activity']}-{selected['KPI']}")
+        record_table(kpi_frame(rows, cfg).to_dict("records"), "overview-kpis-full", end, level=2)

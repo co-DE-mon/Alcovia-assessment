@@ -4,7 +4,7 @@ import streamlit as st
 
 import data
 import ui
-from views.common import record_table, show, table_height
+from views.common import open_pending_record, record_table, show
 
 RUN_ICON = {"ok": "✓ ok", "partial": "! partial", "failed": "✕ failed"}
 
@@ -37,6 +37,7 @@ def affected(end):
 
 def page():
     cfg, end = data.config(), data.as_of()
+    open_pending_record()
     out = data.front(end)
     hours = cfg["data_freshness"]["stale_after_hours"]
     show(ui.page_header("Data health", f"Does each source have a recent, complete load? As of the end of {ui.fmt_date(end)}."))
