@@ -108,7 +108,7 @@ def record_table(rows, key, end, *, style=False, cap=520, level=0):
         st.caption("Selected row · fields and related records")
         st.dataframe(pd.DataFrame([{"Field": k, "Value": "—" if pd.isna(v) else str(v)} for k, v in selected.items()]),
                      hide_index=True, width="stretch", height=table_height(len(selected), 360))
-        if level >= 2:
+        if level >= 3:
             return selected
         event_id = selected.get("Event ID")
         if isinstance(event_id, str) and event_id:
@@ -146,9 +146,15 @@ def record_table(rows, key, end, *, style=False, cap=520, level=0):
         if isinstance(student_id, str) and student_id and level < 2:
             from views import students
             person = next((s for s in data.students(end) if s["student_id"] == student_id), None)
-            if person:
-                with st.expander(f'Student profile · {person["name"]}', expanded=True):
-                    students.detail(person, end, data.config())
-                    students.records(data.profile(end, student_id), end, f"{key}-profile-{student_id}", level=2)
+            profile = data.profile(end, student_id)
+            if profile["identity"]:
+                with st.expander(f'Student profile · {profile["identity"]["Name"]}', expanded=True):
+                    if not person:
+                        st.caption("This student is outside the active cohort on the selected date.")
+                        st.dataframe(pd.DataFrame([{"Field": k, "Value": str(v)} for k, v in profile["identity"].items()]),
+                                     hide_index=True, width="stretch")
+                    else:
+                        students.detail(person, end, data.config())
+                    students.records(profile, end, f"{key}-profile-{student_id}", level=2)
         return selected
     return None
